@@ -2,31 +2,23 @@ from django.shortcuts import render, redirect
 from student.models import *
 from student.forms import QuestionForm
 from django.shortcuts import render
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import *
 from taggit.models import Tag
 from itertools import chain
 
 
-def home(request):
-
-    question_list = Question.objects.all().order_by('-updated')
-
-    paginator = Paginator(question_list, 5)
-    page = request.GET.get('page')
-    try:
-        questions = paginator.page(page)
-    except PageNotAnInteger:
-        
-        questions = paginator.page(1)
-    except EmptyPage:
-        
-        questions = paginator.page(paginator.num_pages)
-    
+def home(request, extra_context=None):
+    template='main_page/home.html'
+    page_template='main_page/question_list.html'
     context={
-        'questions':questions,
+        'questions':Question.objects.all().order_by('-updated'),
+        'page_template':page_template,
     }
-    return render(request, 'main_page/home.html', context)
+
+    if request.is_ajax():
+        template = page_template
+    return render(request, template, context)
+
 
 def tags(request):
     template = 'categories/tags.html' 

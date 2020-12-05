@@ -3,103 +3,36 @@
 {% load static %}
 {% block content %}
 
+{% load el_pagination_tags %}
+
 <main id="tt-pageContent" class="tt-offset-small">
     <div class="container">
         <div class="tt-topic-list">
             <div class="tt-list-header">
-                <div class="tt-col-topic">Topic</div>
-                <div class="tt-col-category">Category</div>
-                <div class="tt-col-value hide-mobile">Likes</div>
-                <div class="tt-col-value hide-mobile">Replies</div>
-                <div class="tt-col-value hide-mobile">Views</div>
-                <div class="tt-col-value">Activity</div>
-            </div>
-            <div class="tt-topic-alert tt-alert-default" role="alert">
-            <a href="#" target="_blank">4 new posts</a> are added recently, click here to load them.
-            </div>
-
-            {% for question in questions %}
-            <div class="tt-item">
-                <div class="tt-col-avatar">
-                    <div class="tt-col-avatar">
-                        <img src="{% static 'images/profile_images/default.jpg' %}" alt="" style="width:40px; height:40px;">
-                    </div>
-                </div>
-                <div class="tt-col-description">
-                    <h6 class="tt-title"><a href="../single-user/page-single-topic.html">
-                        {{ question.title }}
-                    </a></h6>
-                    <div class="row align-items-center no-gutters">
-                        <div class="col-11">
-                            <ul class="tt-list-badge">
-                                <li class="show-mobile"><a href="#"><span class="tt-color01 tt-badge">politics</span></a></li>
-                                <li><a href="#"><span class="tt-badge">contests</span></a></li>
-                                <li><a href="#"><span class="tt-badge">authors</span></a></li>
-                            </ul>
-                        </div>
-                        <div class="col-1 ml-auto show-mobile">
-                            <div class="tt-value">1h</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tt-col-category">
-                    {% for tag in question.tags.all %}
-                        <span class="tt-color01 tt-badge">{{ tag }}</span>
-                    {% endfor %}
-                </div>
-                <div class="tt-col-value hide-mobile">{{ question.get_score }}</div>
-                <div class="tt-col-value tt-color-select hide-mobile">{{ question.get_comment_count }}</div>
-                <!-- <div class="tt-col-value hide-mobile">15.1k</div> -->
-                <div class="tt-col-value hide-mobile">{{ question.updated|date:"d M,y" }}</div>
-            </div>
-            {% endfor %}
-            
-            <div class="tt-item tt-item-popup">
-                <div class="tt-col-avatar">
-                    <svg class="tt-icon">
-                    <use xlink:href="#icon-ava-f"></use>
-                    </svg>
-                </div>
-                <div class="tt-col-message">
-                    Looks like you are new here. Register for free, learn and contribute.
-                </div>
-                <div class="tt-col-btn">
-                    <a href="../auth/page-login.html" class="btn btn-primary">Daxil ol</a>
-                    <a href="../auth/page-signup.html" class="btn btn-secondary">Qeydiyyat</a>
-                    <button type="button" class="btn-icon">
-                        <svg class="tt-icon">
-                        <use xlink:href="#icon-cancel"></use>
-                        </svg>
-                    </button>
-                </div>
+                <div class="tt-col-topic">Mövzu</div>
+                <div class="tt-col-value hide-mobile text-center">Upvote</div>
+                <div class="tt-col-value hide-mobile text-center">Downvote</div>
+                <div class="tt-col-value hide-mobile text-center">Cavablar</div>
+                <div class="tt-col-value hide-mobile text-center">Görünmə</div>
+                <div class="tt-col-value text-center">Tarix</div>
             </div>
             
-            <div class="tt-row-btn">
-                <button type="button" class="btn-icon js-topiclist-showmore">
-                    <svg class="tt-icon">
-                    <use xlink:href="#icon-load_lore_icon"></use>
-                    </svg>
-                </button>
-            </div>
-        </div>
 
-        <div class="pagination">
-            <span class="step-links">
-                {% if questions.has_previous %}
-                    <a href="?page={{ questions.previous_page_number }}">previous</a>
-                {% endif %}
-        
-                <span class="current">
-                    Page {{ questions.number }} of {{ questions.paginator.num_pages }}.
-                </span>
-        
-                {% if questions.has_next %}
-                    <a href="?page={{ questions.next_page_number }}">next</a>
-                {% endif %}
-            </span>
+            {% include page_template %}
+            
+            
+            
         </div>
-
     </div>
 </main>
 
-{% endblock content %}
+
+{% endblock %}
+
+
+{% block script %}
+    {{ block.super }}
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="{% static 'js/el-pagination.js' %}"></script>
+    <script>$.endlessPaginate({paginateOnScroll: true});</script>
+{% endblock %}
