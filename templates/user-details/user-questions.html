@@ -1,0 +1,26 @@
+{% extends 'user-details/single-user.html' %}
+
+
+{% block list %}
+<!-- Suallar -->
+<div class="tab-pane tt-indent-none show active" id="tt-tab-02" role="tabpanel">
+    {% if questions != -1 %}
+        <div class="tt-topic-list">
+            <div class="tt-list-header">
+                <div class="tt-col-topic">Mövzu</div>
+                <div class="tt-col-value hide-mobile text-center">Upvote</div>
+                <div class="tt-col-value hide-mobile text-center">Downvote</div>
+                <div class="tt-col-value hide-mobile text-center">Kommentlər</div>
+                <div class="tt-col-value">Tarix</div>
+            </div>
+            {% include page_template %}
+        </div>
+    {% else %}
+        <div class="text-center mt-5">
+        
+            <h5>Bu istifadəçiyə aid sual tapılmadı.</h5>
+
+        </div>
+    {% endif %}
+</div>
+{% endblock list %}

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # Module Applications
     'django_cleanup',
     'taggit',
+    'el_pagination',
     'crispy_forms',
     'ckeditor',
     # Custom Applications

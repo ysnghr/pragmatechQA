@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% load tag_methods %}
+
+{% block content %}
+
+<main id="tt-pageContent" class="tt-offset-small">
+    <div class="container">
+        <div class="tt-tab-wrapper">
+            <div class="tab-content">
+                <div class="tab-pane show fade active" id="tt-tab-03" role="tabpanel">
+                    <div class="tt-wrapper-inner tt-layout-tab">
+                        <h6 class="tt-title tt-size-lg text-center">
+                            Ən çox soruşulan suallar
+                        </h6>
+                        {% for question in faq_list %}
+                            <div class="accordian">
+                                <div class="contentBx">
+                                    <div class="label">{{ question.title }}</div>
+                                    <div class="content">
+                                        <p> {{ question.content }} </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock content %}

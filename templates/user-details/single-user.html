@@ -1,0 +1,84 @@
+{% extends 'base.html' %} 
+
+{% load static %} 
+
+{% load el_pagination_tags %}
+
+{% block style %}
+    <style>
+        .active{
+            border-color: transparent !important;
+            background-color: transparent !important;
+        }
+        .nav-link:hover{
+            border-color: transparent !important;
+            background-color: transparent !important;
+        }
+    </style>
+{% endblock style %}
+    
+{% block content %}
+
+<main id="tt-pageContent" class="tt-offset-small">
+    <div class="tt-wrapper-section">
+        <div class="container">
+            <div class="tt-user-header">
+                <div class="tt-col-avatar">
+                    <div class="tt-icon">
+                       <img class="tt-icon" src="{{ student.picture.url }}" />
+                    </div>
+                </div>
+                <div class="tt-col-title">
+                    <div class="tt-title">
+                        <a href="#">{{student.user.username}}</a>
+                    </div>
+                    <ul class="tt-list-badge">
+                        <li><a href="#"><span class="tt-color14 tt-badge">LVL : 26</span></a></li>
+                    </ul>
+                </div>
+                <div class="tt-col-btn" id="js-settings-btn">
+                    <div class="tt-list-btn">
+                        <a href="#" class="tt-btn-icon">
+                            <svg class="tt-icon">
+                              <use xlink:href="#icon-settings_fill"></use>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="tt-tab-wrapper">
+            <div class="tt-wrapper-inner">
+                <ul class="nav nav-tabs pt-tabs-default" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link {% if activity %}active{% endif %}" href="{% url 'user_activity' id=student.user.id %}"><span>Ümumi aktivlik</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if questions %}active{% endif %}" href="{% url 'user_questions' id=student.user.id %}"><span>Suallar</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if comments %}active{% endif %}" href="{% url 'user_comments' id=student.user.id %}"><span>Kommentlər</span></a>
+                    </li>
+                    <li class="nav-item tt-hide-md">
+                        <a class="nav-link {% if tags %}active{% endif %}" href="{% url 'user_tags' id=student.user.id %}"><span>Taqlar</span></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-content">
+            {% block list %}
+            {% endblock list %}
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock content %}
+
+{% block script %}
+    {{ block.super }}
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="{% static 'js/el-pagination.js' %}"></script>
+    <script>$.endlessPaginate({paginateOnScroll: true});</script>
+{% endblock %}
