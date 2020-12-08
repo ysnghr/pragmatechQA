@@ -24,161 +24,19 @@
         </div>
         <div class="tt-categories-list">
             <div class="row">
-                <div class="col-md-6 col-lg-4">
-                    <div class="tt-item">
-                        <div class="tt-item-header">
-                            <ul class="tt-list-badge">
-                                <li><a href="#"><span class="tt-color01 tt-badge">python</span></a></li>
-                            </ul>
-                            <h6 class="tt-title"><a href="{% url 'student-tags-index' %}">Suallar - 1,245</a></h6>
-                        </div>
-                        <div class="tt-item-layout">
-                            <div class="innerwrapper">
-                               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo culpa quo hic, debitis sunt ipsa doloremque rem repudiandae in officia dolorum eius assumenda praesentium consequatur fugit alias laboriosam nulla beatae!
-                            </div>
-                            <div class="innerwrapper">
-                                <h6 class="tt-title">Oxşar taglar</h6>
-                                <ul class="tt-list-badge">
-                                    <li><a href="#"><span class="tt-badge">python-django</span></a></li>
-                                    <li><a href="#"><span class="tt-badge">flask</span></a></li>
-                                    <li><a href="#"><span class="tt-badge">flask-forms</span></a></li>
-                                    
-                                </ul>
-                            </div>                           
-                        </div>
+                {% if tags != -1 %}
+
+                    {% include page_template %}
+
+                {% else %}
+
+                    <div class="text-center">
+        
+                        <h5>Saytda taq tapılmadı.</h5>
+
                     </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="tt-item">
-                        <div class="tt-item-header">
-                            <ul class="tt-list-badge">
-                                <li><a href="#"><span class="tt-color02 tt-badge">JavaScript</span></a></li>
-                            </ul>
-                            <h6 class="tt-title"><a href="{% url 'student-tags-index' %}">Suallar - 1,245</a></h6>
-                        </div>
-                        <div class="tt-item-layout">
-                           <div class="innerwrapper">
-                               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo culpa quo hic, debitis sunt ipsa doloremque rem repudiandae in officia dolorum eius assumenda praesentium consequatur fugit alias laboriosam nulla beatae!
-                           </div>
-                           <div class="innerwrapper">
-                            <h6 class="tt-title">Oxşar taglar</h6>
-                            <ul class="tt-list-badge">
-                                <li><a href="#"><span class="tt-badge">python-django</span></a></li>
-                                <li><a href="#"><span class="tt-badge">flask</span></a></li>
-                                <li><a href="#"><span class="tt-badge">flask-forms</span></a></li>
-                                
-                            </ul>
-                        </div>
-                           
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="tt-item">
-                        <div class="tt-item-header">
-                            <ul class="tt-list-badge">
-                                <li><a href="#"><span class="tt-color03 tt-badge">Java</span></a></li>
-                            </ul>
-                            <h6 class="tt-title"><a href="{% url 'student-tags-index' %}">Suallar - 1,245</a></h6>
-                        </div>
-                        <div class="tt-item-layout">
-                           <div class="innerwrapper">
-                               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo culpa quo hic, debitis sunt ipsa doloremque rem repudiandae in officia dolorum eius assumenda praesentium consequatur fugit alias laboriosam nulla beatae!
-                           </div>
-                           <div class="innerwrapper">
-                            <h6 class="tt-title">Oxşar taglar</h6>
-                            <ul class="tt-list-badge">
-                                <li><a href="#"><span class="tt-badge">python-django</span></a></li>
-                                <li><a href="#"><span class="tt-badge">flask</span></a></li>
-                                <li><a href="#"><span class="tt-badge">flask-forms</span></a></li>
-                                
-                            </ul>
-                        </div>
-                           
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="tt-item">
-                        <div class="tt-item-header">
-                            <ul class="tt-list-badge">
-                                <li><a href="#"><span class="tt-color04 tt-badge">C#</span></a></li>
-                            </ul>
-                            <h6 class="tt-title"><a href="{% url 'student-tags-index' %}">Suallar - 1,245</a></h6>
-                        </div>
-                        <div class="tt-item-layout">
-                           <div class="innerwrapper">
-                               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo culpa quo hic, debitis sunt ipsa doloremque rem repudiandae in officia dolorum eius assumenda praesentium consequatur fugit alias laboriosam nulla beatae!
-                           </div>
-                           <div class="innerwrapper">
-                            <h6 class="tt-title">Oxşar taglar</h6>
-                            <ul class="tt-list-badge">
-                                <li><a href="#"><span class="tt-badge">python-django</span></a></li>
-                                <li><a href="#"><span class="tt-badge">flask</span></a></li>
-                                <li><a href="#"><span class="tt-badge">flask-forms</span></a></li>
-                                
-                            </ul>
-                        </div>
-                           
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="tt-item">
-                        <div class="tt-item-header">
-                            <ul class="tt-list-badge">
-                                <li><a href="#"><span class="tt-color05 tt-badge">C++</span></a></li>
-                            </ul>
-                            <h6 class="tt-title"><a href="{% url 'student-tags-index' %}">Suallar - 1,245</a></h6>
-                        </div>
-                        <div class="tt-item-layout">
-                           <div class="innerwrapper">
-                               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo culpa quo hic, debitis sunt ipsa doloremque rem repudiandae in officia dolorum eius assumenda praesentium consequatur fugit alias laboriosam nulla beatae!
-                           </div>
-                           <div class="innerwrapper">
-                            <h6 class="tt-title">Oxşar taglar</h6>
-                            <ul class="tt-list-badge">
-                                <li><a href="#"><span class="tt-badge">python-django</span></a></li>
-                                <li><a href="#"><span class="tt-badge">flask</span></a></li>
-                                <li><a href="#"><span class="tt-badge">flask-forms</span></a></li>
-                                
-                            </ul>
-                        </div>
-                           
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="tt-item">
-                        <div class="tt-item-header">
-                            <ul class="tt-list-badge">
-                                <li><a href="#"><span class="tt-color06 tt-badge">PHP</span></a></li>
-                            </ul>
-                            <h6 class="tt-title"><a href="{% url 'student-tags-index' %}">Suallar - 1,245</a></h6>
-                        </div>
-                        <div class="tt-item-layout">
-                           <div class="innerwrapper">
-                               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Explicabo culpa quo hic, debitis sunt ipsa doloremque rem repudiandae in officia dolorum eius assumenda praesentium consequatur fugit alias laboriosam nulla beatae!
-                           </div>
-                           <div class="innerwrapper">
-                            <h6 class="tt-title">Oxşar taglar</h6>
-                            <ul class="tt-list-badge">
-                                <li><a href="#"><span class="tt-badge">python-django</span></a></li>
-                                <li><a href="#"><span class="tt-badge">flask</span></a></li>
-                                <li><a href="#"><span class="tt-badge">flask-forms</span></a></li>
-                                
-                            </ul>
-                        </div>
-                        </div>
-                    </div>
-                </div>                
-                <div class="col-12">
-                    <div class="tt-row-btn">
-                        <button type="button" class="btn-icon js-topiclist-showmore">
-                            <i class="fas fa-arrow-down" style="font-size: 30px;"></i>
-                        </button>
-                    </div>
-                </div>
+
+                {% endif %}
             </div>
         </div>
     </div>
@@ -186,4 +44,10 @@
 
 {% endblock content %}
 
+{% block script %}
+    {{ block.super }}
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="{% static 'js/el-pagination.js' %}"></script>
+    <script>$.endlessPaginate({paginateOnScroll: true});</script>
+{% endblock %}
 

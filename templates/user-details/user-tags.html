@@ -1,0 +1,28 @@
+{% extends 'user-details/single-user.html' %}
+
+
+{% block list %}
+<!-- Taqlar -->
+<div class="tab-pane active show" id="tt-tab-06" role="tabpanel">
+    <div class="tt-wrapper-inner">
+        <div class="tt-categories-list">
+            <div class="row">
+                {% if tags != -1 %}
+
+                    {% include page_template %}
+
+                {% else %}
+
+                    <div class="text-center mt-5">
+            
+                        <h5>Bu istifadəçiyə aid sual və ya komment tapılmadı.</h5>
+
+                    </div>
+
+                {% endif %}
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock list %}

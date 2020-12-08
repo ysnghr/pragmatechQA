@@ -5,8 +5,23 @@ from random import randrange
 from taggit.managers import TaggableManager
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
+from taggit.models import Tag
 
 # Create your models here.
+
+class TagInfo(models.Model):
+    tag = models.OneToOneField(Tag, on_delete=models.CASCADE) 
+    description = models.TextField(verbose_name="Məzmun")
+
+    class Meta:
+        """Meta definition for StudyGroup."""
+
+        verbose_name = 'TagInfo'
+        verbose_name_plural = 'TagInfos'
+
+    def __str__(self):
+        """Unicode representation of StudyGroup."""
+        return self.description
 
 class StudyGroup(models.Model):
     """Model definition for StudyGroup."""
@@ -29,7 +44,7 @@ class Student(models.Model):
     """Model definition for Student."""
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)    
-    picture = models.ImageField(verbose_name=("Şəkil"), upload_to='media/profile_images')
+    picture = models.ImageField(verbose_name=("Şəkil"), upload_to='profile_images')
     study_group = models.ForeignKey(StudyGroup ,verbose_name=("Qrup"), on_delete = models.PROTECT)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -176,6 +191,12 @@ class Comment(models.Model):
     def __str__(self):
         """Unicode representation of Comment."""
         return self.comment
+
+    def get_downvote(self):
+        return len(self.action_set.filter(action_type = 0).all())
+
+    def get_upvote(self):
+        return len(self.action_set.filter(action_type = 1).all())
 
 
 class Action(models.Model):

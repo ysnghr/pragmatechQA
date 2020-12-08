@@ -1,0 +1,34 @@
+{% load el_pagination_tags %}
+
+{% paginate questions %}
+
+{% for question in questions %}
+    <div class="tt-item">
+        <div class="tt-col-avatar">
+            <img class="tt-icon" src="{{ student.picture.url }}" />
+        </div>
+        <div class="tt-col-description">
+            <h6 class="tt-title">
+                <a href="{% url 'single_topic' slug=question.slug %}">
+                    {{ question.title }}
+                </a>
+            </h6>
+            <div class="row align-items-center no-gutters">
+                <div class="col-11">
+                    <ul class="tt-list-badge">
+                        {% for tag in question.tags.all %} 
+                            <li><a href="{% url 'single_tag' slug=tag.slug %}"><span class="tt-badge">{{ tag.name }}</span></a></li>
+                        {% endfor %} 
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="tt-col-value hide-mobile text-center">{{ question.get_upvote }}</div>
+        <div class="tt-col-value hide-mobile text-center">{{ question.get_downvote }}</div>
+        <div class="tt-col-value tt-color-select hide-mobile text-center">{{ question.get_comment_count }}</div>
+        <div class="tt-col-value-large hide-mobile text-center">{{ question.updated|date:"d M,y" }}</div>
+    </div>
+
+{% endfor %}
+
+{% show_more %}

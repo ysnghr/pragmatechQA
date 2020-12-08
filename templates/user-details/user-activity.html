@@ -1,0 +1,25 @@
+{% extends 'user-details/single-user.html' %}
+
+
+{% block list %}
+<!-- Ümumi Aktivlik -->
+<div class="tab-pane tt-indent-none show active" id="tt-tab-01" role="tabpanel">
+    {% if activity != -1 %}
+        <div class="tt-topic-list">
+            <div class="tt-list-header">
+                <div class="tt-col-topic">Mövzu</div>
+                <div class="tt-col-value hide-mobile text-center">Upvote</div>
+                <div class="tt-col-value hide-mobile text-center">Downvote</div>
+                <div class="tt-col-value-large hide-mobile text-center">Tarix</div>
+            </div>
+            {% include page_template %}
+        </div>
+    {% else %}
+        <div class="text-center mt-5">
+        
+            <h5>Bu istifadəçiyə aid sual və ya komment tapılmadı.</h5>
+
+        </div>
+    {% endif %}
+</div>
+{% endblock list %}
