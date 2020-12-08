@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from student.models import *
-from student.forms import QuestionForm
+from student.forms import QuestionForm, LoginForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, logout, login
 from django.shortcuts import render
 from .models import *
 from taggit.models import Tag
@@ -171,10 +171,24 @@ def user_tags(request, id):
     if request.is_ajax():
         template = page_template
     return render(request, template, context)
-    
 
-def login(request):
-    return render(request, 'auth/login.html')
+
+def login_view(request):
+    form = LoginForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if not form.cleaned_data.get('remember_me'):
+                    request.session.set_expiry(0)
+            login(request, user)
+            if request.session.test_cookie_worked():
+                    request.session.delete_test_cookie()
+            return redirect('student-home')
+    else:
+        request.session.set_test_cookie()
+    return render(request, "auth/login.html", {"form": form})
 
 def register(request):
     return render(request, 'auth/register.html')
