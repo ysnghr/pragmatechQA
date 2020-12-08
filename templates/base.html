@@ -137,9 +137,25 @@
             <!-- /tt-search -->
           </div>
           <div class="col-auto ml-auto">
+            
             <div class="tt-account-btn">
-              <a href="../auth/page-login.html" class="btn btn-primary">Daxil ol</a>
-              <a href="../auth/page-signup.html" class="btn btn-secondary">Qeydiyyat</a>
+            
+              {% comment %} <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a> {% endcomment %}
+              <div class="tt-user-info d-flex justify-content-center">
+                    <a href="{%url 'logout'%}" class="tt-btn-icon">
+                         <i class="fal fa-sign-out-alt" style="font-size: 25px; color: black;"></i>
+                    </a>
+                    <div class="tt-avatar-icon tt-size-md">
+                        <img src="{{ request.user.student.picture.url }}" alt="" style="width:40px; height:40px;">
+                    </div>
+
+                    <div style="margin-top: 5px;">
+                     <a href="{%url 'user_activity' id=request.user.student.id %}">
+                        {{request.user.username}}
+                        </a>
+                    </div>
+                </div>
+    
             </div>
           </div>
         </div>

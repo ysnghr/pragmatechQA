@@ -4,12 +4,13 @@ from student.models import *
 from student.forms import QuestionForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 from django.shortcuts import render
 from .models import *
 from taggit.models import Tag
 from itertools import chain
 
-
+@login_required
 def home(request, extra_context=None):
     template='main_page/home.html'
     page_template='main_page/question_list.html'
@@ -22,7 +23,7 @@ def home(request, extra_context=None):
         template = page_template
     return render(request, template, context)
 
-
+@login_required
 def tags(request):
     template = 'categories/tags.html' 
     page_template = 'categories/tag-list.html'
@@ -34,6 +35,7 @@ def tags(request):
         template = page_template
     return render(request, template, context)
 
+@login_required
 def tag_info(request, slug):
     template = 'categories/single-tag.html' 
     page_template = 'categories/single-tag-questions.html'
@@ -48,12 +50,15 @@ def tag_info(request, slug):
         template = page_template
     return render(request, 'categories/single-tag.html', context)
 
+@login_required
 def about(request):
     return render(request, 'main_page/about.html')
 
+@login_required
 def rules(request):
     return render(request, 'main_page/rules.html')
 
+@login_required
 def page_create_topic(request):
     form = QuestionForm(request.POST or None)
     wrong_tags = ''
@@ -97,13 +102,15 @@ def question_detail(request, slug):
         'student': Student.objects.get(user=request.user),
     }
     return render(request, 'single-user/page-single-topic.html', context)
-    
+
+@login_required
 def faq(request):
     context={
         "faq_list" : FAQ.objects.all().order_by('-updated'),
     }
     return render(request, 'main_page/faq.html', context)
 
+@login_required
 def user_activity(request, id):
     template='user-details/user-activity.html' 
     page_template='user-details/user-activity-list.html'
@@ -118,6 +125,7 @@ def user_activity(request, id):
         template = page_template
     return render(request, template, context)
 
+@login_required
 def user_questions(request, id):
     template='user-details/user-questions.html'
     page_template='user-details/user-question-list.html'
@@ -131,6 +139,7 @@ def user_questions(request, id):
         template = page_template
     return render(request, template, context)
 
+@login_required
 def user_comments(request, id):
     template = 'user-details/user-comments.html'
     page_template = 'user-details/user-comment-list.html'
@@ -144,6 +153,7 @@ def user_comments(request, id):
         template = page_template
     return render(request, template, context)
 
+@login_required
 def user_tags(request, id):
     template = 'user-details/user-tags.html' 
     page_template = 'user-details/user-tag-list.html'
@@ -168,3 +178,8 @@ def login(request):
 
 def register(request):
     return render(request, 'auth/register.html')
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('login')

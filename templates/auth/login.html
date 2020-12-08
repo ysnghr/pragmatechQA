@@ -1,6 +1,7 @@
 {% extends 'static.html' %}
 {% load static %}
 
+{% load crispy_forms_tags %}
 {% block body %}
 
 <!-- tt-mobile menu -->
@@ -23,22 +24,21 @@
     <div class="container">
         <div class="tt-loginpages-wrapper">
             <div class="tt-loginpages">
-                <a href="../main_page/home.html" class="tt-block-title">
+                <a href="{% url 'student-home' %}" class="tt-block-title">
                     <img src="{% static 'images/app_images/logo.png' %}" alt="">
                     <div class="tt-title">
-                        Welcome to Forum19
-                    </div>
-                    <div class="tt-description">
-                       Log into your account to unlock true power of community.
+                        PragmatechQA
                     </div>
                 </a>
-                <form class="form-default">
-                    <div class="form-group">
-                        <label for="loginUserName">Username</label>
-                        <input type="text" name="name" class="form-control" id="loginUserName" placeholder="azyrusmax">
+                <form class="form-default" method="post" action="">
+                    {% csrf_token %} 
+                    {{form|crispy}}
+                    <!-- <div class="form-group">
+                        <label for="loginUserName">İstifadəçi adı</label>
+                        <input type="text" name="name" class="form-control" id="loginUserName" placeholder="kamal-rə">
                     </div>
                     <div class="form-group">
-                        <label for="loginUserPassword">Password</label>
+                        <label for="loginUserPassword">Şifrə</label>
                         <input type="password" name="name" class="form-control" id="loginUserPassword" placeholder="************">
                     </div>
                     <div class="row">
@@ -49,22 +49,21 @@
                                     <label for="settingsCheckBox01">
                                         <span class="check"></span>
                                         <span class="box"></span>
-                                        <span class="tt-text">Remember me</span>
+                                        <span class="tt-text">Yadda saxla</span>
                                     </label>
                                 </div>
                             </div>
                         </div>
                         <div class="col ml-auto text-right">
-                            <a href="#" class="tt-underline">Forgot Password</a>
+                            <a href="#" class="tt-underline">Şifrəni unutmuşam</a>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="form-group">
-                        <a href="#" class="btn btn-secondary btn-block">Log in</a>
+                        <button class="btn btn-secondary btn-block" type="submit">Daxil ol</button>
                     </div>
-                    <p>Don’t have an account? <a href="#" class="tt-underline">Signup here</a></p>
+                    <p>Hesabınız yoxdur? <a href="#" class="tt-underline">Qeydiyyatdan keç</a></p>
                     <div class="tt-notes">
-                        By Logging in, signing in or continuing, I agree to
-                        Forum19’s <a href="#" class="tt-underline">Terms of Use</a> and <a href="#" class="tt-underline">Privacy Policy.</a>
+                        Daxil olaraq, PragmatechQA-ın <a href="{% url 'student-rules' %}" class="tt-underline">Qaydalar</a> ilə razılaşıram.
                     </div>
                 </form>
             </div>

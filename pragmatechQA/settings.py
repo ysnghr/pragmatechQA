@@ -172,4 +172,6 @@ CKEDITOR_ALLOW_NONIMAGE_FILES = False
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
 
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'student-home'
 
