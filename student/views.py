@@ -1,6 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from student.models import *
 from student.forms import QuestionForm
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from .models import *
 from taggit.models import Tag
@@ -69,6 +72,32 @@ def page_create_topic(request):
     }
     return render(request, 'main_page/post_create.html', context)
 
+@login_required
+def question_detail(request, slug):
+    question = get_object_or_404(Question, slug=slug)
+    if request.method=="POST":
+        if request.is_ajax():
+            question=get_object_or_404(Question,id=request.POST.get("id"))
+            stud=Student.objects.get(user=request.user)
+            liked=question.action_set.filter(action_type=1).filter(student=stud).exists()
+            disliked=question.action_set.filter(action_type=0).filter(student=stud).exists()
+            if request.POST.get('type')=='question':
+                if request.POST.get('action_type')=='dislike':
+                    question.actions(0, stud, disliked, liked)
+                else:
+                    question.actions(1, stud, liked, disliked)
+            return JsonResponse({'liked': str(liked), 'disliked': str(disliked)})
+            
+
+    else:
+        question.view +=1
+        question.save()
+    context={
+        'question': question,
+        'student': Student.objects.get(user=request.user),
+    }
+    return render(request, 'single-user/page-single-topic.html', context)
+    
 def faq(request):
     context={
         "faq_list" : FAQ.objects.all().order_by('-updated'),
