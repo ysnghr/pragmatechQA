@@ -70,7 +70,7 @@
                 </div>
                 <div class="row">
                     <div class="col-auto ml-md-auto">
-                        <input id="create_post_btn" type="button" class="btn btn-secondary btn-width-lg" value="Post yaradın">
+                        <a id="create_post_btn" href="#" class="btn btn-secondary btn-width-lg">Sual əlavə et</a>
                     </div>
                 </div>
             </form>
@@ -126,19 +126,21 @@
 
         // for Dropzone to process the queue (instead of default form behavior):
         $('#create_post_btn').on("click", function(e) {
-            if (CheckContent() & CheckTag() & CheckTitle())
+            e.preventDefault();
+            if (CheckTag() & CheckContent() & CheckTitle())
             {
                 if (dzClosure.getQueuedFiles().length > 0) 
                 {                      
-                    e.preventDefault();
                     e.stopPropagation();  
                     dzClosure.processQueue();  
+                    $('#create_post_btn').addClass('disabled')
                 } 
                 else 
                 {
                     var blob = new Blob(); //Back check is blob or not
                     blob.upload = { 'chunked': dzClosure.defaultOptions.chunking };
                     dzClosure.uploadFile(blob);
+                    $('#create_post_btn').addClass('disabled')
                 }    
             }
             else
@@ -163,6 +165,7 @@
             {
                 contentErrorDiv.removeClass('d-none')
                 contentErrorDiv.find('span[label="error_content"]').text('Mövzu doldurulmalıdır.')
+                $('html,body').animate({scrollTop: $("div[label='id_title']").offset().top - 100},'slow');
                 return false;
             }
             else
@@ -218,6 +221,7 @@
             {
                 titleErrorDiv.removeClass('d-none')
                 titleErrorDiv.find('span[label="error_content"]').text('Başlıq doldurulmalıdır.')
+                $('html,body').animate({scrollTop: titleErrorDiv.offset().top - 100},'slow');
                 return false;
             }
             else
@@ -226,6 +230,7 @@
                 {
                     titleErrorDiv.removeClass('d-none')
                     titleErrorDiv.find('span[label="error_content"]').text('Başlığın uzunluğu maximum 50 xarakterdən ibarət ola bilər.')
+                    $('html,body').animate({scrollTop: titleErrorDiv.offset().top - 100},'slow');
                     return false;
 
                 }
@@ -234,12 +239,14 @@
                     if(IsTitleNormalized(title.trim()))
                     {
                         titleErrorDiv.addClass('d-none')
+
                         return true;
                     }
                     else
                     {
                         titleErrorDiv.removeClass('d-none')
                         titleErrorDiv.find('span[label="error_content"]').text('Daxil etdiyiniz başlıq standartlara uyğun deyil.')
+                        $('html,body').animate({scrollTop: titleErrorDiv.offset().top - 100},'slow');
                         return false;
                     }
 
@@ -269,6 +276,7 @@
 
         }
     },
+
     success: function(file, response)
     {
         console.log(response)

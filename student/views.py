@@ -114,13 +114,14 @@ def question_detail(request, slug):
                                     return JsonResponse(commentImage.errors.as_json(), safe = False)  
                         else:
                             return JsonResponse({'max_files' : 2})                            
-                    
                     comment_data = {}
                     comment_data['full_name'] = f'{new_comment.student.user.get_full_name()}'
                     comment_data['created_date'] = f'{(new_comment.created).strftime("%d %B, %Y")}'
                     comment_data['content'] = f'{new_comment.content}'
                     comment_data['question_id'] = int(f'{new_comment.question.id}')
                     comment_data['comment_id'] = int(f'{new_comment.id}')
+                    comment_data['owner'] = True if question.student.user == request.user else False
+                    comment_data['images'] = [comment_image.image.url for comment_image in new_comment.commentimage_set.all()]
                     return JsonResponse(comment_data)
             
             elif(request.POST['post_type'] == 'question_vote'):
