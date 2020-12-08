@@ -161,4 +161,10 @@ def user_tags(request, id):
     if request.is_ajax():
         template = page_template
     return render(request, template, context)
-    from itertools import chain
+    
+
+def login(request):
+    return render(request, 'auth/login.html')
+
+def register(request):
+    return render(request, 'auth/register.html')

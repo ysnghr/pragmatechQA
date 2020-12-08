@@ -14,4 +14,6 @@ urlpatterns = [
     path('tags/', views.tags, name='tags'),
     path('tag/<slug:slug>', views.tag_info, name='single_tag'),
     path('faq', views.faq, name='faq'),
+    path('login/', views.login, name='login'),
+    path('register/', views.register, name='register'),
 ]
