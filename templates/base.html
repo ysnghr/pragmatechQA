@@ -92,19 +92,19 @@
               <!-- toggle -->
               <button class="tt-search-toggle" data-toggle="modal" data-target="#modalAdvancedSearch">
                 <svg class="tt-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 117 117" id="icon-search">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 117 117" id="search-icon">
                     <path d="M54 108C24.22 108 0 83.78 0 54S24.22 0 54 0s54 24.22 54 54-24.22 54-54 54zm0-99C29.19 9 9 29.19 9 54s20.19 45 45 45 45-20.19 45-45S78.81 9 54 9z"></path>
                     <path d="M112.5 117c-1.15 0-2.3-.44-3.18-1.32l-23.5-23.5a4.49 4.49 0 0 1 0-6.36 4.49 4.49 0 0 1 6.36 0l23.5 23.5a4.49 4.49 0 0 1 0 6.36c-.88.88-2.03 1.32-3.18 1.32z"></path>
                   </svg>
                 </svg>
               </button>
               <!-- /toggle -->
-              <form class="search-wrapper">
+              <form class="search-wrapper" role="search" method="GET">
                 <div class="search-form">
-                  <input type="text" class="tt-search__input" placeholder="Search" />
+                  <input type="text" class="tt-search__input" id="user-input" name="q" placeholder="Search" value="{{ request.GET.q }}" />
                   <button class="tt-search__btn" type="submit">
                     <svg class="tt-icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 117 117" id="icon-search">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 117 117" id="search-icon">
                         <path d="M54 108C24.22 108 0 83.78 0 54S24.22 0 54 0s54 24.22 54 54-24.22 54-54 54zm0-99C29.19 9 9 29.19 9 54s20.19 45 45 45 45-20.19 45-45S78.81 9 54 9z"></path>
                         <path d="M112.5 117c-1.15 0-2.3-.44-3.18-1.32l-23.5-23.5a4.49 4.49 0 0 1 0-6.36 4.49 4.49 0 0 1 6.36 0l23.5 23.5a4.49 4.49 0 0 1 0 6.36c-.88.88-2.03 1.32-3.18 1.32z"></path>
                       </svg>
@@ -406,6 +406,7 @@
     <script src="{% static 'js/jquery.js' %}"></script>
     <script src="{% static 'js/bootstrap.js' %}"></script>
     <script src="{% static 'js/app.js' %}"></script>
+    <script src="{% static 'js/ajax_search.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/svg4everybody/2.1.9/svg4everybody.min.js" integrity="sha512-7XdqOa4bqU/hqbUuS8epr0ECSj9laLWnualyqow2TQ3RJ+TUoac0yKNjEtgg3gHGEbM+Jbwgo6K/+Y/0mJHOfA==" crossorigin="anonymous"></script>
     <script script>
       svg4everybody(); // run it now or whenever you are ready

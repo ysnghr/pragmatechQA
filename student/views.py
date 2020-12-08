@@ -4,6 +4,17 @@ from student.forms import QuestionForm
 from django.shortcuts import render
 from .models import *
 from taggit.models import Tag
+from django.db.models import Q
+
+def search(request):
+    if request.is_ajax():
+        q = request.GET.get('q')
+        if q is not None:            
+            results = Question.objects.filter(  
+            	Q( title__icontains = q ) |
+                Q( created__icontains = q ) |
+                Q( student__icontains = q ) |
+                Q( tags__icontains = q ) ) 
 
 
 def home(request, extra_context=None):
@@ -22,6 +33,9 @@ def home(request, extra_context=None):
 def tags(request):
     template = 'categories/tags.html' 
     page_template = 'categories/tag-list.html'
+
+    
+
     context={
         'tags' : Tag.objects.all() if Tag.objects.all() else -1,
         'page_template': page_template,
