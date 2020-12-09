@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth import authenticate
 from student.models import Question
 from django.core.exceptions import ValidationError
 import re
@@ -25,3 +26,16 @@ class QuestionForm(forms.ModelForm):
                 if(not IsCorrectTag(eachTag)):
                     raise ValidationError("Daxil etdiyiniz tag standartlara uyğun deyil")
         return data
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=100)
+    password = forms.CharField(max_length=100, widget=forms.PasswordInput)
+    rememberme = forms.BooleanField(initial=False,required=False)
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if not user:
+                raise forms.ValidationError("İstifadəçi adı və ya şifrə düzgün deyil!")
+        return super(LoginForm, self).clean()

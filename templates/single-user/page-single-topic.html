@@ -1,4 +1,14 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% extends 'base.html' %} 
+
+{% load static %} 
+
+{% load action_methods %}
+
+{% block style %}
+<link href="{% static 'css/lightbox.css' %}" rel="stylesheet" />
+{% endblock style%}
+
+{% block content %}
 
 <main id="tt-pageContent">
     <div class="container">
@@ -8,106 +18,65 @@
                     <div class="tt-item-header">
                         <div class="tt-item-info info-top">
                             <div class="tt-avatar-icon">
-                                <i class="tt-icon"><svg><use xlink:href="#icon-ava-d"></use></svg></i>
+                                <img src="{{ question.student.picture.url }}" alt="" style="width:40px; height:40px;">
                             </div>
                             <div class="tt-avatar-title">
-                               <a href="#">dylan89</a>
+                               <a href="#">{{question.student.user.get_full_name}}</a>
                             </div>
-                            <a href="#" class="tt-info-time">
-                                <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>6 Jan,2019
-                            </a>
+                            <div class="tt-info-time">
+                                <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>{{question.created|date:"d F, Y" }}
+                            </div>
                         </div>
                         <h3 class="tt-item-title">
-                            <a href="#">Web Hosting Packages for ThemeForest WordPress</a>
+                            <span href="#">{{question.title}}</span>
                         </h3>
                         <div class="tt-item-tag">
                             <ul class="tt-list-badge">
-                                <li><a href="#"><span class="tt-color03 tt-badge">exchange</span></a></li>
-                                <li><a href="#"><span class="tt-badge">themeforest</span></a></li>
-                                <li><a href="#"><span class="tt-badge">elements</span></a></li>
+                                {% for tag in question.tags.all %}
+                                <li><a href="#"><span class="tt-color03 tt-badge">{{tag}}</span></a></li>
+                                {% endfor %}
                             </ul>
                         </div>
                     </div>
                     <div class="tt-item-description">
-                        <h6 class="tt-title">Get ready for Movember!</h6>
-                        <p>
-                            It’s time to channel your inner Magnum P.I., Ron Swanson or Hercule Poroit! It’s the time that all guys (or gals) love and all our
-                            partners hate It’s Movember!
-                        </p>
-                        <p>
-                            Throughout November we will be inviting all community members to help raise awareness and funds for the lives of men affected
-                            by cancer and mental health problems via the Movember Foundation 10.
-                        </p>
-                        <h6 class="tt-title">How Does it Work?</h6>
-                        <p>
-                            Authors and customers with facial hair unite! Simply grow, groom, and share your facial hair during November! Even females can enter if they desire (be creative, ladies!). Be inspired by checking out last year’s highlights 28.
-                        </p>
+                        {{ question.content|safe|linebreaks }}
+                        <div style="display: flex; justify-content: space-around;">
+                        {%for question_image in question.questionimage_set.all%}
+                        <div>
+                        <a href="{{question_image.image.url}}" data-lightbox="imagegroup"><img style="width: auto; height:200px;"src="{{question_image.image.url}}" alt=""></a>
+                    </div>
+                        {%endfor%}
+                    </div>
                     </div>
                     <div class="tt-item-info info-bottom">
-                        <a href="#" class="tt-icon-btn">
-                            <i class="tt-icon"><svg><use xlink:href="#icon-like"></use></svg></i>
-                            <span class="tt-text">671</span>
+                        <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'question', 'like'); ">
+                            <i class="tt-icon"><svg class="like_{{question.id}}"{% if question|upvote_check:student %}style="fill:#2c62a0;"{% endif %}><use xlink:href="#icon-like"></use></svg></i>
+                            <span class="tt-text like_{{question.id}}_count">{{ question.get_upvote }}</span>
                         </a>
-                        <a href="#" class="tt-icon-btn">
-                             <i class="tt-icon"><svg><use xlink:href="#icon-dislike"></use></svg></i>
-                            <span class="tt-text">39</span>
+                        <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'question', 'dislike') " >
+                             <i class="tt-icon"><svg class="dislike_{{question.id}}"{% if question|downvote_check:student %}style="fill:#2c62a0;"{% endif %}><use xlink:href="#icon-dislike"></use></svg></i>
+                            <span class="tt-text dislike_{{question.id}}_count">{{ question.get_downvote }}</span>
                         </a>
                         <div class="col-separator"></div>
-                        <a href="#" class="tt-icon-btn tt-hover-02 tt-small-indent">
-                            <i class="tt-icon"><svg><use xlink:href="#icon-share"></use></svg></i>
-                        </a>
-                        <a href="#" class="tt-icon-btn tt-hover-02 tt-small-indent">
-                            <i class="tt-icon"><svg><use xlink:href="#icon-flag"></use></svg></i>
-                        </a>
-                        <a href="#" class="tt-icon-btn tt-hover-02 tt-small-indent">
-                             <i class="tt-icon"><svg><use xlink:href="#icon-reply"></use></svg></i>
-                        </a>
+                        <div class="tt-row-icon">
+                            <div class="tt-item">
+                                <div class="tt-icon-btn tt-position-bottom">
+                                    <i class="tt-icon"><svg><use xlink:href="#icon-reply"></use></svg></i>
+                                    <span class="tt-text">{{ question.get_comment_count }}</span>
+                                </div>
+                            </div>
+                            <div class="tt-item">
+                                <div class="tt-icon-btn tt-position-bottom">
+                                    <i class="tt-icon"><svg><use xlink:href="#icon-view"></use></svg></i>
+                                    <span class="tt-text">{{question.view}}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    
                 </div>
             </div>
-            <div class="tt-item">
-                <div class="tt-info-box">
-                    <h6 class="tt-title">Thread Status</h6>
-                    <div class="tt-row-icon">
-                        <div class="tt-item">
-                            <a href="#" class="tt-icon-btn tt-position-bottom">
-                                <i class="tt-icon"><svg><use xlink:href="#icon-reply"></use></svg></i>
-                                <span class="tt-text">283</span>
-                            </a>
-                        </div>
-                        <div class="tt-item">
-                            <a href="#" class="tt-icon-btn tt-position-bottom">
-                                <i class="tt-icon"><svg><use xlink:href="#icon-view"></use></svg></i>
-                                <span class="tt-text">10.5k</span>
-                            </a>
-                        </div>
-                        <div class="tt-item">
-                            <a href="#" class="tt-icon-btn tt-position-bottom">
-                                <i class="tt-icon"><svg><use xlink:href="#icon-like"></use></svg></i>
-                                <span class="tt-text">2.4k</span>
-                            </a>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row-object-inline form-default">
-                        <h6 class="tt-title">Sort replies by:</h6>
-                        <ul class="tt-list-badge tt-size-lg">
-                            <li><a href="#"><span class="tt-badge">Recent</span></a></li>
-                            <li><a href="#"><span class="tt-color02 tt-badge">Most Liked</span></a></li>
-                            <li><a href="#"><span class="tt-badge">Longest</span></a></li>
-                            <li><a href="#"><span class="tt-badge">Shortest</span></a></li>
-                            <li><a href="#"><span class="tt-badge">Accepted Answers</span></a></li>
-                        </ul>
-                        <select class="tt-select form-control">
-                            <option value="Recent">Recent</option>
-                            <option value="Most Liked">Most Liked</option>
-                            <option value="Longest">Longest</option>
-                            <option value="Shortest">Shortest</option>
-                            <option value="Accepted Answer">Accepted Answer</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+            
             <div class="tt-item tt-wrapper-success">
                  <div class="tt-single-topic">
                     <div class="tt-item-header pt-noborder">
@@ -518,3 +487,14 @@
 </main>
 
 {% endblock content %}
+
+{% block script %}
+<script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+<script src="{% static 'js/actions.js' %}"></script>
+<script src="{% static 'js/lightbox.js' %}"></script>
+
+<!-- highlight.js-->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/styles/default.min.css"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+{% endblock script %}

@@ -11,7 +11,7 @@
     </div>
     <div class="tt-col-description">
         <h6 class="tt-title">
-            <a href="../single-user/page-single-topic.html">
+            <a href="{% url 'single_topic' slug=question.slug %}">
                 {{ question.title }}
             </a>
         </h6>

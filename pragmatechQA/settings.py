@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django_cleanup',
     'taggit',
     'el_pagination',
+    'remember_me',
     # Custom Applications
     'student.apps.StudentConfig',
     'crispy_forms',
@@ -171,5 +172,7 @@ CKEDITOR_CONFIGS = {
 CKEDITOR_ALLOW_NONIMAGE_FILES = False
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
+
+LOGIN_URL = 'login'
 
 

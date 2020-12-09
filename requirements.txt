@@ -5,6 +5,7 @@ django-cleanup==5.1.0
 django-crispy-forms==1.10.0
 django-el-pagination==3.3.0
 django-js-asset==1.2.2
+django-remember-me==0.1.1
 django-taggit==1.3.0
 Pillow==8.0.1
 pytz==2020.4
