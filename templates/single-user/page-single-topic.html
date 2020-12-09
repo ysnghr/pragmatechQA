@@ -105,7 +105,7 @@
                 </div>
             </div>          
             {% for eachComment in comments %}
-                <div class="tt-item  {% if question.answer == eachComment.id %} tt-wrapper-success {% elif eachComment.get_upvote < eachComment.get_downvote  %} tt-wrapper-danger {% endif %} ">
+                <div class="tt-item  {% if question.answer == eachComment.id %} tt-wrapper-success {% elif eachComment.get_upvote|subtract:eachComment.get_downvote < 0  %} tt-wrapper-danger {% endif %} ">
                     <input label='label_comment_id' type="hidden" value="{{eachComment.id}}">
                     <div class="tt-single-topic">
                         <div class="tt-item-header pt-noborder">
@@ -120,15 +120,25 @@
                                     <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>{{eachComment.created|date:"d F, Y" }}
                                 </a>
                             </div>
+
                             {% if question.student.user == request.user %}
                                 <div class="tt-item-info info-top">                                
-                                    <div class="tt-avatar-icon" style="padding-top: 60px;"> 
+                                    <div class="tt-avatar-icon" style="padding-top: 120px;"> 
                                         <a href="#" onclick="event.preventDefault(); check_answer({{question.id}}, {{eachComment.id}});">
                                             <i class="tt-icon"><svg   width="36" height="36" viewBox="0 0 36 36"><path class="select_answer" {% if question|comment_answer_check:eachComment %} style='fill:#48A868;' {% else %} style='fill:#aeb3b4;' {% endif %}  d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path></svg></i>
                                         </a> 
                                     </div>                                
                                 </div>
                             {% endif %}
+                            <!-- <div class="tt-item-info info-top">                                
+                                <div class="tt-avatar-icon d-flex " style="padding-top: 60px;"> 
+                                    <a href="#">
+                                        <i class="tt-icon"><svg aria-hidden="true" class="m0 svg-icon iconArrowDownLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 10h32L18 26 2 10z"></path></svg></i>
+                                    </a> 
+                                    <span label="comment" class="tt-text like_3_count">0</span>
+
+                                </div>                                
+                            </div> -->
                         </div>
                         <div class="tt-item-description">
                             {{ eachComment.content|safe|linebreaks }}
@@ -143,14 +153,20 @@
                             </div>
                         </div>
                         <div class="tt-item-info info-bottom">
-                            <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'comment', 'like', 'comment_vote', {{eachComment.id}});">
-                                <i class="tt-icon"><svg label='comment' class="like_{{eachComment.id}}"{% if eachComment|comment_upvote_check:student %}style="fill:#2c62a0;"{% endif %}><use xlink:href="#icon-like"></use></svg></i>
-                                <span label='comment' class="tt-text like_{{eachComment.id}}_count">{{ eachComment.get_upvote }}</span>
+                            <!-- Upvote(like) -->
+                            <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'comment', 'like', 'comment_vote', {{eachComment.id}});">                               
+                                <svg label='comment' class=" like_{{eachComment.id}}" {% if eachComment|comment_upvote_check:student %}style="fill:#2c62a0; " {% else %} style='fill:#666f74;' {% endif %} width="36" height="36" viewBox="0 0 36 36">
+                                    <path d="M2 26h32L18 10 2 26z"></path>
+                                </svg>                               
                             </a>
-                            <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'comment', 'dislike', 'comment_vote', {{eachComment.id}});" >
-                                <i class="tt-icon"><svg label='comment' class="dislike_{{eachComment.id}}"{% if eachComment|comment_downvote_check:student %}style="fill:#2c62a0;"{% endif %}><use xlink:href="#icon-dislike"></use></svg></i>
-                                <span label='comment' class="tt-text dislike_{{eachComment.id}}_count">{{ eachComment.get_downvote }}</span>
-                            </a>
+                            <!-- Vote result: -->
+                            <span label='comment' style="color: #666f74; font-size: 20px; padding: 2px 20px 0px 20px;" class="vote_result_{{eachComment.id}}"> {{ eachComment.get_upvote|subtract:eachComment.get_downvote }}</span>
+                            <!-- Downvote(dislike) -->
+                            <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'comment', 'dislike', 'comment_vote', {{eachComment.id}});" >                             
+                                <svg label='comment' class=" dislike_{{eachComment.id}}" {% if eachComment|comment_downvote_check:student %}style="fill:#2c62a0; " {% else %} style='fill:#666f74;' {% endif %} width="36" height="36" viewBox="0 0 36 36">
+                                    <path d="M2 10h32L18 26 2 10z"></path>
+                                </svg>                                
+                            </a>                           
                         </div>
                     </div>
                 </div>
@@ -476,7 +492,6 @@
         if(isEnter)
         {
             isEnter = false
-            console.log(response)
             html = `<div class="tt-item">
                         <input label='label_comment_id' type="hidden" value="${response.comment_id}">
                         <div class="tt-single-topic">
@@ -502,14 +517,20 @@
                             </div>
 
                             <div class="tt-item-info info-bottom">
-                                <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions(${response.question_id},'${$('#request_user').val()}', 'comment', 'like', 'comment_vote', ${response.comment_id});">
-                                    <i class="tt-icon"><svg label='comment' class="like_${response.comment_id}"><use xlink:href="#icon-like"></use></svg></i>
-                                    <span label='comment' class="tt-text like_${response.comment_id}_count">0</span>
+                            <!-- Upvote(like) -->
+                                <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions(${response.question_id},'${$('#request_user').val()}', 'comment', 'like', 'comment_vote', ${response.comment_id});">                               
+                                    <svg label='comment' class=" like_${response.comment_id}" style='fill:#666f74;' width="36" height="36" viewBox="0 0 36 36">
+                                        <path d="M2 26h32L18 10 2 26z"></path>
+                                    </svg>                               
                                 </a>
-                                <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions(${response.question_id},'${$('#request_user').val()}', 'comment', 'dislike', 'comment_vote', ${response.comment_id});">
-                                    <i class="tt-icon"><svg label='comment' class="dislike_${response.comment_id}"><use xlink:href="#icon-dislike"></use></svg></i>
-                                    <span label='comment' class="tt-text dislike_${response.comment_id}_count">0</span>
-                                </a>
+                                <!-- Vote result: -->
+                                <span label='comment' style="color: #666f74; font-size: 20px; padding: 2px 20px 0px 20px;" class="vote_result_${response.comment_id}"> 0 </span>
+                                <!-- Downvote(dislike) -->
+                                <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions(${response.question_id},'${$('#request_user').val()}', 'comment', 'dislike', 'comment_vote', ${response.comment_id});" >                             
+                                    <svg label='comment' class=" dislike_${response.comment_id}" style='fill:#666f74;' width="36" height="36" viewBox="0 0 36 36">
+                                        <path d="M2 10h32L18 26 2 10z"></path>
+                                    </svg>                                
+                                </a>                           
                             </div>
                         </div>
                     </div>`

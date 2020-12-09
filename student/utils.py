@@ -18,7 +18,7 @@ def FilterComments(question_obj):
         for j in range(i, len(tempComments)):
             if(tempComments[j].id == question_obj.answer):
                 continue
-            if(max.get_upvote() < tempComments[j].get_upvote() ):
+            if((max.get_upvote() - max.get_downvote()) < (tempComments[j].get_upvote() - tempComments[j].get_downvote() )):
                 max = tempComments[j]
                 max_index = j
         temp = tempComments[i]

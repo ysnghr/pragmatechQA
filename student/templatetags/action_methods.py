@@ -40,3 +40,7 @@ def comment_answer_check(question, comment):
         return 1
     else:
         return 0
+
+@register.filter
+def subtract(value, arg):
+    return value - arg
