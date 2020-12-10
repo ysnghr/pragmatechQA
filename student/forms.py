@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import authenticate
-from student.models import Question
+from student.models import Question, Student
 from django.core.exceptions import ValidationError
 import re
 
@@ -39,3 +39,8 @@ class LoginForm(forms.Form):
             if not user:
                 raise forms.ValidationError("İstifadəçi adı və ya şifrə düzgün deyil!")
         return super(LoginForm, self).clean()
+
+class StudentPictureForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ['picture']

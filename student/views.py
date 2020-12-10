@@ -1,16 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from student.models import *
-from student.forms import QuestionForm, LoginForm
+from student.forms import QuestionForm, LoginForm, StudentPictureForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth import authenticate, logout, login
-from django.shortcuts import render
 from .models import *
+from .decorators import picture_required
 from taggit.models import Tag
 from itertools import chain
 
+
 @login_required
+@picture_required
 def home(request, extra_context=None):
     template='main_page/home.html'
     page_template='main_page/question_list.html'
@@ -24,6 +26,7 @@ def home(request, extra_context=None):
     return render(request, template, context)
 
 @login_required
+@picture_required
 def tags(request):
     template = 'categories/tags.html' 
     page_template = 'categories/tag-list.html'
@@ -36,6 +39,7 @@ def tags(request):
     return render(request, template, context)
 
 @login_required
+@picture_required
 def tag_info(request, slug):
     template = 'categories/single-tag.html' 
     page_template = 'categories/single-tag-questions.html'
@@ -51,14 +55,17 @@ def tag_info(request, slug):
     return render(request, 'categories/single-tag.html', context)
 
 @login_required
+@picture_required
 def about(request):
     return render(request, 'main_page/about.html')
 
 @login_required
+@picture_required
 def rules(request):
     return render(request, 'main_page/rules.html')
 
 @login_required
+@picture_required
 def page_create_topic(request):
     form = QuestionForm(request.POST or None)
     wrong_tags = ''
@@ -78,6 +85,7 @@ def page_create_topic(request):
     return render(request, 'main_page/post_create.html', context)
 
 @login_required
+@picture_required
 def question_detail(request, slug):
     question = get_object_or_404(Question, slug=slug)
     if request.method=="POST":
@@ -104,6 +112,7 @@ def question_detail(request, slug):
     return render(request, 'single-user/page-single-topic.html', context)
 
 @login_required
+@picture_required
 def faq(request):
     context={
         "faq_list" : FAQ.objects.all().order_by('-updated'),
@@ -111,6 +120,7 @@ def faq(request):
     return render(request, 'main_page/faq.html', context)
 
 @login_required
+@picture_required
 def user_activity(request, id):
     template='user-details/user-activity.html' 
     page_template='user-details/user-activity-list.html'
@@ -126,6 +136,7 @@ def user_activity(request, id):
     return render(request, template, context)
 
 @login_required
+@picture_required
 def user_questions(request, id):
     template='user-details/user-questions.html'
     page_template='user-details/user-question-list.html'
@@ -140,6 +151,7 @@ def user_questions(request, id):
     return render(request, template, context)
 
 @login_required
+@picture_required
 def user_comments(request, id):
     template = 'user-details/user-comments.html'
     page_template = 'user-details/user-comment-list.html'
@@ -154,6 +166,7 @@ def user_comments(request, id):
     return render(request, template, context)
 
 @login_required
+@picture_required
 def user_tags(request, id):
     template = 'user-details/user-tags.html' 
     page_template = 'user-details/user-tag-list.html'
@@ -190,6 +203,7 @@ def login_view(request):
         request.session.set_test_cookie()
     return render(request, "auth/login.html", {"form": form})
 
+
 def register(request):
     return render(request, 'auth/register.html')
 
@@ -197,3 +211,15 @@ def register(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+@login_required
+def picture_view(request):
+    form =StudentPictureForm(request.POST or None,
+                                request.FILES or None,
+                                instance=request.user.student)
+    if request.method =="POST":
+        if form.is_valid():
+            form.save()
+            return redirect('student-home')
+    return render(request, "auth/picture.html", {"form": form})
+            
