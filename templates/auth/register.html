@@ -1,5 +1,8 @@
 {% extends 'static.html' %}
+
 {% load static %}
+
+{% load crispy_forms_tags %}
 
 {% block body %}
 <!-- tt-mobile menu -->
@@ -26,32 +29,21 @@
                 <a href="../main_page/home.html" class="tt-block-title">
                     <img src="{% static 'images/app_images/logo.png' %}" alt="">
                     <div class="tt-title">
-                        Welcome to Forum19
+                        PragmatechQA
                     </div>
                     <div class="tt-description">
-                        Join the forum to unlock true power of community.
+                        Zəhmət olmasa Pragmatech-ə qeydiyyatdan keçərkən verdiyiniz email-i daxil edin.
                     </div>
                 </a>
-                <form class="form-default">
+                <form class="form-default" method="POST">
+                    {% csrf_token %}
+                    {{ form.email | as_crispy_field }}
                     <div class="form-group">
-                        <label for="loginUserName">Username</label>
-                        <input type="text" name="name" class="form-control" id="loginUserName" placeholder="azyrusmax">
+                        <button type="submit" class="btn btn-secondary btn-block">Hesab Yarat</button>
                     </div>
-                    <div class="form-group">
-                        <label for="loginUserEmail">Email</label>
-                        <input type="text" name="name" class="form-control" id="loginUserEmail" placeholder="Sample@sample.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="loginUserPassword">Password</label>
-                        <input type="password" name="name" class="form-control" id="loginUserPassword" placeholder="************">
-                    </div>
-                    <div class="form-group">
-                        <a href="#" class="btn btn-secondary btn-block">Create my account</a>
-                    </div>
-                    <p>Already have an account? <a href="#" class="tt-underline">Login here</a></p>
+                    <p>Hesabınız var? <a href="{% url 'login' %}" class="tt-underline">Giriş et</a></p>
                     <div class="tt-notes">
-                        By signing up, signing in or continuing, I agree to
-                        Forum19’s <a href="#" class="tt-underline">Terms of Use</a> and <a href="#" class="tt-underline">Privacy Policy.</a>
+                        Qeydiyyatdan keçərək, PragmatechQA-ın<a href="#" class="tt-underline">Qaydaları</a> ilə razılaşıram.
                     </div>
                 </form>
             </div>

@@ -1,14 +1,21 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from student.models import *
-from student.forms import QuestionForm
+from django.contrib.auth.models import User
+from student.forms import QuestionForm, EmailForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from django.shortcuts import render
 from .models import *
 from taggit.models import Tag
 from itertools import chain
+import requests, random, string
+from django.core import mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.contrib import messages
+
+password_characters = string.ascii_letters + string.digits + string.punctuation
 
 @login_required
 def home(request, extra_context=None):
@@ -177,7 +184,27 @@ def login(request):
     return render(request, 'auth/login.html')
 
 def register(request):
-    return render(request, 'auth/register.html')
+    form = EmailForm(request.POST or None)
+    context = {'form':form}
+    if request.method == "POST":
+        if form.is_valid():
+            person = dict(requests.post('http://157.230.220.111/api/student', data={"email":form.cleaned_data.get('email')}, auth=('admin', 'admin123')).json())
+            username = person.get('name').lower()+'-'+person.get('surname')[0].lower()+person.get('father_name')[0].lower()
+            password = ''.join([random.choice(password_characters) for i in range(12)])
+            user = User.objects.create_user(username, person.get('email'), password)
+            user.first_name = person.get('name')
+            user.last_name = person.get('surname')
+            if StudyGroup.objects.filter(id=person.get('group_id')).first():
+                Student(user = user, study_group = StudyGroup.objects.filter(id=person.get('group_id')).first()).save()
+            else:
+                group = dict(requests.post('http://157.230.220.111/api/group', data={"id":person.get('group_id')}, auth=('admin', 'admin123')).json())
+                StudyGroup(id = person.get('group_id'), name = group.get('name')).save()
+                Student(user = user, study_group = StudyGroup.objects.filter(id=person.get('group_id')).first()).save()
+            html_message = render_to_string('auth/verification.html', {'username': username, 'password': password})
+            mail.send_mail(subject = 'PragmatechQA Hesab Təsdiqlənməsi', message = strip_tags(html_message), from_email = 'Pragmatech <soltanov.tarlan04@gmail.com>', recipient_list=[person.get('email')], html_message=html_message)
+            messages.success(request, 'Profil yaradıldı və məlumatlar emailinizə göndərildi!')
+            return redirect('login')
+    return render(request, 'auth/register.html', context)
 
 @login_required
 def logout_view(request):
