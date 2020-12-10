@@ -30,6 +30,18 @@
                         PragmatechQA
                     </div>
                 </a>
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible fade show mt-3" role="alert">
+                        <span >{{ message }}</span>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
                 <form class="form-default" method="post" action="">
                     {% csrf_token %} 
                     <div class="form-group">
@@ -60,7 +72,7 @@
                     <div class="form-group">
                         <button class="btn btn-secondary btn-block" type="submit">Daxil ol</button>
                     </div>
-                    <p>Hesabınız yoxdur? <a href="#" class="tt-underline">Qeydiyyatdan keç</a></p>
+                    <p>Hesabınız yoxdur? <a href="{% url 'register' %}" class="tt-underline">Qeydiyyatdan keç</a></p>
                     <div class="tt-notes">
                         Daxil olaraq, PragmatechQA-ın <a href="{% url 'student-rules' %}" class="tt-underline">Qaydalar</a> ilə razılaşıram.
                     </div>

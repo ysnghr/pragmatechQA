@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from random import randrange
+from PIL import Image
 from taggit.managers import TaggableManager
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
@@ -44,7 +45,7 @@ class Student(models.Model):
     """Model definition for Student."""
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)    
-    picture = models.ImageField(verbose_name=("Şəkil"), upload_to='profile_images')
+    picture = models.ImageField(verbose_name=("Şəkil"), upload_to='profile_images', default="profile_images/default.jpg")
     study_group = models.ForeignKey(StudyGroup ,verbose_name=("Qrup"), on_delete = models.PROTECT)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -65,6 +66,15 @@ class Student(models.Model):
             for tag in question.tags.all():
                 ans[tag] = ans.setdefault(tag, 0) + 1
         return ans
+
+    def save(self):
+        super().save()
+        if self.picture.path:
+            img = Image.open(self.picture.path)
+            if img.height > 300 or img.width > 300:
+                output_size = (300, 300)
+                img.thumbnail(output_size)
+                img.save(self.picture.path)
     
     
 

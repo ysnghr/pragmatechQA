@@ -1,0 +1,67 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <title>Email</title>
+    <style type="text/css">
+            @media screen and (max-width: 600px) {
+      			.wrapper{
+      				padding: 0;
+      			}
+      		}
+      	  	@media screen and (max-width: 528px) {
+      			.wrapper{
+      				padding: 0;
+      				background-color: white !important;
+      			}
+      			.footer{
+      				font-size: small;
+      			}
+      			body{
+      				background-color: white !important;
+      			}
+      		}
+    </style>
+  </head>
+  <body style="Margin:0;padding:0;background-color:#f6f9fc;">
+    <center class="wrapper" style="width:100%;table-layout:fixed;background-color:#f6f9fc;padding-top:40px;padding-bottom:40px;border-radius:5px;">
+      <div class="webkit" style="max-width:600px;background:#ffffff;">
+        <table class="outer" align="center" style="margin:0 auto;width:100%;max-width:600px;border-spacing:0;border:1px solid #ecebeb;border-radius:10px;box-shadow:2px 3px #dfdede;font-family:'Roboto', sans-serif;color:#4a4a4a;padding: 20px;">
+          <tr>
+            <td style="padding:0;">
+              <table width="100%" style="border-spacing:0;border-spacing: 0; ;">
+                <tr>
+                  <td style="padding:0; padding: 10px; text-align: center;">
+                    <a href=""><img src="https://i.ibb.co/k0MSTMj/logo.png" alt="logo" width="300" style="border:0;"></a>
+                    <h2>Hesabınızı təsdiqləyin</h2>
+                    <p style="line-height: 25px;">Hesabınıza giriş etmək üçün aşağıdakı istifadəçi adı və parolu istifadə etməyiniz lazımdır.</p>
+                    <form action="">
+                      <label for="fname" style="float:left;">İstifadəçi adı</label>
+                      <input type="text" id="fname" name="firstname" value="{{ username }}" readonly style="width:100%;padding:12px 20px;margin:13px 0;display:inline-block;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;">
+                      <label for="lname" style="float:left;">Parol</label>
+                      <input type="text" id="lname" name="lastname" value="{{ password }}" readonly style="width:100%;padding:12px 20px;margin:13px 0;display:inline-block;border:1px solid #ccc;border-radius:4px;box-sizing:border-box;">
+                      <input type="submit" value="Hesabınıza giriş edin" style="width:100%;background-color:#41e063;color:white;padding:14px 20px;margin:20px 0;border:none;border-radius:4px;cursor:pointer;">
+                    </form>
+                  </td>
+                  <div>
+                  </div>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <table style="border-spacing:0;">
+        <tr>
+          <td style="padding:0;">
+            <p class="footer" style="color: grey; font-size: 15px;">&copy; 2020. Müəllif hüquqları qorunur.</p>
+          </td>
+        </tr>
+      </table>
+    </center>
+  </body>
+</html>

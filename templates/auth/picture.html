@@ -1,14 +1,12 @@
 {% extends 'static.html' %}
-
 {% load static %}
 
 {% load crispy_forms_tags %}
-
 {% block body %}
+
 <!-- tt-mobile menu -->
 <nav class="panel-menu" id="mobile-menu">
     <ul>
-
     </ul>
     <div class="mm-navbtn-names">
         <div class="mm-closebtn">
@@ -26,28 +24,25 @@
     <div class="container">
         <div class="tt-loginpages-wrapper">
             <div class="tt-loginpages">
-                <a href="../main_page/home.html" class="tt-block-title">
+                <a href="{% url 'student-home' %}" class="tt-block-title">
                     <img src="{% static 'images/app_images/logo.png' %}" alt="">
                     <div class="tt-title">
                         PragmatechQA
                     </div>
-                    <div class="tt-description">
-                        Zəhmət olmasa Pragmatech-ə qeydiyyatdan keçərkən verdiyiniz email-i daxil edin.
-                    </div>
                 </a>
-                <form class="form-default" method="POST">
-                    {% csrf_token %}
-                    {{ form.email | as_crispy_field }}
+                <form class="form-default" method="post" action="" enctype="multipart/form-data">
+                    {% csrf_token %} 
+                    
+                   {{form}}
+                        
+                     
                     <div class="form-group">
-                        <button type="submit" class="btn btn-secondary btn-block">Hesab Yarat</button>
-                    </div>
-                    <p>Hesabınız var? <a href="{% url 'login' %}" class="tt-underline">Giriş et</a></p>
-                    <div class="tt-notes">
-                        Qeydiyyatdan keçərək, PragmatechQA-ın<a href="#" class="tt-underline">Qaydaları</a> ilə razılaşıram.
+                        <button class="btn btn-secondary btn-block" type="submit">Əlavə et</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </main>
+
 {% endblock body %}

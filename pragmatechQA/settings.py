@@ -176,3 +176,11 @@ CKEDITOR_UPLOAD_PATH = "uploads/"
 LOGIN_URL = 'login'
 
 
+
+# Email Credentails
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'soltanov.tarlan04@gmail.com'
+EMAIL_HOST_PASSWORD = 'tidaaflqpubdgfum'
+EMAIL_USE_TLS = True
