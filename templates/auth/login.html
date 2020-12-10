@@ -44,20 +44,19 @@
                 {% endif %}
                 <form class="form-default" method="post" action="">
                     {% csrf_token %} 
-                    {{form|crispy}}
-                    <!-- <div class="form-group">
+                    <div class="form-group">
                         <label for="loginUserName">İstifadəçi adı</label>
-                        <input type="text" name="name" class="form-control" id="loginUserName" placeholder="kamal-rə">
+                        <input type="text" name="username" class="form-control" id="loginUserName" placeholder="kamal-rə">
                     </div>
                     <div class="form-group">
                         <label for="loginUserPassword">Şifrə</label>
-                        <input type="password" name="name" class="form-control" id="loginUserPassword" placeholder="************">
+                        <input type="password" name="password" class="form-control" id="loginUserPassword" placeholder="************">
                     </div>
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
                                 <div class="checkbox-group">
-                                    <input type="checkbox" id="settingsCheckBox01" name="checkbox">
+                                    <input type="checkbox" id="settingsCheckBox01" name="rememberme">
                                     <label for="settingsCheckBox01">
                                         <span class="check"></span>
                                         <span class="box"></span>
@@ -69,11 +68,11 @@
                         <div class="col ml-auto text-right">
                             <a href="#" class="tt-underline">Şifrəni unutmuşam</a>
                         </div>
-                    </div> -->
+                    </div> 
                     <div class="form-group">
                         <button class="btn btn-secondary btn-block" type="submit">Daxil ol</button>
                     </div>
-                    <p>Hesabınız yoxdur? <a href="#" class="tt-underline">Qeydiyyatdan keç</a></p>
+                    <p>Hesabınız yoxdur? <a href="{% url 'register' %}" class="tt-underline">Qeydiyyatdan keç</a></p>
                     <div class="tt-notes">
                         Daxil olaraq, PragmatechQA-ın <a href="{% url 'student-rules' %}" class="tt-underline">Qaydalar</a> ilə razılaşıram.
                     </div>

@@ -1,7 +1,9 @@
 from django import forms
-from student.models import Question
+from student.models import Question, Student
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
+from django.contrib import messages
 import requests
 import re
 
@@ -39,3 +41,12 @@ class EmailForm(forms.Form):
         if User.objects.filter(email=email).first():
             raise ValidationError("Bu email ilə artıq qeydiyyatdan keçilib.")
         return email
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=100)
+    password = forms.CharField(max_length=100, widget=forms.PasswordInput)
+    rememberme = forms.BooleanField(initial=False,required=False)
+
+class StudentPictureForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ['picture']
