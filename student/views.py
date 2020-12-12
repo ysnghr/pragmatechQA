@@ -15,6 +15,8 @@ from django.core import mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.contrib import messages
+from django.db.models import Q
+import datetime
 
 password_characters = string.ascii_letters + string.digits + string.punctuation
 
@@ -226,6 +228,7 @@ def register(request):
             user = User.objects.create_user(username, person.get('email'), password)
             user.first_name = person.get('name')
             user.last_name = person.get('surname')
+            user.save()
             if StudyGroup.objects.filter(id=person.get('group_id')).first():
                 Student(user = user, study_group = StudyGroup.objects.filter(id=person.get('group_id')).first()).save()
             else:
@@ -253,3 +256,45 @@ def picture_view(request):
             form.save()
             return redirect('student-home')
     return render(request, "auth/picture.html", {"form": form})
+
+@login_required
+def search(request):
+    if request.is_ajax():
+        q = request.GET.get('q')
+        if q is not None:            
+            results = Question.objects.filter(  
+            	Q( title__contains = q ) |
+                Q( content__contains = q ) ).all()[0:3]       
+            return render(request, 'search/results.html', {'results': results})
+
+@login_required
+def advanced_search(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        username = request.POST.get('username')
+        tags = [tag for tag in request.POST.get('tags').split(",")]
+        results = Question.objects.filter(  
+            	Q( title__contains = title ) |
+                Q( content__contains = title ) )
+        if request.POST.get('start'):
+            start = datetime.date(*list(map(int, request.POST.get('start').split("-"))))
+            if request.POST.get('end'):
+                end = datetime.date(*list(map(int, request.POST.get('end').split("-"))))
+                results = results.filter( created__range = (start, end) )
+            else:
+                results = results.filter( created__gte = start )
+        if username:
+            results = results.filter( student__user__username__contains = username )
+        if tags != ['']:
+            results = results.filter( tags__name__in = tags )
+        context={
+            'questions': results,
+            'NotResult': "Nəticə tapılmadı",
+        }
+
+    template='main_page/home.html'
+    page_template='main_page/question_list.html'
+    context['page_template'] = page_template
+    if request.is_ajax():
+        template = page_template
+    return render(request, template, context)

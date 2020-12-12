@@ -7,6 +7,7 @@
 
 <main id="tt-pageContent" class="tt-offset-small">
     <div class="container">
+    {% if questions %}
         <div class="tt-topic-list">
             <div class="tt-list-header">
                 <div class="tt-col-topic">Mövzu</div>
@@ -24,6 +25,9 @@
             
             
         </div>
+    {% else %}
+        <h4 class="text-center mt-5">{{ NotResult }}</h4>
+    {% endif %}
     </div>
 </main>
 
