@@ -39,6 +39,15 @@
     <script script>
       svg4everybody(); // run it now or whenever you are ready
     </script>
+    <script src="{% static 'js/tagsinput.js' %}"></script>
+    <script type="text/javascript">
+      $( document ).ready( function() {
+          $( '#q' ).keyup( function() {
+              q = $( '#q' ).val();
+              $( '#results' ).html( '&nbsp;' ).load( '{% url 'search' %}?q=' + q );
+          });
+      });
+    </script>
     {% block script %} {% endblock script %}
     <svg width="0" height="0" class="hidden">
       <symbol aria-hidden="true" data-prefix="fab" data-icon="facebook-f" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 264 512" id="facebook-f-brands">
