@@ -1,0 +1,85 @@
+{% extends 'static.html' %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+{% block body %}
+
+<!-- tt-mobile menu -->
+<nav class="panel-menu" id="mobile-menu">
+    <ul>
+    </ul>
+    <div class="mm-navbtn-names">
+        <div class="mm-closebtn">
+            Close
+            <div class="tt-icon">
+                <svg>
+                  <use xlink:href="#icon-cancel"></use>
+                </svg>
+            </div>
+        </div>
+        <div class="mm-backbtn">Back</div>
+    </div>
+</nav>
+<main id="tt-pageContent" class="tt-offset-none">
+    <div class="container">
+        <div class="tt-loginpages-wrapper">
+            <div class="tt-loginpages">
+                <a href="{% url 'student-home' %}" class="tt-block-title">
+                    <img src="{% static 'images/app_images/logo.png' %}" alt="">
+                    <div class="tt-title">
+                        PragmatechQA
+                    </div>
+                </a>
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible fade show mt-3" role="alert">
+                        <span >{{ message }}</span>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <form class="form-default" method="post" action="">
+                    {% csrf_token %} 
+                    <div class="form-group">
+                        <label for="loginUserName">İstifadəçi adı</label>
+                        <input type="text" name="username" class="form-control" id="loginUserName" placeholder="kamal-rə">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginUserPassword">Şifrə</label>
+                        <input type="password" name="password" class="form-control" id="loginUserPassword" placeholder="************">
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="settingsCheckBox01" name="rememberme">
+                                    <label for="settingsCheckBox01">
+                                        <span class="check"></span>
+                                        <span class="box"></span>
+                                        <span class="tt-text">Yadda saxla</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col ml-auto text-right">
+                            <a href="#" class="tt-underline">Şifrəni unutmuşam</a>
+                        </div>
+                    </div> 
+                    <div class="form-group">
+                        <button class="btn btn-secondary btn-block" type="submit">Daxil ol</button>
+                    </div>
+                    <p>Hesabınız yoxdur? <a href="{% url 'register' %}" class="tt-underline">Qeydiyyatdan keç</a></p>
+                    <div class="tt-notes">
+                        Daxil olaraq, PragmatechQA-ın <a href="{% url 'student-rules' %}" class="tt-underline">Qaydalar</a> ilə razılaşıram.
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock body %}
