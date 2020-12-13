@@ -315,7 +315,7 @@ def register(request):
         if form.is_valid():
             person = dict(requests.post('http://157.230.220.111/api/student', data={"email":form.cleaned_data.get('email')}, auth=('admin', 'admin123')).json())
             username = person.get('name').lower()+'-'+person.get('surname')[0].lower()+person.get('father_name')[0].lower()
-            old_user = User.objects.filter(username = username).first()
+            old_user = User.objects.filter(username__contains = username).last()
             if old_user:
                 old_person = requests.post('http://157.230.220.111/api/student', data={"email":old_user.email}, auth=('admin', 'admin123')).json()
                 if not old_person:
@@ -328,7 +328,10 @@ def register(request):
                     messages.success(request, 'Profil yaradıldı və məlumatlar emailinizə göndərildi!')
                     return redirect('login')
                 else:
-                    username+="2"
+                    if old_user.username[-1].isdigit():
+                        username = old_user.username[0:-1] + str(int(old_user.username[-1])+1)
+                    else:
+                        username+="2"
             password = ''.join([random.choice(password_characters) for i in range(12)])
             user = User.objects.create_user(username, person.get('email'), password)
             user.first_name = person.get('name')
