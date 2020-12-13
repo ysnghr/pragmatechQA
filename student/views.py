@@ -293,12 +293,18 @@ def login_view(request):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
+            user = User.objects.filter(username = username).first()
+            person = requests.post('http://157.230.220.111/api/student', data={"email": user.email}, auth=('admin', 'admin123')).json()
+            if not person or dict(person).get('type')!=1:
+                messages.error(request, "Sizin emailiniz Pragmatech sistemindən silinmişdir! \
+                    Əgər emailinizi dəyişmisinizsə zəhmət olmasa yeni email ilə yenidən qeydiyyatdan keçin", extra_tags='danger')
+                return redirect('login')
             user = authenticate(username=username, password=password)
             if user is None:
                 messages.error(request, "İstifadəçi adı və ya şifrə düzgün deyil!", extra_tags='danger')
                 return redirect('login')
             if not form.cleaned_data.get('remember_me'):
-                    request.session.set_expiry(0)
+                request.session.set_expiry(0)
             login(request, user)
             if request.session.test_cookie_worked():
                     request.session.delete_test_cookie()
