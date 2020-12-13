@@ -468,7 +468,7 @@ section {
 body {
 	font-family: Krub, sans-serif;
 	font-weight: 400;
-	color: #666f74;
+	color: #182730;
 	text-align: left;
 	background-color: #f8f9fb
 }
@@ -5041,7 +5041,7 @@ textarea:focus:-ms-input-placeholder {
 .form-default .form-control {
 	font-family: Krub, sans-serif;
 	background: #e2e7ea;
-	color: #666f74;
+	color: #182730;
 	font-size: 16px;
 	line-height: 25px;
 	/* border: 1px solid #e2e7ea; */

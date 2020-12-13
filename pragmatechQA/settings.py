@@ -44,10 +44,10 @@ INSTALLED_APPS = [
     'el_pagination',
     'remember_me',
     # Custom Applications
-    'student.apps.StudentConfig',
     'crispy_forms',
     'ckeditor',
-    'ckeditor_uploader',
+    # Custom Applications
+    'student.apps.StudentConfig',
 ]
 
 MIDDLEWARE = [
@@ -152,24 +152,17 @@ CKEDITOR_CONFIGS = {
         'width' : '100%',
         
         'toolbar_Full': [
-        ['Format', 'Bold', 'Italic', 'Strike', '-' , 'Link', 'Image', 'SpecialChar' ],
-        [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-'],
-        [ 'CodeSnippet'],
+        ['Format', 'Bold', 'Italic', '-' , 'Link', 'CodeSnippet'],
+        [ 'NumberedList', 'BulletedList', 'Indent', 'Outdent', '-'],
         [ 'Undo', 'Redo' ],
     ], 
     'removeDialogTabs': ';'.join([
-            'image:advanced',
-            'image:Link',
-            'link:upload',
-            'table:advanced',
-            'tableProperties:advanced',
-            
+            'link:upload', 
         ]),
     'filebrowserBrowseUrl': '',
     }
 }
 
-CKEDITOR_ALLOW_NONIMAGE_FILES = False
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
 

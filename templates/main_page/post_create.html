@@ -1,4 +1,31 @@
-{% extends 'base.html' %} {% load static %} {% load crispy_forms_tags %} {% block content %}
+{% extends 'base.html' %} {% load static %} {% load crispy_forms_tags %} 
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/dropzone.css' %}" type="text/css">
+<script type="application/javascript" src="{% static 'js/dropzone.js' %}"></script>
+
+
+<style>
+    .dz{
+        border: dashed !important;
+        border-color: #ccc !important;
+        border-radius: 10px !important;
+        transition: 0.2s all;
+    }
+
+    .dz:hover{
+        background-color: aliceblue !important;
+    }
+
+    .ck-editor__editable {
+        min-height: 200px;
+        background-color: #e2e7ea !important;
+    }
+</style>
+
+{% endblock style %}
+
+{% block content %}
 
 <main id="tt-pageContent">
     <div class="container">
@@ -6,48 +33,44 @@
             <h1 class="tt-title-border">
                 Yeni Mövzu yaradın
             </h1>
-            <form class="form-default form-create-topic" method="post" action="">
+            <form class="form-default form-create-topic" method="POST" enctype="multipart/form-data">
                 {% csrf_token %} 
                 
-                {{ form.title | as_crispy_field }}
+                <div label='id_title' class="d-none alert alert-danger mt-3" role="alert">
+                    <span label="error_content"></span>Qaydaları oxumaq üçün <a href="{% url 'student-rules' %}" class="alert-link"> clickləyin.</a> 
+                </div> 
 
+                {{ form.title | as_crispy_field }}
+                
                 <div class="pt-editor mb-4 d-flex flex-column">
-                    <h6 class="pt-title">Mövzu*</h6>                
-                    {% if form.content.errors %}
-                        {% for eachError in form.content.errors %}
-                            <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-                                {{eachError}}. Daha ətraflı məlumat üçün <a href="{% url 'student-rules' %}" class="alert-link">bura</a> clickləyin.
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        {% endfor %} 
-                    {% endif %}     
-                    {{ form.content }} {{ form.media }}           
+                    <h6 class="pt-title">Mövzu*</h6>   
+                    <!-- Errors -->
+                    <div label='id_content' class="d-none alert alert-danger mt-3" role="alert">
+                        <span label="error_content"></span>Qaydaları oxumaq üçün <a href="{% url 'student-rules' %}" class="alert-link"> clickləyin.</a> 
+                    </div>                  
+                    <div id="id_content"></div>     
+                </div>
+
+                <div class="row mb-4 ">
+                    <div class="col-md-12">
+                        <div class="dropzone dz" id="myDropzone"></div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="inputTopicTags">Taqlar*</label> 
-                            {% if form.tags.errors %}
-                                {% for eachError in form.tags.errors %}
-                                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-                                    {{eachError}}. Daha ətraflı məlumat üçün <a href="{% url 'student-rules' %}" class="alert-link">bura</a> clickləyin.
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                {% endfor %} 
-                                <input type="tags" name="tags" value="{{wrong_tags}}" class="form-control" id="inputTopicTags" data-role="tagsinput" placeholder="Taq istifadə edin"> 
-                            {% else %}
-                                <input type="tags" name="tags" class="form-control is-invalid" id="inputTopicTags" data-role="tagsinput" placeholder="Taq istifadə edin"> 
-                            {% endif %}
+                            <!-- Errors -->
+                            <div label='id_tags' class="d-none alert alert-danger mt-3" role="alert">
+                                <span label="error_content"></span>Qaydaları oxumaq üçün <a href="{% url 'student-rules' %}" class="alert-link"> clickləyin.</a> 
+                            </div>  
+                            <input id="id_tags" type="text" data-role="tagsinput" placeholder="Taq istifadə edin"> 
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-auto ml-md-auto">
-                        <input type="submit" class="btn btn-secondary btn-width-lg" value="Post yaradın">
+                        <a id="create_post_btn" href="#" class="btn btn-secondary btn-width-lg">Sual əlavə et</a>
                     </div>
                 </div>
             </form>
@@ -56,114 +79,217 @@
     </div>
 </main>
 
-<div id="js-popup-settings" class="tt-popup-settings">
-    <div class="tt-btn-col-close">
-        <a href="#">
-            <span class="tt-icon-title">
-				<svg>
-					<use xlink:href="#icon-settings_fill"></use>
-				</svg>
-			</span>
-            <span class="tt-icon-text">
-				Settings
-			</span>
-            <span class="tt-icon-close">
-				<svg>
-					<use xlink:href="#icon-cancel"></use>
-				</svg>
-			</span>
-        </a>
-    </div>
-    <form class="form-default">
-        <div class="tt-form-upload">
-            <div class="row no-gutter">
-                <div class="col-auto">
-                    <div class="tt-avatar">
-                        <svg>
-		                  <use xlink:href="#icon-ava-d"></use>
-		                </svg>
-                    </div>
-                </div>
-                <div class="col-auto ml-auto">
-                    <a href="#" class="btn btn-primary">Upload Picture</a>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="settingsUserName">Username</label>
-            <input type="text" name="name" class="form-control" id="settingsUserName" placeholder="azyrusmax">
-        </div>
-        <div class="form-group">
-            <label for="settingsUserEmail">Email</label>
-            <input type="text" name="name" class="form-control" id="settingsUserEmail" placeholder="Sample@sample.com">
-        </div>
-        <div class="form-group">
-            <label for="settingsUserPassword">Password</label>
-            <input type="password" name="name" class="form-control" id="settingsUserPassword" placeholder="************">
-        </div>
-        <div class="form-group">
-            <label for="settingsUserLocation">Location</label>
-            <input type="text" name="name" class="form-control" id="settingsUserLocation" placeholder="Slovakia">
-        </div>
-        <div class="form-group">
-            <label for="settingsUserWebsite">Website</label>
-            <input type="text" name="name" class="form-control" id="settingsUserWebsite" placeholder="Sample.com">
-        </div>
-        <div class="form-group">
-            <label for="settingsUserAbout">About</label>
-            <textarea name="" placeholder="Few words about you" class="form-control" id="settingsUserAbout"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="settingsUserAbout">Notify me via Email</label>
-            <div class="checkbox-group">
-                <input type="checkbox" id="settingsCheckBox01" name="checkbox">
-                <label for="settingsCheckBox01">
-		            <span class="check"></span>
-		            <span class="box"></span>
-		            <span class="tt-text">When someone replies to my thread</span>
-		        </label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="settingsCheckBox02" name="checkbox">
-                <label for="settingsCheckBox02">
-		            <span class="check"></span>
-		            <span class="box"></span>
-		            <span class="tt-text">When someone likes my thread or reply</span>
-		        </label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="settingsCheckBox03" name="checkbox">
-                <label for="settingsCheckBox03">
-		            <span class="check"></span>
-		            <span class="box"></span>
-		            <span class="tt-text">When someone mentions me</span>
-		        </label>
-            </div>
-        </div>
-        <div class="form-group">
-            <a href="#" class="btn btn-secondary">Yadda saxla</a>
-        </div>
-    </form>
-</div>
-<a href="page-create-topic.html" class="tt-btn-create-topic">
-    <span class="tt-icon">
-        <svg>
-          <use xlink:href="#icon-create_new"></use>
-        </svg>
-    </span>
-</a>
-</div>
-</main>
 
 
+{% endblock content %} 
 
-<script src="../../assets/js/app.js"></script>
+{% block script %}
 
-{% endblock content %} {% block script %}
+
 
 <script src="{% static 'js/tagsinput.js' %}"></script>
 <!-- highlight.js-->
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/styles/default.min.css"/>
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
+<script src="{% static 'ckeditor/ckeditor.js' %}"></script>
+<!-- Conifiguration of ckeditor -->
+<script src="{% static 'ckeditor/ckeditor_config.js' %}"></script>
+
+    
+
+</script>
+
+<script>
+    Dropzone.options.myDropzone= {
+    url: `${location.href}`,
+    headers:{
+        'X-CSRFToken' : '{{ csrf_token }}'
+    },
+    autoProcessQueue: false,
+    maxFiles : 2, // (Back-End : 2)
+    maxFilesize : 2, //2 MB (Back-End : 2 MB)
+    parallelUploads: 2,
+    uploadMultiple : true,
+    addRemoveLinks: true,
+    autoProcessQueue: false, // Bununla biz submit etdikde filelar yuklenecek
+    acceptedFiles: 'image/*', // (Back-End : only images)
+    dictDefaultMessage: 'Şəkilləri bura yükləyin',
+    dictFallbackMessage: 'Şəkilləri bura yükləyin',
+    dictRemoveFile: 'Şəkli sil',
+    dictFileTooBig: `Şəkilin tutumu böyüdür. Max şəkil tutumu: 2 MB`,
+    dictInvalidFileType: 'Yalnız şəkil yükləyə bilərsiniz',
+    dictMaxFilesExceeded: 'Maximum 2 şəkil yükləyə bilərsiniz',
+    dictResponseError: "Server responded with {{statusCode}} code.",
+    init: function() {
+        dzClosure = this; // Makes sure that 'this' is understood inside the functions below.
+
+        // for Dropzone to process the queue (instead of default form behavior):
+        $('#create_post_btn').on("click", function(e) {
+            e.preventDefault();
+            if (CheckTag() & CheckContent() & CheckTitle())
+            {
+                if (dzClosure.getQueuedFiles().length > 0) 
+                {                      
+                    e.stopPropagation();  
+                    dzClosure.processQueue();  
+                    $('#create_post_btn').addClass('disabled')
+                } 
+                else 
+                {
+                    var blob = new Blob(); //Back check is blob or not
+                    blob.upload = { 'chunked': dzClosure.defaultOptions.chunking };
+                    dzClosure.uploadFile(blob);
+                    $('#create_post_btn').addClass('disabled')
+                }    
+            }
+            else
+            {
+                return false;
+            }
+        });
+
+        //send all the form data along with the files:
+        this.on("sendingmultiple", function(data, xhr, formData) {
+            formData.append("title", $("#id_title").val());
+            formData.append("content", id_content.getData());
+            formData.append("tags", $("#id_tags").tagsinput('items'));
+        });
+
+        
+        function CheckContent()
+        {
+            content = id_content.getData()
+            contentErrorDiv = $("div[label='id_content']")
+            if(!content) //Empty
+            {
+                contentErrorDiv.removeClass('d-none')
+                contentErrorDiv.find('span[label="error_content"]').text('Mövzu doldurulmalıdır.')
+                $('html,body').animate({scrollTop: $("div[label='id_title']").offset().top - 100},'slow');
+                return false;
+            }
+            else
+            {   
+                contentErrorDiv.addClass('d-none');
+                return true;
+            }
+
+        }
+
+        function CheckTag()
+        {
+            tagList = $("#id_tags").tagsinput('items')
+            tagErrorDiv = $("div[label='id_tags']")
+            if(tagList.length > 0 &&  tagList.length < 6 )  //Back max 5
+            {
+                tagErrorDiv.addClass('d-none')
+                for (var i = 0; i < tagList.length; i++ )
+                {
+                    if(! IsCorrectTag(tagList[i]))
+                    {
+                        tagErrorDiv.removeClass('d-none')
+                        tagErrorDiv.find('span[label="error_content"]').text('Daxil etdiyiniz tag standartlara uyğun deyil.')
+                        return false
+                    }                    
+                }
+                return true
+            }
+            else // Empty
+            {  
+                tagErrorDiv.removeClass('d-none')
+                tagErrorDiv.find('span[label="error_content"]').text('Ən azı 1, ən çoxu 5 tag yazılmalıdır.')
+                return false
+            }
+
+        }
+
+        function IsCorrectTag(argTag)
+        {
+            let pattern = /^[a-zA-Z0-9]{1,17}(-([a-zA-Z0-9]){1,17}){0,3}$/ //Back regex
+            if (argTag.match(pattern))
+            {
+                return true;
+            }
+            return false;            
+        }
+
+        function CheckTitle()
+        {
+            title = $("#id_title").val()
+            titleErrorDiv = $("div[label='id_title']")
+            if(!title.trim()) //Empty
+            {
+                titleErrorDiv.removeClass('d-none')
+                titleErrorDiv.find('span[label="error_content"]').text('Başlıq doldurulmalıdır.')
+                $('html,body').animate({scrollTop: titleErrorDiv.offset().top - 100},'slow');
+                return false;
+            }
+            else
+            {   
+                if(title.trim().length > 50)
+                {
+                    titleErrorDiv.removeClass('d-none')
+                    titleErrorDiv.find('span[label="error_content"]').text('Başlığın uzunluğu maximum 50 xarakterdən ibarət ola bilər.')
+                    $('html,body').animate({scrollTop: titleErrorDiv.offset().top - 100},'slow');
+                    return false;
+
+                }
+                else
+                {
+                    if(IsTitleNormalized(title.trim()))
+                    {
+                        titleErrorDiv.addClass('d-none')
+
+                        return true;
+                    }
+                    else
+                    {
+                        titleErrorDiv.removeClass('d-none')
+                        titleErrorDiv.find('span[label="error_content"]').text('Daxil etdiyiniz başlıq standartlara uyğun deyil.')
+                        $('html,body').animate({scrollTop: titleErrorDiv.offset().top - 100},'slow');
+                        return false;
+                    }
+
+                }
+            }
+
+        }
+    
+        function IsTitleNormalized(argData)
+        {
+            var azeriChar = ['ə','ü','ö','ğ','ı','ç','ş']
+
+            lowerData = argData.toLowerCase()
+
+            for (var i=0; i < lowerData.length; i++)
+            {
+                if((lowerData[i].charCodeAt(0) >= 32 && lowerData[i].charCodeAt(0) <= 126) || azeriChar.includes(lowerData[i]) )
+                {
+                   null;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+
+        }
+    },
+
+    success: function(file, response)
+    {
+        console.log(response)
+        location.href = "{% url 'student-home' %}";
+    },
+
+}
+
+
+
+</script>
+
+
+
+
 {% endblock script %}

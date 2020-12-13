@@ -5,8 +5,33 @@
 {% load action_methods %}
 
 {% block style %}
+
+<link rel="stylesheet" href="{% static 'css/dropzone.css' %}" type="text/css">
+<script type="application/javascript" src="{% static 'js/dropzone.js' %}"></script>
 <link href="{% static 'css/lightbox.css' %}" rel="stylesheet" />
-{% endblock style%}
+
+<style>
+.action_active{
+    fill: #2c62a0 !important;
+}
+
+.dz{
+        border: dashed !important;
+        border-color: #ccc !important;
+        border-radius: 10px !important;
+        transition: 0.2s all;
+    }
+
+    .dz:hover{
+        background-color: aliceblue !important;
+    }
+
+    .ck-editor__editable {
+        min-height: 200px;
+    }
+</style>
+{% endblock style %}
+
 
 {% block content %}
 
@@ -17,6 +42,7 @@
                  <div class="tt-single-topic">
                     <div class="tt-item-header">
                         <div class="tt-item-info info-top">
+                            <input id="request_user" type="hidden" value="{{request.user}" >
                             <div class="tt-avatar-icon">
                                 <img src="{{ question.student.picture.url }}" alt="" style="width:40px; height:40px;">
                             </div>
@@ -40,22 +66,25 @@
                     </div>
                     <div class="tt-item-description">
                         {{ question.content|safe|linebreaks }}
-                        <div style="display: flex; justify-content: space-around;">
-                        {%for question_image in question.questionimage_set.all%}
-                        <div>
-                        <a href="{{question_image.image.url}}" data-lightbox="imagegroup"><img style="width: auto; height:200px;"src="{{question_image.image.url}}" alt=""></a>
-                    </div>
-                        {%endfor%}
-                    </div>
+
+                        <div style="display: flex; justify-content: space-around;">                         
+                            {% for quesiton_image in question.questionimage_set.all %}
+                                <div>
+                                    <a href="{{quesiton_image.image.url}}" data-lightbox="question_{{question.id}}_imagegroup">
+                                        <img style="width: auto; height:200px;"src="{{quesiton_image.image.url}}" alt="">
+                                    </a>
+                                </div>
+                            {% endfor %}                            
+                        </div>
                     </div>
                     <div class="tt-item-info info-bottom">
-                        <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'question', 'like'); ">
-                            <i class="tt-icon"><svg class="like_{{question.id}}"{% if question|upvote_check:student %}style="fill:#2c62a0;"{% endif %}><use xlink:href="#icon-like"></use></svg></i>
-                            <span class="tt-text like_{{question.id}}_count">{{ question.get_upvote }}</span>
+                        <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'question', 'like', 'question_vote');">
+                            <i class="tt-icon"><svg label='question' class="like_{{question.id}}"{% if question|question_upvote_check:student %}style="fill:#2c62a0;"{% endif %}><use xlink:href="#icon-like"></use></svg></i>
+                            <span label='question'  class="tt-text like_{{question.id}}_count">{{ question.get_upvote }}</span>
                         </a>
-                        <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'question', 'dislike') " >
-                             <i class="tt-icon"><svg class="dislike_{{question.id}}"{% if question|downvote_check:student %}style="fill:#2c62a0;"{% endif %}><use xlink:href="#icon-dislike"></use></svg></i>
-                            <span class="tt-text dislike_{{question.id}}_count">{{ question.get_downvote }}</span>
+                        <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'question', 'dislike', 'question_vote');" >
+                             <i  class="tt-icon"><svg label='question' class="dislike_{{question.id}}"{% if question|question_downvote_check:student %}style="fill:#2c62a0;"{% endif %}><use xlink:href="#icon-dislike"></use></svg></i>
+                            <span label='question' class="tt-text dislike_{{question.id}}_count">{{ question.get_downvote }}</span>
                         </a>
                         <div class="col-separator"></div>
                         <div class="tt-row-icon">
@@ -72,233 +101,103 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
+                    </div>                   
                 </div>
-            </div>
-            
-            <div class="tt-item tt-wrapper-success">
-                 <div class="tt-single-topic">
-                    <div class="tt-item-header pt-noborder">
-                        <div class="tt-item-info info-top">
-                            <div class="tt-avatar-icon">
-                                <i class="tt-icon"><svg><use xlink:href="#icon-ava-t"></use></svg></i>
-                            </div>
-                            <div class="tt-avatar-title">
-                               <a href="#">tesla02</a>
-                               <span class="tt-color13 tt-badge">best answer</span>
-                            </div>
-                            <a href="#" class="tt-info-time">
-                                <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>6 Jan,2019
-                            </a>
-                        </div>
-                    </div>
-                    <div class="tt-item-description">
-                        Finally!<br>
-                        Are there any special recommendations for design or an updated guide that includes new preview sizes, including retina displays?
-                    </div>
-                    <div class="tt-item-info info-bottom">
-                        <a href="#" class="tt-icon-btn">
-                            <i class="tt-icon"><svg><use xlink:href="#icon-like"></use></svg></i>
-                            <span class="tt-text">671</span>
-                        </a>
-                        <a href="#" class="tt-icon-btn">
-                             <i class="tt-icon"><svg><use xlink:href="#icon-dislike"></use></svg></i>
-                            <span class="tt-text">39</span>
-                        </a>
-                        <div class="col-separator"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="tt-item">
-                 <div class="tt-single-topic">
-                    <div class="tt-item-header pt-noborder">
-                        <div class="tt-item-info info-top">
-                            <div class="tt-avatar-icon">
-                                <i class="tt-icon"><svg><use xlink:href="#icon-ava-t"></use></svg></i>
-                            </div>
-                            <div class="tt-avatar-title">
-                               <a href="#">kulis72</a>
-                            </div>
-                            <a href="#" class="tt-info-time">
-                                <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>6 Jan,2019
-                            </a>
-                        </div>
-                    </div>
-                    <div class="tt-item-description">
-                        Eventually!<br>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae quidem magnam esse rerum, officiis delectus?
-                    </div>
-                    <div class="tt-item-info info-bottom">
-                        <a href="#" class="tt-icon-btn">
-                            <i class="tt-icon"><svg><use xlink:href="#icon-like"></use></svg></i>
-                            <span class="tt-text">671</span>
-                        </a>
-                        <a href="#" class="tt-icon-btn">
-                             <i class="tt-icon"><svg><use xlink:href="#icon-dislike"></use></svg></i>
-                            <span class="tt-text">39</span>
-                        </a>
-                        <a href="#" class="tt-icon-btn">
-                             <i class="tt-icon"><svg><use xlink:href="#icon-favorite"></use></svg></i>
-                            <span class="tt-text">12</span>
-                        </a>
-                        <div class="col-separator"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="tt-item tt-wrapper-danger">
-                 <div class="tt-single-topic">
-                    <div class="tt-item-header pt-noborder">
-                        <div class="tt-item-info info-top">
-                            <div class="tt-avatar-icon">
-                                <i class="tt-icon"><svg><use xlink:href="#icon-ava-u"></use></svg></i>
-                            </div>
-                            <div class="tt-avatar-title">
-                               <a href="#">usain31</a>
-                            </div>
-                            <a href="#" class="tt-info-time">
-                                <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>6 Jan,2019
-                            </a>
-                        </div>
-                    </div>
-                    <div class="tt-item-description">
-                       This post has been flagged by a moderator, received too many downvotes.
-                    </div>
-                    <div class="row">
-                        <div class="col-auto">
-                            <div class="tt-item-info info-bottom">
-                                <a href="#" class="tt-icon-btn">
-                                     <i class="tt-icon"><svg><use xlink:href="#icon-dislike"></use></svg></i>
-                                    <span class="tt-text">39</span>
+            </div>          
+            {% for eachComment in comments %}
+                <div class="tt-item  {% if question.answer == eachComment.id %} tt-wrapper-success {% elif eachComment.get_upvote|subtract:eachComment.get_downvote < 0  %} tt-wrapper-danger {% endif %} ">
+                    <input label='label_comment_id' type="hidden" value="{{eachComment.id}}">
+                    <div class="tt-single-topic">
+                        <div class="tt-item-header pt-noborder">
+                            <div class="tt-item-info info-top">
+                                <div class="tt-avatar-icon">
+                                    <i class="tt-icon"><svg><use xlink:href="#icon-ava-t"></use></svg></i>
+                                </div>
+                                <div class="tt-avatar-title">
+                                    <a href="#">{{eachComment.student.user.get_full_name}}</a>
+                                </div>
+                                <a href="#" class="tt-info-time">
+                                    <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>{{eachComment.created|date:"d F, Y" }}
                                 </a>
                             </div>
+
+                            {% if question.student.user == request.user %}
+                                <div class="tt-item-info info-top">                                
+                                    <div class="tt-avatar-icon" style="padding-top: 120px;"> 
+                                        <a href="#" onclick="event.preventDefault(); check_answer({{question.id}}, {{eachComment.id}});">
+                                            <i class="tt-icon"><svg   width="36" height="36" viewBox="0 0 36 36"><path class="select_answer" {% if question|comment_answer_check:eachComment %} style='fill:#48A868;' {% else %} style='fill:#aeb3b4;' {% endif %}  d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path></svg></i>
+                                        </a> 
+                                    </div>                                
+                                </div>
+                            {% endif %}
+                            <!-- <div class="tt-item-info info-top">                                
+                                <div class="tt-avatar-icon d-flex " style="padding-top: 60px;"> 
+                                    <a href="#">
+                                        <i class="tt-icon"><svg aria-hidden="true" class="m0 svg-icon iconArrowDownLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 10h32L18 26 2 10z"></path></svg></i>
+                                    </a> 
+                                    <span label="comment" class="tt-text like_3_count">0</span>
+
+                                </div>                                
+                            </div> -->
+                        </div>
+                        <div class="tt-item-description">
+                            {{ eachComment.content|safe|linebreaks }}
+                            <div style="display: flex; justify-content: space-around;">
+                                {% for comment_image in eachComment.commentimage_set.all %}
+                                    <div>
+                                        <a href="{{comment_image.image.url}}" data-lightbox="comment_{{eachComment.id}}_imagegroup">
+                                            <img style="width: auto; height:200px;"src="{{comment_image.image.url}}" alt="">
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="tt-item-info info-bottom">
+                            <!-- Upvote(like) -->
+                            <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'comment', 'like', 'comment_vote', {{eachComment.id}});">                               
+                                <svg label='comment' class=" like_{{eachComment.id}}" {% if eachComment|comment_upvote_check:student %}style="fill:#2c62a0; " {% else %} style='fill:#666f74;' {% endif %} width="36" height="36" viewBox="0 0 36 36">
+                                    <path d="M2 26h32L18 10 2 26z"></path>
+                                </svg>                               
+                            </a>
+                            <!-- Vote result: -->
+                            <span label='comment' style="color: #666f74; font-size: 20px; padding: 2px 20px 0px 20px;" class="vote_result_{{eachComment.id}}"> {{ eachComment.get_upvote|subtract:eachComment.get_downvote }}</span>
+                            <!-- Downvote(dislike) -->
+                            <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'comment', 'dislike', 'comment_vote', {{eachComment.id}});" >                             
+                                <svg label='comment' class=" dislike_{{eachComment.id}}" {% if eachComment|comment_downvote_check:student %}style="fill:#2c62a0; " {% else %} style='fill:#666f74;' {% endif %} width="36" height="36" viewBox="0 0 36 36">
+                                    <path d="M2 10h32L18 26 2 10z"></path>
+                                </svg>                                
+                            </a>                           
                         </div>
                     </div>
                 </div>
-            </div>
+            {% endfor %}
+
         </div>
         <div class="tt-wrapper-inner">
             <h4 class="tt-title-separator"><span>You’ve reached the end of replies</span></h4>
         </div>
-        <div class="tt-topic-list">
-            <div class="tt-item tt-item-popup">
-                <div class="tt-col-avatar">
-                    <svg class="tt-icon">
-                      <use xlink:href="#icon-ava-f"></use>
-                    </svg>
-                </div>
-                <div class="tt-col-message">
-                    Looks like you are new here. Register for free, learn and contribute.
-                </div>
-                <div class="tt-col-btn">
-                    <button type="button" class="btn btn-primary">Log in</button>
-                    <button type="button" class="btn btn-secondary">Sign up</button>
-                    <button type="button" class="btn-icon">
-                        <svg class="tt-icon">
-                          <use xlink:href="#icon-cancel"></use>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
+
+        <!-- Post Your Reply -->
         <div class="tt-wrapper-inner">
             <div class="pt-editor form-default">
-                <h6 class="pt-title">Post Your Reply</h6>
-                 <div class="pt-row">
-                    <div class="col-left">
-                        <ul class="pt-edit-btn">
-                                        <li><button type="button" class="btn-icon">
-                                            <svg class="tt-icon">
-                                              <use xlink:href="#icon-quote"></use>
-                                            </svg>
-                                        </button></li>
-                                        <li><button type="button" class="btn-icon">
-                                            <svg class="tt-icon">
-                                              <use xlink:href="#icon-bold"></use>
-                                            </svg>
-                                        </button></li>
-                                        <li><button type="button" class="btn-icon">
-                                            <svg class="tt-icon">
-                                              <use xlink:href="#icon-italic"></use>
-                                            </svg>
-                                        </button></li>
-                                        <li><button type="button" class="btn-icon">
-                                            <svg class="tt-icon">
-                                              <use xlink:href="#icon-share_topic"></use>
-                                            </svg>
-                                        </button></li>
-                                        <li><button type="button" class="btn-icon">
-                                            <svg class="tt-icon">
-                                              <use xlink:href="#icon-blockquote"></use>
-                                            </svg>
-                                        </button></li>
-                                        <li><button type="button" class="btn-icon">
-                                            <svg class="tt-icon">
-                                              <use xlink:href="#icon-performatted"></use>
-                                            </svg>
-                                        </button></li>
-                                        <li class="hr"></li>
-                                        <li><button type="button" class="btn-icon">
-                                            <svg class="tt-icon">
-                                              <use xlink:href="#icon-upload_files"></use>
-                                            </svg>
-                                        </button></li>
-                                        <li><button type="button" class="btn-icon">
-                                            <svg class="tt-icon">
-                                              <use xlink:href="#icon-bullet_list"></use>
-                                            </svg>
-                                        </button></li>
-                                        <li><button type="button" class="btn-icon">
-                                            <svg class="tt-icon">
-                                              <use xlink:href="#icon-heading"></use>
-                                            </svg>
-                                        </button></li>
-                                        <li><button type="button" class="btn-icon">
-                                            <svg class="tt-icon">
-                                              <use xlink:href="#icon-horizontal_line"></use>
-                                            </svg>
-                                        </button></li>
-                                        <li><button type="button" class="btn-icon">
-                                            <svg class="tt-icon">
-                                              <use xlink:href="#icon-emoticon"></use>
-                                            </svg>
-                                        </button></li>
-                                        <li><button type="button" class="btn-icon">
-                                            <svg class="tt-icon">
-                                              <use xlink:href="#icon-settings"></use>
-                                            </svg>
-                                        </button></li>
-                                        <li><button type="button" class="btn-icon">
-                                            <svg class="tt-icon">
-                                              <use xlink:href="#icon-color_picker"></use>
-                                            </svg>
-                                        </button></li>
-                                    </ul>
-                    </div>
-                    <div class="col-right tt-hidden-mobile">
-                        <a href="#" class="btn btn-primary">Preview</a>
-                    </div>
+                <h6 class="pt-title">Cavab Yaz</h6>  
+                <div label='id_answer_content' class="d-none alert alert-danger mt-3" role="alert">
+                    <span label="error_content"></span>Qaydaları oxumaq üçün <a href="{% url 'student-rules' %}" class="alert-link"> clickləyin.</a> 
+                </div>               
+                <div id="id_answer_content"></div>
+            </div>
+            <div class="row mt-4 mb-4">
+                <div class="col-md-12">
+                    <div class="dropzone dz" id="answerDropzone"></div>
                 </div>
-                <div class="form-group">
-                    <textarea name="message" class="form-control" rows="5" placeholder="Lets get started"></textarea>
-                </div>
-                <div class="pt-row">
-                    <div class="col-auto">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="checkBox21" name="checkbox" checked="">
-                            <label for="checkBox21">
-                                <span class="check"></span>
-                                <span class="box"></span>
-                                <span class="tt-text">Subscribe to this topic.</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <a href="#" class="btn btn-secondary btn-width-lg">Reply</a>
-                    </div>
+            </div>
+            <div class="row flex flex-row-reverse">
+                <div class="col-auto">
+                    <a id="create_post_answer" href="#" class="btn btn-secondary btn-width-lg">Cavabla</a>
                 </div>
             </div>
         </div>
+        <!-- Suggested topics -->
         <div class="tt-topic-list tt-ofset-30">
             <div class="tt-list-search">
                 <div class="tt-title">Suggested Topics</div>
@@ -485,6 +384,7 @@
         </div>
     </div>
 </main>
+>
 
 {% endblock content %}
 
@@ -493,8 +393,210 @@
 <script src="{% static 'js/actions.js' %}"></script>
 <script src="{% static 'js/lightbox.js' %}"></script>
 
+<script src="{% static 'ckeditor/ckeditor.js' %}"></script>
+<!-- Conifiguration of ckeditor -->
+<script src="{% static 'ckeditor/ckeditor_config.js' %}"></script>
+
 <!-- highlight.js-->
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/styles/default.min.css"/>
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
+
+
+<script>
+    var isEnter = true;
+    Dropzone.options.answerDropzone= {
+    url: `${window.location.href}`,
+    headers:{
+        'X-CSRFToken' : '{{ csrf_token }}'
+    },
+    autoProcessQueue: false,
+    maxFiles : 2, // (Back-End : 2)
+    maxFilesize : 2, //2 MB (Back-End : 2 MB)
+    parallelUploads: 2,
+    uploadMultiple : true,
+    addRemoveLinks: true,
+    autoProcessQueue: false, // Bununla biz submit etdikde filelar yuklenecek
+    acceptedFiles: 'image/*', // (Back-End : only images)
+    dictDefaultMessage: 'Şəkilləri bura yükləyin',
+    dictFallbackMessage: 'Şəkilləri bura yükləyin',
+    dictRemoveFile: 'Şəkli sil',
+    dictFileTooBig: `Şəkilin tutumu böyüdür. Max şəkil tutumu: 2 MB`,
+    dictInvalidFileType: 'Yalnız şəkil yükləyə bilərsiniz',
+    dictMaxFilesExceeded: 'Maximum 2 şəkil yükləyə bilərsiniz',
+    dictResponseError: "Server responded with {{statusCode}} code.",
+    init: function() {
+        dzClosure = this; // Makes sure that 'this' is understood inside the functions below.
+
+        // for Dropzone to process the queue (instead of default form behavior):
+        $('#create_post_answer').on("click", function(e) {
+            if (CheckContent())
+            {
+                if (dzClosure.getQueuedFiles().length > 0) 
+                {
+                    isEnter = true;                      
+                    e.preventDefault();
+                    e.stopPropagation();  
+                    dzClosure.processQueue(); 
+                    $('#create_post_answer').addClass('disabled')
+                } 
+                else 
+                {
+                    isEnter = true;                      
+                    e.preventDefault();
+                    var blob = new Blob(); //Back check is blob or not
+                    blob.upload = { 'chunked': dzClosure.defaultOptions.chunking };
+                    dzClosure.uploadFile(blob);
+                    $('#create_post_answer').addClass('disabled')
+                }    
+            }
+            else
+            {
+                $('html,body').animate({scrollTop: $("div[label='id_answer_content']").offset().top - 100},'slow');
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        //send all the form data along with the files:
+        this.on("sendingmultiple", function(data, xhr, formData) 
+        {
+            formData.append("question_id", '{{question.id}}');
+            formData.append("content", id_answer_content.getData());
+            formData.append("post_type", "comment_create");
+        });
+
+        
+        function CheckContent()
+        {
+            content = id_answer_content.getData()
+            contentErrorDiv = $("div[label='id_answer_content']")
+            if(!content) //Empty
+            {
+                contentErrorDiv.removeClass('d-none')
+                contentErrorDiv.find('span[label="error_content"]').text('Mövzu doldurulmalıdır.')
+                return false;
+            }
+            else
+            {   
+                contentErrorDiv.addClass('d-none');
+                return true;
+            }
+        };
+
+    },
+
+
+    success: function(file, response)
+    {
+        if(isEnter)
+        {
+            isEnter = false
+            html = `<div class="tt-item">
+                        <input label='label_comment_id' type="hidden" value="${response.comment_id}">
+                        <div class="tt-single-topic">
+                            <div class="tt-item-header pt-noborder">
+                                <div class="tt-item-info info-top">
+                                    <div class="tt-avatar-icon">
+                                        <i class="tt-icon"><svg><use xlink:href="#icon-ava-t"></use></svg></i>
+                                    </div>
+                                    <div class="tt-avatar-title">
+                                        <a href="#">${response.full_name}</a>
+                                    </div>
+                                    <a href="#" class="tt-info-time">
+                                        <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>${response.created_date}
+                                    </a>
+                                </div>
+                                ${IsOwner(response.owner)}
+                            </div>
+                            <div class="tt-item-description">
+                                ${response.content}
+                                <div style="display: flex; justify-content: space-around;">
+                                ${GetImages(response.images)}
+                                </div>
+                            </div>
+
+                            <div class="tt-item-info info-bottom">
+                            <!-- Upvote(like) -->
+                                <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions(${response.question_id},'${$('#request_user').val()}', 'comment', 'like', 'comment_vote', ${response.comment_id});">                               
+                                    <svg label='comment' class=" like_${response.comment_id}" style='fill:#666f74;' width="36" height="36" viewBox="0 0 36 36">
+                                        <path d="M2 26h32L18 10 2 26z"></path>
+                                    </svg>                               
+                                </a>
+                                <!-- Vote result: -->
+                                <span label='comment' style="color: #666f74; font-size: 20px; padding: 2px 20px 0px 20px;" class="vote_result_${response.comment_id}"> 0 </span>
+                                <!-- Downvote(dislike) -->
+                                <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions(${response.question_id},'${$('#request_user').val()}', 'comment', 'dislike', 'comment_vote', ${response.comment_id});" >                             
+                                    <svg label='comment' class=" dislike_${response.comment_id}" style='fill:#666f74;' width="36" height="36" viewBox="0 0 36 36">
+                                        <path d="M2 10h32L18 26 2 10z"></path>
+                                    </svg>                                
+                                </a>                           
+                            </div>
+                        </div>
+                    </div>`
+            
+            $('.tt-single-topic-list').append(html)
+            comments = $('.tt-single-topic-list')[0].querySelectorAll('.tt-item')
+
+            code = $(comments[comments.length-1]).find('code')[0]
+            if(code)
+            {
+                hljs.highlightBlock(code)
+                $(comments[comments.length-1]).find('code').addClass("hljs javascript");
+            }
+            $('html,body').animate({scrollTop: $(comments[comments.length-1]).offset().top - 100},'slow');
+
+            setTimeout(function(){ 
+                dzClosure.removeAllFiles(true)
+                id_answer_content.setData('')
+                $('#create_post_answer').removeClass('disabled')
+            }, 2000); // 5 sec
+
+
+            function IsOwner(argOwner)
+            {
+                if(argOwner)
+                {
+                    return ` <div class="tt-item-info info-top">                                
+                                <div class="tt-avatar-icon" style="padding-top: 60px;"> 
+                                    <a href="#" onclick="event.preventDefault(); check_answer(${response.question_id}, ${response.comment_id});">
+                                        <i class="tt-icon"><svg   width="36" height="36" viewBox="0 0 36 36"><path class="select_answer" style='fill:#aeb3b4;' d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path></svg></i>
+                                    </a> 
+                                </div>                                
+                            </div>`
+                }
+                else
+                {
+                    return ``
+                }
+            }
+
+            function GetImages(argImages)
+            {
+                temp_html = ''
+                for (var i = 0; i < argImages.length; i++)
+                {
+                    temp_html += `<div>
+                                    <a href="${argImages[i]}" data-lightbox="comment_${response.comment_id}_imagegroup">
+                                        <img style="width: auto; height:200px;"src="${argImages[i]}" alt="">
+                                    </a>
+                                </div>`
+                }
+                return temp_html;
+
+            }
+        }        
+    },
+
+}
+
+
+
+</script>
+
+</script>
+
+
 {% endblock script %}
+
+
