@@ -315,6 +315,20 @@ def register(request):
         if form.is_valid():
             person = dict(requests.post('http://157.230.220.111/api/student', data={"email":form.cleaned_data.get('email')}, auth=('admin', 'admin123')).json())
             username = person.get('name').lower()+'-'+person.get('surname')[0].lower()+person.get('father_name')[0].lower()
+            old_user = User.objects.filter(username = username).first()
+            if old_user:
+                old_person = requests.post('http://157.230.220.111/api/student', data={"email":old_user.email}, auth=('admin', 'admin123')).json()
+                if not old_person:
+                    new_password = ''.join([random.choice(password_characters) for i in range(12)])
+                    old_user.set_password(new_password)
+                    old_user.email = person.get('email')
+                    old_user.save()
+                    html_message = render_to_string('auth/verification.html', {'username': old_user.username, 'password': new_password})
+                    mail.send_mail(subject = 'PragmatechQA Hesab Təsdiqlənməsi', message = strip_tags(html_message), from_email = 'Pragmatech <soltanov.tarlan04@gmail.com>', recipient_list=[person.get('email')], html_message=html_message)
+                    messages.success(request, 'Profil yaradıldı və məlumatlar emailinizə göndərildi!')
+                    return redirect('login')
+                else:
+                    username+="2"
             password = ''.join([random.choice(password_characters) for i in range(12)])
             user = User.objects.create_user(username, person.get('email'), password)
             user.first_name = person.get('name')
