@@ -69,7 +69,10 @@ def tag_info(request, slug):
 @login_required
 @picture_required
 def about(request):
-    return render(request, 'main_page/about.html')
+    context={
+        'students': Student.objects.all().order_by('level')[0:10],
+    }
+    return render(request, 'main_page/about.html', context)
 
 @login_required
 @picture_required
@@ -85,8 +88,10 @@ def page_create_topic(request):
         if form.is_valid():
             new_question = form.save()  
             student = Student.objects.get(user = request.user)
+            student.level +=3
             new_question.student = student
             new_question.save()
+            student.save()
             if((len(request.FILES) == 1) and (request.FILES['file[0]'].name == 'blob')):
                 pass
             else:
@@ -132,6 +137,8 @@ def question_detail(request, slug):
                 del comment_data['question_id']
                 commentForm = CommentForm(comment_data)
                 if(commentForm.is_valid()):
+                    student.level +=1
+                    student.save()
                     new_comment = commentForm.save()
                     if((len(request.FILES) == 1) and (request.FILES['file[0]'].name == 'blob')):
                         pass
@@ -191,7 +198,6 @@ def question_detail(request, slug):
                 student = get_object_or_404(Student, id = request.user.id)
                 question = get_object_or_404(Question, id = request.POST.get("question_id"), student = student)
                 comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question)
-                print(question.answer )
                 if (question.answer == comment.id):
                     question.answer = None
                     question.save()
