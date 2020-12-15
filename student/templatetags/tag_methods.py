@@ -14,7 +14,3 @@ def tag_count(tag, id=0):
             ans+=1
     return ans
 
-# @register.filter
-# def tag_check(a,b):
-#     print(a, b)
-#     return 0

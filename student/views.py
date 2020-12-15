@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required,user_passes_test
 from datetime import datetime
-from student.utils import FilterComments
+from student.utils import *
 from taggit.models import Tag
 from itertools import chain
 from django.contrib.auth.models import User
@@ -115,9 +115,6 @@ def page_create_topic(request):
 def question_detail(request, slug):
     question = get_object_or_404(Question, slug=slug)
     comments = question.comment_set.all()
-    # print('Comment: ')
-    # print(FilterComments(question))
-    # print(comments)
     if request.method=="POST":
         if request.is_ajax():
             if(request.POST['post_type'] == 'comment_create'):
@@ -189,7 +186,6 @@ def question_detail(request, slug):
                 student = get_object_or_404(Student, id = request.user.id)
                 question = get_object_or_404(Question, id = request.POST.get("question_id"), student = student)
                 comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question)
-                print(question.answer )
                 if (question.answer == comment.id):
                     question.answer = None
                     question.save()
@@ -209,6 +205,70 @@ def question_detail(request, slug):
         'student': Student.objects.get(user = request.user),
     }
     return render(request, 'single-user/page-single-topic.html', context)
+
+@login_required
+@picture_required
+def question_edit(request, slug):
+    question = get_object_or_404(Question, slug=slug)
+    form = QuestionForm()
+    if request.method == "POST":
+        form = QuestionForm(request.POST or None)
+        if form.is_valid():
+            student = Student.objects.get(user = request.user) 
+            if(question.student == student ):                
+                question.title = form.cleaned_data['title']
+                question.content = form.cleaned_data['content'] 
+                question.slug = GetUniqueSlug(question.title) 
+                question.updated = datetime.now()       
+                question.tags.clear()
+                for eachTag in form.cleaned_data['tags']:
+                    question.tags.add(eachTag)           
+                question.save()
+                return JsonResponse({'slug': question.slug }, safe = False)
+            else:
+                return JsonResponse({'error':'Question owner is not valid'}, safe = False)
+
+            # Check for server images deleted or not
+            previos_images_url = GetPreviousImages(question)
+            current_images_url = request.POST['server_images'].split(',')
+            for prev_image in previos_images_url:
+                if(prev_image['image_url'] not in current_images_url):
+                    prev_image['image_object'].delete()
+                
+            # Add new images
+            if((len(request.FILES) == 1) and (request.FILES['file[0]'].name == 'blob')):
+                pass
+            else:
+                MAX_FILES = 2 # The number of max files (Client-Side 2)
+                if (len(request.FILES) <= MAX_FILES ): 
+                    for imageKey, imageValue in request.FILES.items():
+                        questionData = {'question' : question}
+                        imageData = {'image' : imageValue}
+                        formImage = QuestionImageForm(questionData, imageData)
+                        if(formImage.is_valid()):
+                            formImage.save()
+                        else:
+                            return JsonResponse(formImage.errors.as_json(), safe = False)  
+                else:
+                    return JsonResponse(JsonResponse({'max_files' : 2}, safe = False))
+
+        else:
+            return JsonResponse(form.errors.as_json(), safe = False)
+
+
+    
+    context={
+        'form':form,
+        'question':question,
+        'question_images_data': GetImagesData(question)[0],
+        'question_images_urls' : GetImagesData(question)[1],
+        'question_tags' : GetTagsData(question)
+    }
+    return render(request, 'single-user/page-single-topic_edit.html', context)
+    
+
+
+
 
 @login_required
 @picture_required

@@ -7,6 +7,8 @@ from taggit.managers import TaggableManager
 from ckeditor.fields import  RichTextField
 from django.contrib.auth.models import User
 from taggit.models import Tag
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
 
 # Create your models here.
 
@@ -121,7 +123,7 @@ class Question(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, default = 1) # Bu Tes ucundur Productionda silinecek.
     view = models.IntegerField(verbose_name="Baxış sayı", default = 0 )
     created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    updated = models.DateTimeField(auto_now_add=True)   
     slug = models.SlugField(unique=True, editable=False, max_length=130)
     answer =  models.IntegerField(verbose_name="Cavab Commentin İDsi", null=True)
 
@@ -185,7 +187,10 @@ class QuestionImage(models.Model):
         """Unicode representation of QuestionImage."""
         return f'[ {self.question.title} ] - {self.image.name}'
     
-   
+@receiver(post_delete, sender = QuestionImage)
+def submission_delete(sender, instance, **kwargs):
+    instance.image.delete(False) 
+
 class Comment(models.Model):
     """Model definition for Comment."""
 
@@ -248,6 +253,9 @@ class CommentImage(models.Model):
     def get_upvote(self):
         return len(self.action_set.filter(action_type = 1).all())
 
+@receiver(post_delete, sender = CommentImage)
+def submission_delete(sender, instance, **kwargs):
+    instance.image.delete(False) 
 
 class Action(models.Model):
     """Model definition for Action."""
