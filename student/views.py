@@ -182,8 +182,8 @@ def question_detail(request, slug):
                         comment.actions(1, student, liked, disliked)
                 return JsonResponse({'liked': str(liked), 'disliked': str(disliked)})
     
-            elif(request.POST['post_type'] == 'select_answer'):
-                student = get_object_or_404(Student, id = request.user.id)
+            elif(request.POST['post_type'] == 'select_answer'):                
+                student = get_object_or_404(Student, user = request.user)
                 question = get_object_or_404(Question, id = request.POST.get("question_id"), student = student)
                 comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question)
                 if (question.answer == comment.id):
@@ -223,8 +223,7 @@ def question_edit(request, slug):
                 question.tags.clear()
                 for eachTag in form.cleaned_data['tags']:
                     question.tags.add(eachTag)           
-                question.save()
-                return JsonResponse({'slug': question.slug }, safe = False)
+                question.save()                
             else:
                 return JsonResponse({'error':'Question owner is not valid'}, safe = False)
 
@@ -251,7 +250,8 @@ def question_edit(request, slug):
                             return JsonResponse(formImage.errors.as_json(), safe = False)  
                 else:
                     return JsonResponse(JsonResponse({'max_files' : 2}, safe = False))
-
+            
+            return JsonResponse({'slug': question.slug }, safe = False)
         else:
             return JsonResponse(form.errors.as_json(), safe = False)
 
@@ -265,9 +265,17 @@ def question_edit(request, slug):
         'question_tags' : GetTagsData(question)
     }
     return render(request, 'single-user/page-single-topic_edit.html', context)
+
+@login_required
+@picture_required 
+def question_delete(request, slug):
+    print('Salam aleykume')
+    question = get_object_or_404(Question, slug=slug)
+    student = Student.objects.get(user = request.user) 
+    if(question.student == student):
+        question.delete()
+    return redirect('/')
     
-
-
 
 
 @login_required
