@@ -49,7 +49,8 @@ class Student(models.Model):
     study_group = models.ForeignKey(StudyGroup ,verbose_name=("Qrup"), on_delete = models.PROTECT)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    
+    level = models.IntegerField(default=0)
+
     class Meta:
         """Meta definition for Student."""
 
@@ -156,9 +157,15 @@ class Question(models.Model):
     def actions(self, action_num, stud, vote1, vote2):
         if not vote1:
             action=Action.objects.create(student=stud, question=self, type=0, action_type=action_num)
+            self.student.level = self.student.level + 1 if action_num==1 else self.student.level - 2
+            self.student.save()
             if vote2:
+                self.student.level = self.student.level + 2 if action_num==1 else self.student.level - 1
+                self.student.save()
                 self.action_set.filter(action_type=1 if action_num==0 else 0).filter(student=stud).delete()
         else:
+            self.student.level = self.student.level - 1 if action_num==1 else self.student.level + 2
+            self.student.save()
             self.action_set.filter(action_type=action_num).filter(student=stud).delete() 
         return action_num
     
@@ -212,9 +219,15 @@ class Comment(models.Model):
     def actions(self, action_num, stud, vote1, vote2):
         if not vote1:
             action = Action.objects.create(student = stud, comment = self, type=1, action_type = action_num)
+            self.student.level = self.student.level + 1 if action_num==1 else self.student.level - 2
+            self.student.save()
             if vote2:
+                self.student.level = self.student.level + 2 if action_num==1 else self.student.level - 1
+                self.student.save()
                 self.action_set.filter(action_type = 1 if action_num == 0 else 0).filter(student = stud).delete()
         else:
+            self.student.level = self.student.level - 1 if action_num==1 else self.student.level + 2
+            self.student.save()
             self.action_set.filter(action_type = action_num).filter(student = stud).delete() 
         return action_num
 

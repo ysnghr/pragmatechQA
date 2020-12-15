@@ -25,7 +25,7 @@
             <div class="tt-user-header">
                 <div class="tt-col-avatar">
                     <div class="tt-icon">
-                       <img class="tt-icon" src="{{ student.picture.url }}" />
+                       <img class="tt-icon" src="{{ student.picture.url }}" style="width: 40px; height: 40px; border-radius: 50%" />
                     </div>
                 </div>
                 <div class="tt-col-title">
@@ -33,7 +33,7 @@
                         <a href="#">{{student.user.username}}</a>
                     </div>
                     <ul class="tt-list-badge">
-                        <li><a href="#"><span class="tt-color14 tt-badge">LVL : 26</span></a></li>
+                        <li><a href="#"><span class="tt-color14 tt-badge">LVL : {{student.level}}</span></a></li>
                     </ul>
                 </div>
                 <div class="tt-col-btn" id="js-settings-btn">
