@@ -5,7 +5,6 @@ import requests, random, string
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required,user_passes_test
-from student.utils import *
 from taggit.models import Tag
 from itertools import chain
 from django.contrib.auth.models import User
@@ -195,8 +194,7 @@ def question_detail(request, slug):
                 question = get_object_or_404(Question,id = request.POST.get("question_id"))
                 student = get_object_or_404(Student, user = request.user)
                 comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
-                GetCommentData(comment)
-                return JsonResponse(GetCommentData(comment), safe = False)
+                return JsonResponse(comment.get_info(), safe = False)
 
             elif(request.POST['post_type'] == 'comment_edit-update'):
                 question = get_object_or_404(Question,id = request.POST.get("question_id"))
@@ -217,7 +215,7 @@ def question_detail(request, slug):
                     comment.save()                
 
                     # Check for comment's server images are removed or not
-                    previos_images_url = GetPrevCommentImages(comment)
+                    previos_images_url = comment.get_previous_images()
                     for prev_image in previos_images_url:
                         if(prev_image['image_url'] not in current_images_url):
                             prev_image['image_object'].delete()
@@ -278,7 +276,7 @@ def question_detail(request, slug):
         question.view +=1
         question.save()
     context={
-        'comments' : FilterComments(question),
+        'comments' : question.filter_comments(),
         'question': question,
         'student': Student.objects.get(user = request.user),
     }
@@ -296,7 +294,7 @@ def question_edit(request, slug):
             if(question.student == student ):                
                 question.title = form.cleaned_data['title']
                 question.content = form.cleaned_data['content'] 
-                question.slug = GetUniqueSlug(question.title) 
+                question.slug = question.get_unique_slug()
                 question.updated = datetime.datetime.now()       
                 question.tags.clear()
                 for eachTag in form.cleaned_data['tags']:
@@ -306,7 +304,7 @@ def question_edit(request, slug):
                 return JsonResponse({'error':'Question owner is not valid'}, safe = False)
 
             # Check for server images deleted or not
-            previos_images_url = GetPrevQuestionImages(question)
+            previos_images_url = question.get_previous_images()
             current_images_url = request.POST['server_images'].split(',')
             for prev_image in previos_images_url:
                 if(prev_image['image_url'] not in current_images_url):
@@ -338,9 +336,9 @@ def question_edit(request, slug):
     context={
         'form':form,
         'question':question,
-        'question_images_data': GetImagesData(question)[0],
-        'question_images_urls' : GetImagesData(question)[1],
-        'question_tags' : GetTagsData(question)
+        'question_images_data': question.get_images_data()[0],
+        'question_images_urls' : question.get_images_data()[1],
+        'question_tags' : question.get_tags()
     }
     return render(request, 'single-user/page-single-topic_edit.html', context)
 
