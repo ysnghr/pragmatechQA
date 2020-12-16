@@ -182,5 +182,3 @@ function check_answer(question_id, comment_id)
   
 }
 
-
-

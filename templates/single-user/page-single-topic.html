@@ -11,11 +11,11 @@
 <link href="{% static 'css/lightbox.css' %}" rel="stylesheet" />
 
 <style>
-.action_active{
-    fill: #2c62a0 !important;
-}
+    .action_active{
+        fill: #2c62a0 !important;
+    }
 
-.dz{
+    .dz{
         border: dashed !important;
         border-color: #ccc !important;
         border-radius: 10px !important;
@@ -29,6 +29,12 @@
     .ck-editor__editable {
         min-height: 200px;
     }
+
+    .dz-preview .dz-image img{
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover;
+    }
 </style>
 {% endblock style %}
 
@@ -39,11 +45,12 @@
 <main id="tt-pageContent">
     <div class="container">
         <div class="tt-single-topic-list">
-            <div class="tt-item">
+            <div class="question-wrapper tt-item">
                  <div class="tt-single-topic">
                     <div class="tt-item-header">
                         <div class="tt-item-info info-top">
                             <input id="request_user" type="hidden" value="{{request.user}" >
+                            <input label='label_question_id' type="hidden" value="{{question.id}}">
                             <div class="tt-avatar-icon">
                                 <img src="{{ question.student.picture.url }}" alt="" style="width:40px; height:40px;">
                             </div>
@@ -121,7 +128,7 @@
                 </div>
             </div>          
             {% for eachComment in comments %}
-                <div class="tt-item  {% if question.answer == eachComment.id %} tt-wrapper-success {% elif eachComment.get_upvote|subtract:eachComment.get_downvote < 0  %} tt-wrapper-danger {% endif %} ">
+                <div class="comment-wrapper tt-item  {% if question.answer == eachComment.id %} tt-wrapper-success {% elif eachComment.get_upvote|subtract:eachComment.get_downvote < 0  %} tt-wrapper-danger {% endif %} ">
                     <input label='label_comment_id' type="hidden" value="{{eachComment.id}}">
                     <div class="tt-single-topic">
                         <div class="tt-item-header pt-noborder">
@@ -133,7 +140,7 @@
                                     <a href="#">{{eachComment.student.user.get_full_name}}</a>
                                 </div>
                                 <a href="#" class="tt-info-time">
-                                    <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>{{eachComment.created|date:"d F, Y" }}
+                                    <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>{{eachComment.created|date:"d F, Y" }}  {% if eachComment.created != eachComment.updated %} (Dəyişdirilib){% endif %}
                                 </a>
                             </div>
 
@@ -145,16 +152,7 @@
                                         </a> 
                                     </div>                                
                                 </div>
-                            {% endif %}
-                            <!-- <div class="tt-item-info info-top">                                
-                                <div class="tt-avatar-icon d-flex " style="padding-top: 60px;"> 
-                                    <a href="#">
-                                        <i class="tt-icon"><svg aria-hidden="true" class="m0 svg-icon iconArrowDownLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 10h32L18 26 2 10z"></path></svg></i>
-                                    </a> 
-                                    <span label="comment" class="tt-text like_3_count">0</span>
-
-                                </div>                                
-                            </div> -->
+                            {% endif %}                            
                         </div>
                         <div class="tt-item-description">
                             {{ eachComment.content|safe|linebreaks }}
@@ -182,7 +180,25 @@
                                 <svg label='comment' class=" dislike_{{eachComment.id}}" {% if eachComment|comment_downvote_check:student %}style="fill:#2c62a0; " {% else %} style='fill:#666f74;' {% endif %} width="36" height="36" viewBox="0 0 36 36">
                                     <path d="M2 10h32L18 26 2 10z"></path>
                                 </svg>                                
-                            </a>                           
+                            </a>
+                            <div class="col-separator"></div>
+                            <div class="tt-row-icon">
+                                {% if eachComment.student.user == request.user %}
+                                    <div class="tt-item">
+                                        <!-- Edit -->
+                                        <a onclick="event.preventDefault(); CommentEdit(this)" label="comment_edit_btn" href="#" class="tt-icon-btn tt-position-bottom">
+                                            <i style="font-size: 22px; color: #666f74; cursor: pointer;" class="tt-icon fas fa-edit"></i>                                                              
+                                        </a>
+                                        
+                                    </div>
+                                    <div class="tt-item">
+                                        <!-- Delete -->
+                                        <a onclick="event.preventDefault(); CommentDelete(this)" label="comment_delete_btn" href="#" class="tt-icon-btn tt-position-bottom">
+                                            <i style="font-size: 22px; color: red; cursor: pointer;" class="fas fa-trash-alt"></i>
+                                        </a>                           
+                                    </div>                            
+                                {% endif %}                  
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -194,7 +210,7 @@
         </div>
 
         <!-- Post Your Reply -->
-        <div class="tt-wrapper-inner">
+        <div label="post_comment" class="tt-wrapper-inner">
             <div class="pt-editor form-default">
                 <h6 class="pt-title">Cavab Yaz</h6>  
                 <div label='id_answer_content' class="d-none alert alert-danger mt-3" role="alert">
@@ -213,6 +229,32 @@
                 </div>
             </div>
         </div>
+
+        <!-- Edit Your Reply -->
+        <div label="edit_comment" class="tt-wrapper-inner d-none">
+            <div class="pt-editor form-default">
+                <h6 class="pt-title">Commenti redaktə et</h6>  
+                <!-- Errors -->
+                <div label='comment_content_edit_error' class="d-none alert alert-danger mt-3" role="alert">
+                    <span label="error_content"></span>Qaydaları oxumaq üçün <a href="{% url 'student-rules' %}" class="alert-link"> clickləyin.</a> 
+                </div>        
+                <!-- Content -->
+                <div id="id_comment_content_edit"></div>
+            </div>
+            <div class="row mt-4 mb-4"> 
+                <!-- Dropzone -->
+                <div label="comment_edit_dropzone_wrapper" class="col-md-12">                    
+                </div>
+            </div>
+            <div class="row flex flex-row-reverse">
+                <div class="col-auto">
+                    <!-- Submit and Cancel buttons -->
+                    <a id="comment_edit_cancel_btn" href="#" class="btn btn-danger btn-width-lg">Ləğv et</a>
+                    <a id="comment_edit_submit_btn" href="#" class="btn btn-secondary btn-width-lg">Yadda saxla</a>
+                </div>
+            </div>
+        </div>
+
         <!-- Suggested topics -->
         <div class="tt-topic-list tt-ofset-30">
             <div class="tt-list-search">
@@ -423,8 +465,10 @@
 
 
 <script>
+    Dropzone.autoDiscover = false;
+
     var isEnter = true;
-    Dropzone.options.answerDropzone= {
+    var answerDropzone = new Dropzone("#answerDropzone", {
     url: `${window.location.href}`,
     headers:{
         'X-CSRFToken' : '{{ csrf_token }}'
@@ -505,13 +549,12 @@
 
     },
 
-
     success: function(file, response)
     {
         if(isEnter)
         {
             isEnter = false
-            html = `<div class="tt-item">
+            html = `<div class="comment-wrapper tt-item">
                         <input label='label_comment_id' type="hidden" value="${response.comment_id}">
                         <div class="tt-single-topic">
                             <div class="tt-item-header pt-noborder">
@@ -549,13 +592,28 @@
                                     <svg label='comment' class=" dislike_${response.comment_id}" style='fill:#666f74;' width="36" height="36" viewBox="0 0 36 36">
                                         <path d="M2 10h32L18 26 2 10z"></path>
                                     </svg>                                
-                                </a>                           
+                                </a>  
+                                <div class="col-separator"></div>
+                                <div class="tt-row-icon">
+                                    <div class="tt-item">
+                                        <!-- Edit -->
+                                        <a label="comment_edit_btn" onclick="event.preventDefault(); CommentEdit(this)"  href="#" class="tt-icon-btn tt-position-bottom">
+                                            <i style="font-size: 22px; color: #666f74; cursor: pointer;" class="tt-icon fas fa-edit"></i>                                                              
+                                        </a>                                                                                
+                                    </div>   
+                                    <div class="tt-item">
+                                        <!-- Delete -->
+                                        <a label="comment_delete_btn" onclick="event.preventDefault(); CommentDelete(this)" href="#" class="tt-icon-btn tt-position-bottom">
+                                            <i style="font-size: 22px; color: red; cursor: pointer;" class="fas fa-trash-alt"></i>
+                                        </a>                           
+                                    </div>                                                                                                               
+                                </div>                          
                             </div>
                         </div>
                     </div>`
             
             $('.tt-single-topic-list').append(html)
-            comments = $('.tt-single-topic-list')[0].querySelectorAll('.tt-item')
+            comments = $('.tt-single-topic-list')[0].querySelectorAll('.comment-wrapper')
 
             code = $(comments[comments.length-1]).find('code')[0]
             if(code)
@@ -607,37 +665,46 @@
         }        
     },
 
-}
+})
 
 
 
 </script>
 
-<!-- sweetAlert -->
+<!-- sweetAlert for question delete -->
 <script>
 $('#question_delete_btn').on('click',function(e){
     e.preventDefault()
-    swal("A wild Pikachu appeared! What do you want to do?", {
-        icon: "warning",
-        title: "Bu etmək istədiyindən əminsən?",
-        text: "Sualı sildikdən sonra geri qaytarmaq mümkün olmayacaq.",
-        buttons: {
-            cancel: "Yox!",
-            catch: {
-            text: "Hə!",
-            value: "remove",
+    swal("Sualı sildikdən sonra geri qaytarmaq mümkün olmayacaq.", {
+            icon: "warning",
+            title: "Bu etmək istədiyindən əminsən?",
+            text: "Sualı sildikdən sonra geri qaytarmaq mümkün olmayacaq.",
+            buttons: {
+                cancel: "Yox!",
+                catch: {
+                text: "Hə!",
+                value: "remove",
+                },
             },
-  },
-})
-.then((value) => {
-    if(value == 'remove'){
-        location.href = "{% url 'single_topic_delete' slug=question.slug %}"
-    }
-  
-});
+        }) //End of swal
+        .then((value) => {
+            if(value == 'remove'){
+                location.href = "{% url 'single_topic_delete' slug=question.slug %}"
+            }        
+        }); // End of then
 });
     
 </script>
+
+<!-- ======================================================================= -->
+<!-- ===========================  Comment Edit/Delete ====================== -->
+<!-- ======================================================================= -->
+
+
+<script src="{% static 'js/comment_edit_delete.js' %}"></script>
+
+
+
 
 {% endblock script %}
 

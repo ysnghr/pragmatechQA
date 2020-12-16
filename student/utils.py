@@ -49,12 +49,24 @@ def GetImagesData(question_obj):
 
     return (mockFiles, file_urls)
 
-def GetPreviousImages(question_obj):
+def GetPrevQuestionImages(question_obj):
     image_list = list(question_obj.questionimage_set.all())
     
     temp = []
 
     for eachImage in image_list:
+        temp.append({
+            'image_object': eachImage,
+            'image_url': eachImage.image.url,        
+        })
+
+    return temp
+
+def GetPrevCommentImages(comment_obj):
+    comment_images = comment_obj.commentimage_set.all()
+    temp = []
+
+    for eachImage in comment_images:
         temp.append({
             'image_object': eachImage,
             'image_url': eachImage.image.url,        
@@ -84,3 +96,25 @@ def GetUniqueSlug(artTitle):
         unique_slug = f'{slug}-{str(ran)}'
         ran = randrange(10000, 99999)
     return unique_slug
+
+def GetCommentData(comment_obj):
+    comment_images = comment_obj.commentimage_set.all()
+
+    comment_image_info = []
+    comment_images_urls =[]
+
+    for eachImage in comment_images:
+        comment_image_info.append({
+            'name': os.path.basename(eachImage.image.name),
+            'size': eachImage.image.size,  
+            'type': 'image/jpeg',          
+        })
+        comment_images_urls.append(eachImage.image.url)
+
+    comment_data = {}
+    comment_data['content'] = comment_obj.content
+    comment_data['comment_image_info'] = comment_image_info
+    comment_data['comment_images_urls'] = comment_images_urls
+
+    return comment_data
+    

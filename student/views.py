@@ -119,7 +119,7 @@ def question_detail(request, slug):
         if request.is_ajax():
             if(request.POST['post_type'] == 'comment_create'):
                 question = get_object_or_404(Question, id = int(request.POST['question_id']))
-                student = Student.objects.get(user = request.user)
+                student = get_object_or_404(Student, user = request.user)
                 comment_data = request.POST.copy()
                 comment_data['question'] = question
                 comment_data['student'] = student
@@ -145,6 +145,7 @@ def question_detail(request, slug):
                             return JsonResponse({'max_files' : 2})                            
                     comment_data = {}
                     comment_data['full_name'] = f'{new_comment.student.user.get_full_name()}'
+                    comment_data['slug'] = f'{new_comment.question.slug}'
                     comment_data['created_date'] = f'{(new_comment.created).strftime("%d %B, %Y")}'
                     comment_data['content'] = f'{new_comment.content}'
                     comment_data['question_id'] = int(f'{new_comment.question.id}')
@@ -181,7 +182,76 @@ def question_detail(request, slug):
                         # 1 - upvote like
                         comment.actions(1, student, liked, disliked)
                 return JsonResponse({'liked': str(liked), 'disliked': str(disliked)})
-    
+            
+            elif(request.POST['post_type'] == 'comment_edit-read'):
+                question = get_object_or_404(Question,id = request.POST.get("question_id"))
+                student = get_object_or_404(Student, user = request.user)
+                comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
+                GetCommentData(comment)
+                return JsonResponse(GetCommentData(comment), safe = False)
+
+            elif(request.POST['post_type'] == 'comment_edit-update'):
+                question = get_object_or_404(Question,id = request.POST.get("question_id"))
+                student = get_object_or_404(Student, user = request.user)
+                comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
+                
+                current_images_url = request.POST['server_images'].split(',')
+
+                comment_data = request.POST.copy()
+                comment_data['question'] = question
+                comment_data['student'] = student
+                del comment_data['post_type']
+                del comment_data['question_id']
+                del comment_data['server_images']
+                commentForm = CommentForm(comment_data)
+                if(commentForm.is_valid()):
+                    comment.content = commentForm.cleaned_data['content']
+                    comment.save()                
+
+                    # Check for comment's server images are removed or not
+                    previos_images_url = GetPrevCommentImages(comment)
+                    for prev_image in previos_images_url:
+                        if(prev_image['image_url'] not in current_images_url):
+                            prev_image['image_object'].delete()
+
+                    # Add new images
+                    if((len(request.FILES) == 1) and (request.FILES['file[0]'].name == 'blob')):
+                        pass
+                    else:
+                        MAX_FILES = 2 # The number of max files (Client-Side 2)
+                        if (len(request.FILES) <= MAX_FILES ): 
+                            for imageKey, imageValue in request.FILES.items():
+                                commentData = {'comment' : comment}
+                                imageData = {'image' : imageValue}
+                                commentImage = CommentImageForm(commentData, imageData)
+                                if(commentImage.is_valid()):
+                                    commentImage.save()
+                                else:
+                                    return JsonResponse(commentImage.errors.as_json(), safe = False)  
+                        else:
+                            return JsonResponse({'max_files' : 2})   
+
+                    # Respond to ajax
+                    comment_data = {}
+                    comment_data['full_name'] = f'{comment.student.user.get_full_name()}'
+                    comment_data['slug'] = f'{comment.question.slug}'
+                    comment_data['created_date'] = f'{(comment.created).strftime("%d %B, %Y")}'
+                    comment_data['content'] = f'{comment.content}'
+                    comment_data['question_id'] = int(f'{comment.question.id}')
+                    comment_data['comment_id'] = int(f'{comment.id}')
+                    comment_data['owner'] = True if question.student.user == request.user else False
+                    comment_data['images'] = [comment_image.image.url for comment_image in comment.commentimage_set.all()]
+                    return JsonResponse(comment_data)
+                else:
+                    return JsonResponse(commentForm.errors.as_json(), safe = False) 
+
+            elif(request.POST['post_type'] == 'comment_delete'):
+                question = get_object_or_404(Question,id = request.POST.get("question_id"))
+                student = get_object_or_404(Student, user = request.user)
+                comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
+                comment.delete()
+                return JsonResponse({'status':'good'}, safe = False) 
+
             elif(request.POST['post_type'] == 'select_answer'):                
                 student = get_object_or_404(Student, user = request.user)
                 question = get_object_or_404(Question, id = request.POST.get("question_id"), student = student)
@@ -228,7 +298,7 @@ def question_edit(request, slug):
                 return JsonResponse({'error':'Question owner is not valid'}, safe = False)
 
             # Check for server images deleted or not
-            previos_images_url = GetPreviousImages(question)
+            previos_images_url = GetPrevQuestionImages(question)
             current_images_url = request.POST['server_images'].split(',')
             for prev_image in previos_images_url:
                 if(prev_image['image_url'] not in current_images_url):
@@ -269,7 +339,6 @@ def question_edit(request, slug):
 @login_required
 @picture_required 
 def question_delete(request, slug):
-    print('Salam aleykume')
     question = get_object_or_404(Question, slug=slug)
     student = Student.objects.get(user = request.user) 
     if(question.student == student):
