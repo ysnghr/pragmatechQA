@@ -16,6 +16,8 @@ from django.core import mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.contrib import messages
+from django.db.models import Q
+import datetime
 
 
 password_characters = string.ascii_letters + string.digits + string.punctuation
@@ -67,7 +69,10 @@ def tag_info(request, slug):
 @login_required
 @picture_required
 def about(request):
-    return render(request, 'main_page/about.html')
+    context={
+        'students': Student.objects.all().order_by('level')[0:10],
+    }
+    return render(request, 'main_page/about.html', context)
 
 @login_required
 @picture_required
@@ -83,8 +88,10 @@ def page_create_topic(request):
         if form.is_valid():
             new_question = form.save()  
             student = Student.objects.get(user = request.user)
+            student.level +=3
             new_question.student = student
             new_question.save()
+            student.save()
             if((len(request.FILES) == 1) and (request.FILES['file[0]'].name == 'blob')):
                 pass
             else:
@@ -127,6 +134,8 @@ def question_detail(request, slug):
                 del comment_data['question_id']
                 commentForm = CommentForm(comment_data)
                 if(commentForm.is_valid()):
+                    student.level +=1
+                    student.save()
                     new_comment = commentForm.save()
                     if((len(request.FILES) == 1) and (request.FILES['file[0]'].name == 'blob')):
                         pass
@@ -428,12 +437,18 @@ def login_view(request):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
+            user = User.objects.filter(username = username).first()
+            person = requests.post('http://157.230.220.111/api/student', data={"email": user.email}, auth=('admin', 'admin123')).json()
+            if not person or dict(person).get('type')!=1:
+                messages.error(request, "Sizin emailiniz Pragmatech sistemindən silinmişdir! \
+                    Əgər emailinizi dəyişmisinizsə zəhmət olmasa yeni email ilə yenidən qeydiyyatdan keçin", extra_tags='danger')
+                return redirect('login')
             user = authenticate(username=username, password=password)
             if user is None:
                 messages.error(request, "İstifadəçi adı və ya şifrə düzgün deyil!", extra_tags='danger')
                 return redirect('login')
             if not form.cleaned_data.get('remember_me'):
-                    request.session.set_expiry(0)
+                request.session.set_expiry(0)
             login(request, user)
             if request.session.test_cookie_worked():
                     request.session.delete_test_cookie()
@@ -450,6 +465,23 @@ def register(request):
         if form.is_valid():
             person = dict(requests.post('http://157.230.220.111/api/student', data={"email":form.cleaned_data.get('email')}, auth=('admin', 'admin123')).json())
             username = person.get('name').lower()+'-'+person.get('surname')[0].lower()+person.get('father_name')[0].lower()
+            old_user = User.objects.filter(username__contains = username).last()
+            if old_user:
+                old_person = requests.post('http://157.230.220.111/api/student', data={"email":old_user.email}, auth=('admin', 'admin123')).json()
+                if not old_person:
+                    new_password = ''.join([random.choice(password_characters) for i in range(12)])
+                    old_user.set_password(new_password)
+                    old_user.email = person.get('email')
+                    old_user.save()
+                    html_message = render_to_string('auth/verification.html', {'username': old_user.username, 'password': new_password})
+                    mail.send_mail(subject = 'PragmatechQA Hesab Təsdiqlənməsi', message = strip_tags(html_message), from_email = 'Pragmatech <soltanov.tarlan04@gmail.com>', recipient_list=[person.get('email')], html_message=html_message)
+                    messages.success(request, 'Profil yaradıldı və məlumatlar emailinizə göndərildi!')
+                    return redirect('login')
+                else:
+                    if old_user.username[-1].isdigit():
+                        username = old_user.username[0:-1] + str(int(old_user.username[-1])+1)
+                    else:
+                        username+="2"
             password = ''.join([random.choice(password_characters) for i in range(12)])
             user = User.objects.create_user(username, person.get('email'), password)
             user.first_name = person.get('name')
@@ -482,3 +514,45 @@ def picture_view(request):
             form.save()
             return redirect('student-home')
     return render(request, "auth/picture.html", {"form": form})
+
+@login_required
+def search(request):
+    if request.is_ajax():
+        q = request.GET.get('q')
+        if q is not None:            
+            results = Question.objects.filter(  
+            	Q( title__contains = q ) |
+                Q( content__contains = q ) ).all()[0:3]       
+            return render(request, 'search/results.html', {'results': results})
+
+@login_required
+def advanced_search(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        username = request.POST.get('username')
+        tags = [tag for tag in request.POST.get('tags').split(",")]
+        results = Question.objects.filter(  
+            	Q( title__contains = title ) |
+                Q( content__contains = title ) )
+        if request.POST.get('start'):
+            start = datetime.date(*list(map(int, request.POST.get('start').split("-"))))
+            if request.POST.get('end'):
+                end = datetime.date(*list(map(int, request.POST.get('end').split("-"))))
+                results = results.filter( created__range = (start, end) )
+            else:
+                results = results.filter( created__gte = start )
+        if username:
+            results = results.filter( student__user__username__contains = username )
+        if tags != ['']:
+            results = results.filter( tags__name__in = tags )
+        context={
+            'questions': results,
+            'NotResult': "Nəticə tapılmadı",
+        }
+
+    template='main_page/home.html'
+    page_template='main_page/question_list.html'
+    context['page_template'] = page_template
+    if request.is_ajax():
+        template = page_template
+    return render(request, template, context)
