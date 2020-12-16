@@ -27,7 +27,7 @@ function actions(id, user, type, vote, post_type, comment_id = null) {
           } 
           else 
           {
-            vote_actions(".dislike_",id, "#14DF69", 1, 'question');
+            vote_actions(".dislike_",id, "#3BAF6F", 1, 'question');
             if (response.liked == "True")
             {
               vote_actions(".like_",id, "#666f74", - 1, 'question');
@@ -42,7 +42,7 @@ function actions(id, user, type, vote, post_type, comment_id = null) {
           } 
           else 
           {
-            vote_actions(".like_",id, "#14DF69", 1, 'question');
+            vote_actions(".like_",id, "#3BAF6F", 1, 'question');
             if (response.disliked == "True"){
               vote_actions(".dislike_",id, "#666f74", - 1, 'question');
             }
@@ -70,13 +70,13 @@ function actions(id, user, type, vote, post_type, comment_id = null) {
         {
           if(response.liked == "False" &&  response.disliked == "False" )
           {
-            $(`.dislike_${comment_id}`).css("fill", "#14DF69");
+            $(`.dislike_${comment_id}`).css("fill", "#3BAF6F");
             vote_result = parseInt($(`.vote_result_${comment_id}`).html()) - 1
             $(`.vote_result_${comment_id}`).html(vote_result)
           }
           else if (response.liked == "True" &&  response.disliked == "False")
           {
-            $(`.dislike_${comment_id}`).css("fill", "#14DF69");
+            $(`.dislike_${comment_id}`).css("fill", "#3BAF6F");
             vote_result = parseInt($(`.vote_result_${comment_id}`).html()) - 2
             $(`.vote_result_${comment_id}`).html(vote_result)
             $(`.like_${comment_id}`).css("fill", "#666f74");
@@ -93,7 +93,7 @@ function actions(id, user, type, vote, post_type, comment_id = null) {
         {
           if(response.liked == "False" &&  response.disliked == "False" )
           {
-            $(`.like_${comment_id}`).css("fill", "#14DF69");
+            $(`.like_${comment_id}`).css("fill", "#3BAF6F");
             vote_result = parseInt($(`.vote_result_${comment_id}`).html()) + 1
             $(`.vote_result_${comment_id}`).html(vote_result)
           }
@@ -105,7 +105,7 @@ function actions(id, user, type, vote, post_type, comment_id = null) {
           }
           else if (response.liked == "False" &&  response.disliked == "True")
           {
-            $(`.like_${comment_id}`).css("fill", "#14DF69");
+            $(`.like_${comment_id}`).css("fill", "#3BAF6F");
             vote_result = parseInt($(`.vote_result_${comment_id}`).html()) + 2
             $(`.vote_result_${comment_id}`).html(vote_result)
             $(`.dislike_${comment_id}`).css("fill", "#666f74");
@@ -121,7 +121,7 @@ function actions(id, user, type, vote, post_type, comment_id = null) {
           // } 
           // else 
           // {
-          //   vote_actions(".like_",comment_id, "#14DF69", 1, 'comment');
+          //   vote_actions(".like_",comment_id, "#3BAF6F", 1, 'comment');
           //   if (response.disliked == "True")
           //   {
           //     vote_actions(".dislike_",comment_id, "#666f74", - 1, 'comment');
