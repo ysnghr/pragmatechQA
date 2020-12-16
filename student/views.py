@@ -5,7 +5,6 @@ import requests, random, string
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required,user_passes_test
-from datetime import datetime
 from student.utils import *
 from taggit.models import Tag
 from itertools import chain
@@ -298,7 +297,7 @@ def question_edit(request, slug):
                 question.title = form.cleaned_data['title']
                 question.content = form.cleaned_data['content'] 
                 question.slug = GetUniqueSlug(question.title) 
-                question.updated = datetime.now()       
+                question.updated = datetime.datetime.now()       
                 question.tags.clear()
                 for eachTag in form.cleaned_data['tags']:
                     question.tags.add(eachTag)           

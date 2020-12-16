@@ -291,8 +291,8 @@ function CommentEditDropzone(response, question_id, comment_id)
                 {
                     response.comment_images_urls.splice(i, 1);
                 }        
-                file.previewElement.remove();    
             }    
+            file.previewElement.remove();  
         }
 
     })

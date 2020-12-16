@@ -81,13 +81,6 @@ def GetTagsData(question_obj):
 
     return tag_data
 
-def GetTagsData(question_obj):
-    tag_list = list(map(str, question_obj.tags.all()))    
-    tag_data = ",".join(tag_list)
-    
-
-    return tag_data
-
 def GetUniqueSlug(artTitle):
     slug = slugify(artTitle.replace('ı', 'i').replace('ə', 'e').replace('ş', 's').replace('ç', 'c').replace('ğ', 'g').replace('ü', 'u').replace('ö', 'o'))
     ran = randrange(10000, 99999)
