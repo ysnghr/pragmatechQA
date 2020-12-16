@@ -1,0 +1,16 @@
+{% if results|length %}
+    <ul>
+        {% for question in results %}
+            <li>
+                <a href="{% url 'single_topic' slug=question.slug %}">
+                    <h6 class="tt-title">{{ question.title }}</h6>
+                    <div class="tt-description">{{ question.content|safe }}</div>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+	<div class="d-flex justify-content-center">
+	Sizin axtarış nəticə vermədi!
+	</div>
+{% endif %}
