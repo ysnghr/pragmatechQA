@@ -34,6 +34,29 @@ Pragmatech Education Center daxilindəki tələbələrin dərslə bağlı sualla
 
 ### Asılılıqlar
 
+Proyekti çalışdırmaq üçün ilk olaraq mysql-də schema yaratmaq lazımdır.
+
+```CREATE SCHEMA `pragmatechqa` DEFAULT CHARACTER SET utf8 ;```
+
+Bundan sonra isə database.cnf faylında database-in məlumatları yazılmalıdır.
+
+```
+[client]
+database = pragmatechqa
+host = localhost
+user = DB-USER
+password = DB-PASSWORD
+default-character-set = utf8
+```
+
+Sonra is' django migration kommandları çalışdırılmalıdır.
+```
+python manage.py makemigrations
+```
+```
+python manage.py migrate
+```
+
 Proyektin asılı olduğu plugin və frameworkləri requirements.txt faylında daha ətraflı görə bilərsiz.
 * asgiref==3.3.1
 * certifi==2020.12.5

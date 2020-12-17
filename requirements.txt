@@ -10,6 +10,7 @@ django-js-asset==1.2.2
 django-remember-me==0.1.1
 django-taggit==1.3.0
 idna==2.10
+mysqlclient==2.0.2
 Pillow==8.0.1
 pytz==2020.4
 requests==2.25.0

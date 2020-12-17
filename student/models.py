@@ -10,7 +10,30 @@ from taggit.models import Tag
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
 import os
+from django.core import mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+import requests
+
+auth = ('admin', 'admin123')
+
 # Create your models here.
+
+class Role(models.Model):
+    """Model definition for Role."""
+
+    name = models.CharField(verbose_name="Ad", max_length=50)
+
+    class Meta:
+        """Meta definition for Role."""
+
+        verbose_name = 'Role'
+        verbose_name_plural = 'Roles'
+
+    def __str__(self):
+        """Unicode representation of Role."""
+        return self.name
+
 
 class TagInfo(models.Model):
     tag = models.OneToOneField(Tag, on_delete=models.CASCADE) 
@@ -48,10 +71,11 @@ class Student(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)    
     picture = models.ImageField(verbose_name=("Şəkil"), upload_to='profile_images', default="profile_images/default.jpg")
-    study_group = models.ForeignKey(StudyGroup ,verbose_name=("Qrup"), on_delete = models.PROTECT)
+    study_group = models.ForeignKey(StudyGroup ,verbose_name=("Qrup"), on_delete = models.PROTECT, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     level = models.IntegerField(default=0)
+    roles = models.ManyToManyField(Role)
 
     class Meta:
         """Meta definition for Student."""
@@ -69,6 +93,26 @@ class Student(models.Model):
             for tag in question.tags.all():
                 ans[tag] = ans.setdefault(tag, 0) + 1
         return ans
+
+    def add_study_group(self, person):
+        if StudyGroup.objects.filter(id=person.get('group_id')).first():
+            self.study_group = StudyGroup.objects.filter(id=person.get('group_id')).first()
+        else:
+            group = dict(requests.post('http://157.230.220.111/api/group', data={"id":person.get('group_id')}, auth=auth).json())
+            StudyGroup(id = person.get('group_id'), name = group.get('name')).save()
+            self.study_group = StudyGroup.objects.filter(id=person.get('group_id')).first()
+        self.save()
+
+    def add_roles(self, roles):
+        for i in roles:
+            if Role.objects.filter(id=i).first():
+                self.roles.add(Role.objects.filter(id=i).first())
+            else:
+                role_dict = dict(requests.post('http://157.230.220.111/api/role', data={"id":i}, auth=auth).json())
+                role = Role(id = role_dict.get('id'), name = role_dict.get('name'))
+                role.save()
+                self.roles.add(role)
+        self.save()
 
     def save(self):
         super().save()
@@ -317,7 +361,11 @@ class Comment(models.Model):
             self.action_set.filter(action_type = action_num).filter(student = stud).delete() 
         return action_num
 
-
+    def send_message(self, new_comment):
+        html_message = render_to_string('notifications/notification.html', {'eachComment': new_comment})
+        mail.send_mail(subject = 'PragmatechQA Hesab Bildirişi', message = strip_tags(html_message), from_email = 'Pragmatech <soltanov.tarlan04@gmail.com>', recipient_list=[new_comment.question.student.user.email], html_message=html_message)
+        return html_message
+    
     def __str__(self):
         """Unicode representation of Comment."""
         return f'Q:/{self.question.title} / - C:/{self.content[0:20]}.../'

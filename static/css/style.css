@@ -568,11 +568,20 @@ a {
 	background-color: transparent;
 	text-decoration: none;
 	outline: 0;
-	color: #2172cd
+	color: #3BAF6F;
+	font-weight: bold;
+}
+
+.logo-color{
+	background-color: #3BAF6F !important;
+}
+
+.logo-color-text{
+	color: #3BAF6F !important;
 }
 
 a:hover {
-	color: #0056b3;
+	color: #3BAF6F;
 	outline: 0;
 	text-decoration: none
 }
@@ -5087,7 +5096,7 @@ textarea:focus:-ms-input-placeholder {
 }
 
 .form-default .form-control:focus {
-	border-color: #2172cd
+	border-color: #3BAF6F
 }
 
 .form-default .pt-required {
@@ -5194,7 +5203,7 @@ textarea:focus:-ms-input-placeholder {
 }
 
 .checkbox-group:hover label {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .checkbox-group input[type=checkbox] {
@@ -5247,7 +5256,7 @@ select:disabled.simple-control::-ms-expand {
 }
 
 .custom-select-01 select:hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .custom-select-01::after,
@@ -5405,7 +5414,7 @@ hr {
 }
 
 .tt-btn-icon:hover .tt-icon {
-	fill: #2172cd
+	fill: #3BAF6F
 }
 
 .btn {
@@ -5454,7 +5463,7 @@ hr {
 }
 
 .btn.btn-secondary {
-	background-color: #2172cd;
+	background-color: #3BAF6F;
 	color: #fff
 }
 
@@ -5519,7 +5528,7 @@ hr {
 .tt-underline {
 	position: relative;
 	display: inline-block;
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-underline:before {
@@ -5541,11 +5550,11 @@ hr {
 }
 
 .tt-underline:not([class^=tt-color-]):before {
-	background: #2172cd
+	background: #3BAF6F
 }
 
 .tt-underline:not([class^=tt-color-]):hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-underline.tt-color-dark {
@@ -5584,15 +5593,15 @@ hr {
 }
 
 .tt-underline-02:not([class^=tt-color-]) {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-underline-02:not([class^=tt-color-]):before {
-	background: #2172cd
+	background: #3BAF6F
 }
 
 .tt-underline-02:not([class^=tt-color-]):hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-underline-02.tt-color-dark {
@@ -5650,12 +5659,12 @@ hr {
 }
 
 .tt-icon-btn:hover .tt-text {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-icon-btn:hover .tt-icon svg,
 .tt-icon-btn:hover .tt-icon svg path {
-	fill: #2172cd
+	fill: #3BAF6F
 }
 
 .tt-icon-btn:hover.tt-hover-02 .tt-text {
@@ -5813,7 +5822,7 @@ hr {
 
 .tt-button-icon.active,
 .tt-button-icon:hover {
-	border-color: #2172cd
+	border-color: #3BAF6F
 }
 
 @media (max-width:767px) {
@@ -6127,7 +6136,7 @@ hr {
 		margin-left: 0
 	}
 	#tt-header .tt-account-btn [class^=btn]:hover {
-		color: #2172cd
+		color: #3BAF6F
 	}
 }
 
@@ -6208,7 +6217,7 @@ hr {
 	left: 0;
 	right: 0;
 	z-index: 10;
-	background-color: #2172cd;
+	background-color: #3BAF6F;
 	-webkit-transition: width .2s linear;
 	transition: width .2s linear
 }
@@ -6329,7 +6338,7 @@ hr {
 }
 
 .tt-search .tt-search__btn:hover .tt-icon {
-	fill: #2172cd
+	fill: #3BAF6F
 }
 
 .tt-search .tt-search__close {
@@ -6351,7 +6360,7 @@ hr {
 }
 
 .tt-search .tt-search__close:hover .tt-icon {
-	fill: #2172cd
+	fill: #3BAF6F
 }
 
 .tt-search .search-form {
@@ -6410,7 +6419,7 @@ hr {
 }
 
 .tt-search .search-results ul li a:hover .tt-title {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-search .search-results ul li .tt-description {
@@ -6475,7 +6484,7 @@ hr {
 }
 
 .tt-search-toggle:hover .tt-icon {
-	fill: #2172cd
+	fill: #3BAF6F
 }
 
 .tt-search-toggle:focus {
@@ -6525,7 +6534,7 @@ hr {
 }
 
 .toggle-mobile-menu:hover .tt-icon {
-	fill: #2172cd
+	fill: #3BAF6F
 }
 
 .tt-user-info select {
@@ -6587,7 +6596,7 @@ hr {
 }
 
 .panel-menu ul li a:hover {
-	color: #2172cd;
+	color: #3BAF6F;
 	background: 0 0
 }
 
@@ -6601,12 +6610,12 @@ hr {
 }
 
 .panel-menu #mm0.mmpanel a:not(.mm-close):hover {
-	color: #2172cd;
+	color: #3BAF6F;
 	background-color: transparent
 }
 
 .panel-menu #mm0.mmpanel a:not(.mm-close):hover:after {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .panel-menu #mm0.mmpanel .mm-next-level:after {
@@ -6639,13 +6648,13 @@ hr {
 .panel-menu .mm-close:hover,
 .panel-menu .mm-next-level:hover,
 .panel-menu .mm-prev-level:hover {
-	color: #2172cd;
+	color: #3BAF6F;
 	background-color: transparent
 }
 
 .panel-menu .mm-close:hover:before .mm-prev-level:hover:before,
 .panel-menu .mm-next-level:hover:after {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .panel-menu li.mm-close-parent {
@@ -6673,12 +6682,12 @@ hr {
 }
 
 .panel-menu li.mm-close-parent .mm-close:hover {
-	color: #2172cd;
+	color: #3BAF6F;
 	background-color: transparent
 }
 
 .panel-menu li.mm-close-parent .mm-close:hover svg {
-	fill: #2172cd
+	fill: #3BAF6F
 }
 
 .panel-menu .mm-prev-level {
@@ -6699,12 +6708,12 @@ hr {
 }
 
 .panel-menu .mm-prev-level:hover {
-	color: #2172cd;
+	color: #3BAF6F;
 	background-color: transparent
 }
 
 .panel-menu .mm-prev-level:hover:before {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .panel-menu .mm-next-level {
@@ -6722,12 +6731,12 @@ hr {
 }
 
 .panel-menu .mm-next-level:hover {
-	color: #2172cd;
+	color: #3BAF6F;
 	background-color: transparent
 }
 
 .panel-menu .mm-next-level:hover:after {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .panel-menu .mm-original-link {
@@ -6742,12 +6751,12 @@ hr {
 }
 
 .panel-menu .mm-original-link:hover {
-	color: #2172cd;
+	color: #3BAF6F;
 	background-color: transparent
 }
 
 .panel-menu .mm-original-link:hover:before {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .mm-open {
@@ -6981,7 +6990,7 @@ hr {
 
 .tt-topic-list .tt-topic-alert.tt-alert-default {
 	background-color: #d1e4f9;
-	border-left: 2px solid #2172cd
+	border-left: 2px solid #3BAF6F
 }
 
 .tt-topic-list .tt-topic-alert.tt-alert-default a {
@@ -7207,7 +7216,7 @@ hr {
 }
 
 .tt-topic-list .tt-item .tt-col-description .tt-title a:hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-topic-list .tt-item .tt-col-description .tt-title .tt-icon {
@@ -7521,7 +7530,7 @@ hr {
 }
 
 .tt-single-topic .tt-item-header .tt-item-info.info-top .tt-avatar-title a:hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-single-topic .tt-item-header .tt-item-info.info-top .tt-info-time {
@@ -7556,7 +7565,7 @@ hr {
 }
 
 .tt-single-topic .tt-item-header .tt-item-title a:hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-single-topic .tt-item-header .tt-item-tag {
@@ -7591,7 +7600,7 @@ hr {
 }
 
 .tt-single-topic .tt-item-description .tt-title a:hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-single-topic .tt-item-description img {
@@ -7614,7 +7623,7 @@ hr {
 
 .tt-single-topic .tt-item-description .topic-inner {
 	background-color: #f7f8fa;
-	border-left: 2px solid #2172cd;
+	border-left: 2px solid #3BAF6F;
 	padding: 30px 43px 22px 28px
 }
 
@@ -7653,7 +7662,7 @@ hr {
 }
 
 .tt-single-topic .tt-item-description .topic-inner .topic-inner-title .topic-inner-title a:hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-single-topic .tt-item-description .pt-gallery-layout {
@@ -8279,7 +8288,7 @@ hr {
 }
 
 .modal .modal-content .tt-modal-title .pt-close-modal:hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .modal .modal-content .form-default .form-group {
@@ -8415,7 +8424,7 @@ html.ie.gecko body.modal-open {
 }
 
 .tt-modal-confirmation .tt-option-btn:hover .btn {
-	background-color: #2172cd;
+	background-color: #3BAF6F;
 	color: #fff
 }
 
@@ -8489,7 +8498,7 @@ html.ie.gecko body.modal-open {
 }
 
 .tt-modal-level-up .tt-option-btn:hover .btn {
-	background-color: #2172cd;
+	background-color: #3BAF6F;
 	color: #fff
 }
 
@@ -8593,7 +8602,7 @@ html.ie.gecko body.modal-open {
 }
 
 .tt-popup-settings .tt-btn-col-close a:hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-popup-settings .tt-btn-col-close a:hover .tt-icon-close svg {
@@ -8752,7 +8761,7 @@ html.ie.gecko body.modal-open {
 }
 
 .tt-user-header .tt-col-title .tt-title a:hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-user-header .tt-col-title>:not(:first-child) {
@@ -8850,11 +8859,11 @@ html.ie.gecko body.modal-open {
 
 .tt-tab-wrapper .nav-tabs .nav-item a.active,
 .tt-tab-wrapper .nav-tabs .nav-item a:hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-tab-wrapper .nav-tabs .nav-item a.active span:after {
-	background-color: #2172cd
+	background-color: #3BAF6F
 }
 
 .tt-tab-wrapper .nav-tabs .nav-item:first-child a {
@@ -8999,7 +9008,7 @@ html.ie.gecko body.modal-open {
 }
 
 .pt-editor .pt-edit-btn .btn-icon:hover {
-	fill: #2172cd
+	fill: #3BAF6F
 }
 
 .pt-editor .pt-edit-btn hr {
@@ -9185,7 +9194,7 @@ html.ie.gecko body.modal-open {
 	position: absolute;
 	bottom: 0;
 	left: 0;
-	width: 160px;
+	width: 100%;
 	height: 1px;
 	background-color: #e2e7ea
 }
@@ -9208,7 +9217,6 @@ html.ie.gecko body.modal-open {
 }
 
 .tt-loginpages .tt-block-title:hover .tt-title {
-	color: #2172cd
 }
 
 .tt-loginpages .tt-description {
@@ -9361,7 +9369,7 @@ html.ie.gecko body.modal-open {
 }
 
 .tt-categories-list .tt-item .tt-item-header .tt-title a:hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-categories-list .tt-item .tt-item-layout .tt-title {
@@ -9902,7 +9910,7 @@ html.ie.gecko body.modal-open {
 }
 
 .tt-followers-list .tt-item .tt-col-description ul li a:hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-followers-list .tt-item .tt-col-merged {
@@ -10125,7 +10133,7 @@ html.ie.gecko body.modal-open {
 }
 
 .tt-messages-layout .tt-title-content .tt-toggle-aside:hover {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 @media (max-width:767px) {
@@ -10302,7 +10310,7 @@ html.ie.gecko body.modal-open {
 }
 
 .tt-all-avatar .tt-box-search .tt-btn-input:hover {
-	fill: #2172cd
+	fill: #3BAF6F
 }
 
 .tt-all-avatar .tt-box-search .tt-btn-icon {
@@ -10323,7 +10331,7 @@ html.ie.gecko body.modal-open {
 }
 
 .tt-all-avatar .tt-box-search .tt-btn-icon:hover {
-	fill: #2172cd
+	fill: #3BAF6F
 }
 
 .tt-all-avatar .tt-list-avatar {
@@ -10438,7 +10446,7 @@ html.ie.gecko body.modal-open {
 }
 
 .tt-all-avatar .tt-list-avatar .tt-item .tt-col-description .tt-message.tt-select {
-	color: #2172cd
+	color: #3BAF6F
 }
 
 .tt-all-avatar .tt-list-avatar .tt-item:nth-child(odd) {
@@ -10463,7 +10471,7 @@ html.ie.gecko body.modal-open {
 }
 
 .tt-all-avatar .tt-list-avatar .tt-item:hover:before {
-	background-color: #2172cd
+	background-color: #3BAF6F
 }
 
 .tt-all-avatar .tt-list-avatar .tt-item:hover .tt-col-description .tt-title span:before {
@@ -10683,7 +10691,7 @@ html.ie.gecko body.modal-open {
    .accordian .contentBx .label{
        position: relative;
        padding: 10px;
-       background: #2172cd;
+       background: #3BAF6F;
        color: #fff;
        cursor: pointer;
    }

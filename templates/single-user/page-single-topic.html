@@ -11,9 +11,10 @@
 <link href="{% static 'css/lightbox.css' %}" rel="stylesheet" />
 
 <style>
-    .action_active{
-        fill: #2c62a0 !important;
-    }
+
+.action_active{
+    fill: #3BAF6F !important;
+}
 
     .dz{
         border: dashed !important;
@@ -55,7 +56,13 @@
                                 <img src="{{ question.student.picture.url }}" alt="" style="width: 40px; height: 40px; border-radius: 50%">
                             </div>
                             <div class="tt-avatar-title">
-                               <a href="#">{{question.student.user.get_full_name}}</a>                               
+
+                               <a href="#">{{question.student.user.get_full_name}}</a>
+                               <ul class="tt-list-badge">
+                                    {% for role in request.user.student.roles.all %}
+                                        <li><a href="#"><span class="tt-color0{{ role.id }} tt-badge">{{ role }}</span></a></li>
+                                    {% endfor %}
+                                </ul>
                             </div>
                             
                             <div class="tt-info-time">
@@ -69,7 +76,7 @@
                             <ul class="tt-list-badge">
                                 {% for tag in question.tags.all %} 
                                     <li><a href="{% url 'single_tag' slug=tag.slug %}"><span class="tt-badge">{{ tag.name }}</span></a></li>
-                                {% endfor %} 
+                                {% endfor %}
                             </ul>
                         </div>
                     </div>
@@ -88,11 +95,11 @@
                     </div>
                     <div class="tt-item-info info-bottom">
                         <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'question', 'like', 'question_vote');">
-                            <i class="tt-icon"><svg label='question' class="like_{{question.id}}"{% if question|question_upvote_check:student %}style="fill:#2c62a0;"{% endif %}><use xlink:href="#icon-like"></use></svg></i>
+                            <i class="tt-icon"><svg label='question' class="like_{{question.id}}"{% if question|question_upvote_check:student %}style="fill:#3BAF6F;"{% endif %}><use xlink:href="#icon-like"></use></svg></i>
                             <span label='question'  class="tt-text like_{{question.id}}_count">{{ question.get_upvote }}</span>
                         </a>
                         <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'question', 'dislike', 'question_vote');" >
-                             <i  class="tt-icon"><svg label='question' class="dislike_{{question.id}}"{% if question|question_downvote_check:student %}style="fill:#2c62a0;"{% endif %}><use xlink:href="#icon-dislike"></use></svg></i>
+                             <i  class="tt-icon"><svg label='question' class="dislike_{{question.id}}"{% if question|question_downvote_check:student %}style="fill:#3BAF6F;"{% endif %}><use xlink:href="#icon-dislike"></use></svg></i>
                             <span label='question' class="tt-text dislike_{{question.id}}_count">{{ question.get_downvote }}</span>
                         </a>
                         <div class="col-separator"></div>
@@ -169,7 +176,7 @@
                         <div class="tt-item-info info-bottom">
                             <!-- Upvote(like) -->
                             <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'comment', 'like', 'comment_vote', {{eachComment.id}});">                               
-                                <svg label='comment' class=" like_{{eachComment.id}}" {% if eachComment|comment_upvote_check:student %}style="fill:#2c62a0; " {% else %} style='fill:#666f74;' {% endif %} width="36" height="36" viewBox="0 0 36 36">
+                                <svg label='comment' class=" like_{{eachComment.id}}" {% if eachComment|comment_upvote_check:student %}style="fill:#3BAF6F; " {% else %} style='fill:#666f74;' {% endif %} width="36" height="36" viewBox="0 0 36 36">
                                     <path d="M2 26h32L18 10 2 26z"></path>
                                 </svg>                               
                             </a>
@@ -177,7 +184,7 @@
                             <span label='comment' style="color: #666f74; font-size: 20px; padding: 2px 20px 0px 20px;" class="vote_result_{{eachComment.id}}"> {{ eachComment.get_upvote|subtract:eachComment.get_downvote }}</span>
                             <!-- Downvote(dislike) -->
                             <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'comment', 'dislike', 'comment_vote', {{eachComment.id}});" >                             
-                                <svg label='comment' class=" dislike_{{eachComment.id}}" {% if eachComment|comment_downvote_check:student %}style="fill:#2c62a0; " {% else %} style='fill:#666f74;' {% endif %} width="36" height="36" viewBox="0 0 36 36">
+                                <svg label='comment' class=" dislike_{{eachComment.id}}" {% if eachComment|comment_downvote_check:student %}style="fill:#3BAF6F; " {% else %} style='fill:#666f74;' {% endif %} width="36" height="36" viewBox="0 0 36 36">
                                     <path d="M2 10h32L18 26 2 10z"></path>
                                 </svg>                                
                             </a>

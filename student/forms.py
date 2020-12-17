@@ -78,8 +78,10 @@ class EmailForm(forms.Form):
     email = forms.EmailField(required=True, error_messages = {'invalid': 'Zəhmət olmasa düzgün email daxil edin!'})
     
     def clean_email(self):
-        email = self.cleaned_data['email']        
-        if requests.post('http://157.230.220.111/api/student', data={"email":email}, auth=('admin', 'admin123')).json() is None:
+        email = self.cleaned_data['email']
+        auth = ('admin', 'admin123')
+        print(requests.post('http://157.230.220.111/api/person', data={"email":email}, auth=auth).json())
+        if requests.post('http://157.230.220.111/api/person', data={"email":email}, auth=auth).json() is None:
             raise ValidationError("Bu email Pragmatech-in sistemində tapılmadı.")
         if User.objects.filter(email=email).first():
             raise ValidationError("Bu email ilə artıq qeydiyyatdan keçilib.")
