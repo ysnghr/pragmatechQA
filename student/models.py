@@ -106,7 +106,7 @@ class Student(models.Model):
                 self.roles.add(Role.objects.filter(id=i).first())
             else:
                 role_dict = dict(requests.post('http://157.230.220.111/api/role', data={"id":i}, auth=auth).json())
-                role = Role(id = role_dict.get('id'), name = role_dict.get('name'))
+                role = Role(id = i, name = role_dict.get('name'))
                 role.save()
                 self.roles.add(role)
         self.save()

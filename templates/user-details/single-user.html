@@ -34,7 +34,7 @@
                     </div>
                     <ul class="tt-list-badge">
                         <li><a href="#"><span class="tt-color14 tt-badge">LVL : {{student.level}}</span></a></li>
-                        {% for role in request.user.student.roles.all %}
+                        {% for role in student.roles.all %}
                             <li><a href="#"><span class="tt-color0{{ role.id }} tt-badge">{{ role }}</span></a></li>
                         {% endfor %}
                     </ul>

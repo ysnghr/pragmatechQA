@@ -305,7 +305,7 @@ def login_view(request):
             password = form.cleaned_data.get('password')
             user = User.objects.filter(username = username).first()
             person = requests.post('http://157.230.220.111/api/person', data={"email": user.email}, auth=auth).json()
-            if not person or dict(person).get('type')!=1:
+            if not person or ('Tələbə' in dict(person).get('roles') and dict(person).get('type')!=1):
                 messages.error(request, "Sizin emailiniz Pragmatech sistemindən silinmişdir! \
                     Əgər emailinizi dəyişmisinizsə zəhmət olmasa yeni email ilə yenidən qeydiyyatdan keçin", extra_tags='danger')
                 return redirect('login')
@@ -331,7 +331,9 @@ def register(request):
         if form.is_valid():
             # Getting persons data and creating username and random password
             person = dict(requests.post('http://157.230.220.111/api/person', data={"email":form.cleaned_data.get('email')}, auth=auth).json())
-            username = person.get('name').lower()+'-'+person.get('surname')[0].lower()+person.get('father_name')[0].lower()
+            username = person.get('name').lower()+'-'+person.get('surname')[0].lower()
+            if person.get('father_name'):
+                username+=person.get('father_name')[0].lower()
             password = ''.join([random.choice(password_characters) for i in range(12)])
 
             # Checking users with that username

@@ -24,12 +24,12 @@
     <div class="container">
         <div class="tt-loginpages-wrapper">
             <div class="tt-loginpages">
-                <a href="{% url 'student-home' %}" class="tt-block-title">
-                    <img src="{% static 'images/app_images/logo.png' %}" alt="">
-                    <div class="tt-title">
+                <div class="tt-block-title tex-center">
+                    <img src="{% static 'images/app_images/logo-lg.png' %}" alt="" class="col-12">
+                    <div class="tt-title text-center col-12">
                         PragmatechQA
                     </div>
-                </a>
+                </div>
                 <form class="form-default" method="post" action="" enctype="multipart/form-data">
                     {% csrf_token %} 
                     
