@@ -11,7 +11,7 @@ from taggit.models import Tag
 from itertools import chain
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout, login
-from student.decorators import picture_required
+from student.decorators import *
 from django.core import mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -294,7 +294,7 @@ def user_tags(request, id):
         template = page_template
     return render(request, template, context)
 
-
+@logout_required
 def login_view(request):
     form = LoginForm(request.POST or None)
     if request.method == "POST":
@@ -321,7 +321,7 @@ def login_view(request):
         request.session.set_test_cookie()
     return render(request, "auth/login.html", {"form": form})
 
-
+@logout_required
 def register(request):
     form = EmailForm(request.POST or None)
     context = {'form':form}

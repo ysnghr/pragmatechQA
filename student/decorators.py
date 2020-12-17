@@ -8,3 +8,10 @@ def picture_required(function):
             return redirect('user_picture')
         return function(request, *args, **kwargs)
     return _function
+
+def logout_required(function):
+    def _function(request,*args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('student-home')
+        return function(request, *args, **kwargs)
+    return _function
