@@ -140,6 +140,8 @@ def question_detail(request, slug):
                     student.level +=1
                     student.save()
                     new_comment = commentForm.save()
+                    if new_comment.student!= new_comment.question.student:
+                        new_comment.send_message(new_comment)
                     if((len(request.FILES) == 1) and (request.FILES['file[0]'].name == 'blob')):
                         pass
                     else:
@@ -300,7 +302,7 @@ def login_view(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = User.objects.filter(username = username).first()
-            person = requests.post('http://157.230.220.111/api/student', data={"email": user.email}, auth=('admin', 'admin123')).json()
+            person = requests.post('http://157.230.220.111/api/person', data={"email": user.email}, auth=('admin', 'admin123')).json()
             if not person or dict(person).get('type')!=1:
                 messages.error(request, "Sizin emailiniz Pragmatech sistemindən silinmişdir! \
                     Əgər emailinizi dəyişmisinizsə zəhmət olmasa yeni email ilə yenidən qeydiyyatdan keçin", extra_tags='danger')
@@ -325,11 +327,11 @@ def register(request):
     context = {'form':form}
     if request.method == "POST":
         if form.is_valid():
-            person = dict(requests.post('http://157.230.220.111/api/student', data={"email":form.cleaned_data.get('email')}, auth=('admin', 'admin123')).json())
+            person = dict(requests.post('http://157.230.220.111/api/person', data={"email":form.cleaned_data.get('email')}, auth=('admin', 'admin123')).json())
             username = person.get('name').lower()+'-'+person.get('surname')[0].lower()+person.get('father_name')[0].lower()
             old_user = User.objects.filter(username__contains = username).last()
             if old_user:
-                old_person = requests.post('http://157.230.220.111/api/student', data={"email":old_user.email}, auth=('admin', 'admin123')).json()
+                old_person = requests.post('http://157.230.220.111/api/person', data={"email":old_user.email}, auth=('admin', 'admin123')).json()
                 if not old_person:
                     new_password = ''.join([random.choice(password_characters) for i in range(12)])
                     old_user.set_password(new_password)

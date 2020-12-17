@@ -7,6 +7,9 @@ from taggit.managers import TaggableManager
 from ckeditor.fields import  RichTextField
 from django.contrib.auth.models import User
 from taggit.models import Tag
+from django.core import mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 # Create your models here.
 
@@ -231,7 +234,11 @@ class Comment(models.Model):
             self.action_set.filter(action_type = action_num).filter(student = stud).delete() 
         return action_num
 
-
+    def send_message(self, new_comment):
+        html_message = render_to_string('notifications/notification.html', {'eachComment': new_comment})
+        mail.send_mail(subject = 'PragmatechQA Hesab Bildirişi', message = strip_tags(html_message), from_email = 'Pragmatech <soltanov.tarlan04@gmail.com>', recipient_list=[new_comment.question.student.user.email], html_message=html_message)
+        return html_message
+    
     def __str__(self):
         """Unicode representation of Comment."""
         return f'Q:/{self.question.title} / - C:/{self.content[0:20]}.../'
