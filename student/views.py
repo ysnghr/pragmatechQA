@@ -429,3 +429,6 @@ def advanced_search(request):
     if request.is_ajax():
         template = page_template
     return render(request, template, context)
+
+def error_404(request, exception):
+    return render(request, 'error_pages/error404.html', context={})
