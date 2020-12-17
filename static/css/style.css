@@ -576,6 +576,10 @@ a {
 	background-color: #3BAF6F !important;
 }
 
+.logo-color-text{
+	color: #3BAF6F !important;
+}
+
 a:hover {
 	color: #3BAF6F;
 	outline: 0;

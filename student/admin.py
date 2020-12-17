@@ -16,6 +16,7 @@ class TagAdminExtend(TagAdmin):
 admin.site.unregister(Tag)
 admin.site.register(Tag, TagAdminExtend)
 admin.site.register(Student)
+admin.site.register(Role)
 
 class SettingAdmin(admin.ModelAdmin):
 

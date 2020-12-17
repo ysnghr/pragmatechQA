@@ -48,6 +48,11 @@
                             </div>
                             <div class="tt-avatar-title">
                                <a href="#">{{question.student.user.get_full_name}}</a>
+                               <ul class="tt-list-badge">
+                                    {% for role in request.user.student.roles.all %}
+                                        <li><a href="#"><span class="tt-color0{{ role.id }} tt-badge">{{ role }}</span></a></li>
+                                    {% endfor %}
+                                </ul>
                             </div>
                             <div class="tt-info-time">
                                 <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>{{question.created|date:"d F, Y" }}
