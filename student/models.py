@@ -7,6 +7,9 @@ from taggit.managers import TaggableManager
 from ckeditor.fields import  RichTextField
 from django.contrib.auth.models import User
 from taggit.models import Tag
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
+import os
 from django.core import mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -165,7 +168,7 @@ class Question(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, default = 1) # Bu Tes ucundur Productionda silinecek.
     view = models.IntegerField(verbose_name="Baxış sayı", default = 0 )
     created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    updated = models.DateTimeField(auto_now_add=True)   
     slug = models.SlugField(unique=True, editable=False, max_length=130)
     answer =  models.IntegerField(verbose_name="Cavab Commentin İDsi", null=True)
 
@@ -217,6 +220,87 @@ class Question(models.Model):
             self.slug = self.get_unique_slug()
         return super(Question, self).save(*args, **kwargs)
 
+    def filter_comments(self):
+        filtered_comments = []
+        tempComments = list(self.comment_set.all())
+        
+        # Eger sualin cavabi varsa 1 - ci yere push edir
+        if(Comment.objects.filter(id = self.answer).exists()):
+            filtered_comments.append(Comment.objects.filter(id = self.answer).first())
+
+        for i in range(0, len(tempComments)):
+            if(tempComments[i].id == self.answer):
+                continue
+            max = tempComments[i]
+            max_index = i
+            for j in range(i, len(tempComments)):
+                if(tempComments[j].id == self.answer):
+                    continue
+                if((max.get_upvote() - max.get_downvote()) < (tempComments[j].get_upvote() - tempComments[j].get_downvote() )):
+                    max = tempComments[j]
+                    max_index = j
+            temp = tempComments[i]
+            tempComments[i] = max
+            filtered_comments.append(max)
+            tempComments[max_index] = temp
+
+        return filtered_comments
+
+    def get_images_data(self):
+        image_list = list(self.questionimage_set.all())
+        
+        mockFiles = []
+        file_urls =[]
+
+        for eachImage in image_list:
+            mockFiles.append({
+                'name': os.path.basename(eachImage.image.name),
+                'size': eachImage.image.size,  
+                'type' : 'image/jpeg',          
+            })
+
+            file_urls.append(eachImage.image.url)
+
+        return (mockFiles, file_urls)
+
+    def get_previous_images(self):
+        image_list = list(self.questionimage_set.all())    
+        temp = []
+
+        for eachImage in image_list:
+            temp.append({
+                'image_object': eachImage,
+                'image_url': eachImage.image.url,        
+            })
+
+        return temp
+
+    def get_tags(self):
+        tag_list = list(map(str, self.tags.all()))    
+        tag_data = ",".join(tag_list)
+        
+        return tag_data
+
+    def get_info(self):
+        comment_images = self.commentimage_set.all()
+
+        comment_image_info = []
+        comment_images_urls =[]
+
+        for eachImage in comment_images:
+            comment_image_info.append({
+                'name': os.path.basename(eachImage.image.name),
+                'size': eachImage.image.size,  
+                'type': 'image/jpeg',          
+            })
+            comment_images_urls.append(eachImage.image.url)
+
+        comment_data = {}
+        comment_data['content'] = self.content
+        comment_data['comment_image_info'] = comment_image_info
+        comment_data['comment_images_urls'] = comment_images_urls
+
+        return comment_data
 
 class QuestionImage(models.Model):
     """Model definition for QuestionImage."""
@@ -235,7 +319,10 @@ class QuestionImage(models.Model):
         """Unicode representation of QuestionImage."""
         return f'[ {self.question.title} ] - {self.image.name}'
     
-   
+@receiver(post_delete, sender = QuestionImage)
+def submission_delete(sender, instance, **kwargs):
+    instance.image.delete(False) 
+
 class Comment(models.Model):
     """Model definition for Comment."""
 
@@ -283,6 +370,18 @@ class Comment(models.Model):
         """Unicode representation of Comment."""
         return f'Q:/{self.question.title} / - C:/{self.content[0:20]}.../'
 
+    def get_previous_images(self):
+        comment_images = self.commentimage_set.all()
+        temp = []
+
+        for eachImage in comment_images:
+            temp.append({
+                'image_object': eachImage,
+                'image_url': eachImage.image.url,        
+            })
+
+        return temp
+
 
 class CommentImage(models.Model):
     """Model definition for CommentImage."""
@@ -308,6 +407,9 @@ class CommentImage(models.Model):
     def get_upvote(self):
         return len(self.action_set.filter(action_type = 1).all())
 
+@receiver(post_delete, sender = CommentImage)
+def submission_delete(sender, instance, **kwargs):
+    instance.image.delete(False) 
 
 class Action(models.Model):
     """Model definition for Action."""
@@ -337,3 +439,5 @@ class Action(models.Model):
     def __str__(self):
         """Unicode representation of Action."""
         return self.get_action_type_display()
+
+
