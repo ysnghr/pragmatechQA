@@ -11,7 +11,7 @@ from taggit.models import Tag
 from itertools import chain
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout, login
-from student.decorators import picture_required
+from student.decorators import *
 from django.core import mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -22,6 +22,7 @@ import datetime
 
 password_characters = string.ascii_letters + string.digits + string.punctuation
 
+auth = ('admin', 'admin123')
 
 @login_required
 @picture_required
@@ -70,6 +71,7 @@ def tag_info(request, slug):
 @picture_required
 def about(request):
     context={
+        'roles': Role.objects.all(),
         'students': Student.objects.all().order_by('level')[0:10],
     }
     return render(request, 'main_page/about.html', context)
@@ -294,7 +296,7 @@ def user_tags(request, id):
         template = page_template
     return render(request, template, context)
 
-
+@logout_required
 def login_view(request):
     form = LoginForm(request.POST or None)
     if request.method == "POST":
@@ -302,7 +304,7 @@ def login_view(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = User.objects.filter(username = username).first()
-            person = requests.post('http://157.230.220.111/api/person', data={"email": user.email}, auth=('admin', 'admin123')).json()
+            person = requests.post('http://157.230.220.111/api/person', data={"email": user.email}, auth=auth).json()
             if not person or dict(person).get('type')!=1:
                 messages.error(request, "Sizin emailiniz Pragmatech sistemindən silinmişdir! \
                     Əgər emailinizi dəyişmisinizsə zəhmət olmasa yeni email ilə yenidən qeydiyyatdan keçin", extra_tags='danger')
@@ -321,42 +323,51 @@ def login_view(request):
         request.session.set_test_cookie()
     return render(request, "auth/login.html", {"form": form})
 
-
+@logout_required
 def register(request):
     form = EmailForm(request.POST or None)
     context = {'form':form}
     if request.method == "POST":
         if form.is_valid():
-            person = dict(requests.post('http://157.230.220.111/api/person', data={"email":form.cleaned_data.get('email')}, auth=('admin', 'admin123')).json())
+            # Getting persons data and creating username and random password
+            person = dict(requests.post('http://157.230.220.111/api/person', data={"email":form.cleaned_data.get('email')}, auth=auth).json())
             username = person.get('name').lower()+'-'+person.get('surname')[0].lower()+person.get('father_name')[0].lower()
+            password = ''.join([random.choice(password_characters) for i in range(12)])
+
+            # Checking users with that username
             old_user = User.objects.filter(username__contains = username).last()
+            check = 0
             if old_user:
-                old_person = requests.post('http://157.230.220.111/api/person', data={"email":old_user.email}, auth=('admin', 'admin123')).json()
+                old_person = requests.post('http://157.230.220.111/api/person', data={"email":old_user.email}, auth=auth).json()
+                # If Person changed email 
                 if not old_person:
-                    new_password = ''.join([random.choice(password_characters) for i in range(12)])
-                    old_user.set_password(new_password)
+                    old_user.set_password(password)
                     old_user.email = person.get('email')
                     old_user.save()
-                    html_message = render_to_string('auth/verification.html', {'username': old_user.username, 'password': new_password})
-                    mail.send_mail(subject = 'PragmatechQA Hesab Təsdiqlənməsi', message = strip_tags(html_message), from_email = 'Pragmatech <soltanov.tarlan04@gmail.com>', recipient_list=[person.get('email')], html_message=html_message)
-                    messages.success(request, 'Profil yaradıldı və məlumatlar emailinizə göndərildi!')
-                    return redirect('login')
+                    username = old_user.username
+                
+                # If Person is new user
                 else:
                     if old_user.username[-1].isdigit():
                         username = old_user.username[0:-1] + str(int(old_user.username[-1])+1)
                     else:
                         username+="2"
-            password = ''.join([random.choice(password_characters) for i in range(12)])
-            user = User.objects.create_user(username, person.get('email'), password)
-            user.first_name = person.get('name')
-            user.last_name = person.get('surname')
-            user.save()
-            if StudyGroup.objects.filter(id=person.get('group_id')).first():
-                Student(user = user, study_group = StudyGroup.objects.filter(id=person.get('group_id')).first()).save()
-            else:
-                group = dict(requests.post('http://157.230.220.111/api/group', data={"id":person.get('group_id')}, auth=('admin', 'admin123')).json())
-                StudyGroup(id = person.get('group_id'), name = group.get('name')).save()
-                Student(user = user, study_group = StudyGroup.objects.filter(id=person.get('group_id')).first()).save()
+                    check = 1
+            
+            # Creating user if it's not already exist
+            if not old_user or check == 1:
+                user = User.objects.create_user(username, person.get('email'), password)
+                user.first_name = person.get('name')
+                user.last_name = person.get('surname')
+                user.save()
+                student = Student(user = user)
+                student.save()
+                student.add_roles(person.get('roles'))
+                if 5 in person.get('roles'):
+                    student.add_study_group(person)
+                student.save()
+            
+            # Sending mail to user's email
             html_message = render_to_string('auth/verification.html', {'username': username, 'password': password})
             mail.send_mail(subject = 'PragmatechQA Hesab Təsdiqlənməsi', message = strip_tags(html_message), from_email = 'Pragmatech <soltanov.tarlan04@gmail.com>', recipient_list=[person.get('email')], html_message=html_message)
             messages.success(request, 'Profil yaradıldı və məlumatlar emailinizə göndərildi!')
@@ -420,3 +431,6 @@ def advanced_search(request):
     if request.is_ajax():
         template = page_template
     return render(request, template, context)
+
+def error_404(request, exception):
+    return render(request, 'error_pages/error404.html', context={})

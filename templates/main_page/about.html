@@ -8,56 +8,27 @@
           <div class="tt-layout-tab">
             <div class="tt-wrapper-inner">
               <h2 class="tt-title">Saytın istifadəçiləri haqqında</h2>
-              <h3 class="tt-title">Adminlər</h3>
-              <div class="tt-list-avatar">
-                <div class="row">
-                  <div class="col-6 col-md-4 col-lg-3">
-                    <a href="#" class="tt-avatar">
-                      <div class="tt-col-icon" style="border-radius: 50%">
-                        <img src="{% static 'images/profile_images/default.jpg' %}" alt="" style="width: 40px; height: 40px; border-radius: 50%" />
-                      </div>
-                      <div class="tt-col-description">
-                        <h6 class="tt-title">Soltanov</h6>
-                        <div class="tt-value">@theking</div>
-                      </div>
-                    </a>
+              {% for role in roles %}
+                <h3 class="tt-title tt-color0{{role.id}}">{{ role.name }}</h3>
+                
+                <div class="tt-list-avatar">
+                  <div class="row">
+                    {% for student in role.student_set.all %}
+                    <div class="col-6 col-md-4 col-lg-3">
+                      <a href="{% url 'user_activity' id=student.user.id %}" class="tt-avatar">
+                        <div class="tt-col-icon" style="border-radius: 50%">
+                          <img src="{{student.picture.url}}" alt="" style="width: 40px; height: 40px; border-radius: 50%" />
+                        </div>
+                        <div class="tt-col-description">
+                          <h6 class="tt-title">{{student.user.get_full_name}}</h6>
+                          <div class="tt-value logo-color-text">@{{student.user.username}}</div>
+                        </div>
+                      </a>
+                    </div>
+                    {% endfor %}
                   </div>
                 </div>
-              </div>
-              <h4 class="tt-title">Editorlar</h4>
-              <div class="tt-list-avatar">
-                <div class="row">
-                  <div class="col-6 col-md-4 col-lg-3">
-                    <a href="#" class="tt-avatar">
-                      <div class="tt-col-icon" style="border-radius: 50%">
-                        <img src="{% static 'images/profile_images/default.jpg' %}" alt="" style="width: 40px; height: 40px; border-radius: 50%" />
-                      </div>
-                      <div class="tt-col-description">
-                        <h6 class="tt-title">Soltanov</h6>
-                        <div class="tt-value">@theking</div>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <h3 class="tt-title">TOP 10 Tələbə</h3>
-              <div class="tt-list-avatar">
-                <div class="row">
-                  {% for student in students %}
-                  <div class="col-6 col-md-4 col-lg-3">
-                    <a href="{% url 'user_activity' id=student.user.id %}" class="tt-avatar">
-                      <div class="tt-col-icon" style="border-radius: 50%">
-                        <img src="{{student.picture.url}}" alt="" style="width: 40px; height: 40px; border-radius: 50%" />
-                      </div>
-                      <div class="tt-col-description">
-                        <h6 class="tt-title">{{student.user.get_full_name}}</h6>
-                        <div class="tt-value">@{{student.user.username}}</div>
-                      </div>
-                    </a>
-                  </div>
-                  {% endfor %}
-                </div>
-              </div>
+              {% endfor %}
             </div>
           </div>
         </div>

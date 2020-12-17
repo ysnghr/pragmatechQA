@@ -24,12 +24,18 @@
     <div class="container">
         <div class="tt-loginpages-wrapper">
             <div class="tt-loginpages">
-                <a href="{% url 'student-home' %}" class="tt-block-title">
-                    <img src="{% static 'images/app_images/logo.png' %}" alt="">
-                    <div class="tt-title">
+                <!--<a href="{% url 'student-home' %}" class="tt-block-title tex-center">
+                    <img width="60px" height="60px" src="{% static 'images/app_images/logo.png' %}" alt="">
+                    <div class="tt-title text-center col-12">
                         PragmatechQA
                     </div>
-                </a>
+                </a>-->
+                <div class="tt-block-title tex-center">
+                    <img src="{% static 'images/app_images/logo-lg.png' %}" alt="" class="col-12">
+                    <div class="tt-title text-center col-12">
+                        PragmatechQA
+                    </div>
+                </div>
                 {% if messages %}
                 <div class="messages">
                     {% for message in messages %}
@@ -73,9 +79,6 @@
                         <button class="btn btn-secondary btn-block" type="submit">Daxil ol</button>
                     </div>
                     <p>Hesabınız yoxdur? <a href="{% url 'register' %}" class="tt-underline">Qeydiyyatdan keç</a></p>
-                    <div class="tt-notes">
-                        Daxil olaraq, PragmatechQA-ın <a href="{% url 'student-rules' %}" class="tt-underline">Qaydalar</a> ilə razılaşıram.
-                    </div>
                 </form>
             </div>
         </div>

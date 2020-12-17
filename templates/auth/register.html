@@ -26,25 +26,23 @@
     <div class="container">
         <div class="tt-loginpages-wrapper">
             <div class="tt-loginpages">
-                <a href="../main_page/home.html" class="tt-block-title">
-                    <img src="{% static 'images/app_images/logo.png' %}" alt="">
-                    <div class="tt-title">
+                <div class="tt-block-title tex-center">
+                    <img src="{% static 'images/app_images/logo-lg.png' %}" alt="" class="col-12">
+                    <div class="tt-title text-center col-12">
                         PragmatechQA
                     </div>
-                    <div class="tt-description">
-                        Zəhmət olmasa Pragmatech-ə qeydiyyatdan keçərkən verdiyiniz email-i daxil edin.
-                    </div>
-                </a>
+                </div>
                 <form class="form-default" method="POST">
                     {% csrf_token %}
                     {{ form.email | as_crispy_field }}
+                    
+                    <div class="tt-description">
+                        Zəhmət olmasa Pragmatech-ə qeydiyyatdan keçərkən verdiyiniz email-i daxil edin.
+                    </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-secondary btn-block">Hesab Yarat</button>
                     </div>
                     <p>Hesabınız var? <a href="{% url 'login' %}" class="tt-underline">Giriş et</a></p>
-                    <div class="tt-notes">
-                        Qeydiyyatdan keçərək, PragmatechQA-ın<a href="#" class="tt-underline">Qaydaları</a> ilə razılaşıram.
-                    </div>
                 </form>
             </div>
         </div>

@@ -8,7 +8,7 @@
 
   var defaultOptions = {
     tagClass: function(item) {
-      return 'badge badge-secondary ml-1 mr-1';
+      return 'badge badge-secondary logo-color ml-1 mr-1';
     },
     focusClass: 'focus',
     itemValue: function(item) {
