@@ -142,6 +142,8 @@ def question_detail(request, slug):
                     student.level +=1
                     student.save()
                     new_comment = commentForm.save()
+                    if new_comment.student!= new_comment.question.student:
+                        new_comment.send_message(new_comment)
                     if((len(request.FILES) == 1) and (request.FILES['file[0]'].name == 'blob')):
                         pass
                     else:
