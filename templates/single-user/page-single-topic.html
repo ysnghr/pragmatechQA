@@ -58,7 +58,7 @@
                             <div class="tt-avatar-title">
                                <a href="{% url 'user_activity' id=request.user.id %}">{{question.student.user.get_full_name}}</a>
                                <ul class="tt-list-badge">
-                                    {% for role in student.roles.all %}
+                                    {% for role in question.student.roles.all %}
                                         <li><a href="{% url 'student-about' %}"><span class="tt-color0{{ role.id }} tt-badge">{{ role }}</span></a></li>
                                     {% endfor %}
                                 </ul>
@@ -93,11 +93,11 @@
                         </div>
                     </div>
                     <div class="tt-item-info info-bottom">
-                        <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'question', 'like', 'question_vote');">
+                        <a href="javascript:void(0)" class="tt-icon-btn" {% if question.student != request.user.student %}onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'question', 'like', 'question_vote');"{% endif %}>
                             <i class="tt-icon"><svg label='question' class="like_{{question.id}}"{% if question|question_upvote_check:student %}style="fill:#3BAF6F;"{% endif %}><use xlink:href="#icon-like"></use></svg></i>
                             <span label='question'  class="tt-text like_{{question.id}}_count">{{ question.get_upvote }}</span>
                         </a>
-                        <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'question', 'dislike', 'question_vote');" >
+                        <a href="javascript:void(0)" class="tt-icon-btn" {% if question.student != request.user.student %}onclick="event.preventDefault(); actions({{question.id}},'{{request.user}}', 'question', 'dislike', 'question_vote');"{% endif %} >
                              <i  class="tt-icon"><svg label='question' class="dislike_{{question.id}}"{% if question|question_downvote_check:student %}style="fill:#3BAF6F;"{% endif %}><use xlink:href="#icon-dislike"></use></svg></i>
                             <span label='question' class="tt-text dislike_{{question.id}}_count">{{ question.get_downvote }}</span>
                         </a>
@@ -237,11 +237,18 @@
         </div>
     </div>
 </main>
->
 
 {% endblock content %}
 
 {% block script %}
+<!-- ======================================================================= -->
+<!-- ===========================  Comment Edit/Delete ====================== -->
+<!-- ======================================================================= -->
+
+
+<script src="{% static 'js/comment_edit_delete.js' %}"></script>
+
+
 <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
 <script src="{% static 'js/actions.js' %}"></script>
 <script src="{% static 'js/lightbox.js' %}"></script>
@@ -355,7 +362,7 @@
                             <div class="tt-item-header pt-noborder">
                                 <div class="tt-item-info info-top">
                                     <div class="tt-avatar-icon">
-                                        <i class="tt-icon"><svg><use xlink:href="#icon-ava-t"></use></svg></i>
+                                        <img src="${response.writer_image}" alt="" style="width: 40px; height: 40px; border-radius: 50%">
                                     </div>
                                     <div class="tt-avatar-title">
                                         <a href="#">${response.full_name}</a>
@@ -491,12 +498,7 @@ $('#question_delete_btn').on('click',function(e){
     
 </script>
 
-<!-- ======================================================================= -->
-<!-- ===========================  Comment Edit/Delete ====================== -->
-<!-- ======================================================================= -->
 
-
-<script src="{% static 'js/comment_edit_delete.js' %}"></script>
 
 
 

@@ -156,6 +156,7 @@ def question_detail(request, slug):
                             return JsonResponse({'max_files' : 2})                            
                     comment_data = {}
                     comment_data['full_name'] = f'{new_comment.student.user.get_full_name()}'
+                    comment_data['writer_image'] = f'{new_comment.student.picture.url}'
                     comment_data['slug'] = f'{new_comment.question.slug}'
                     comment_data['created_date'] = f'{(new_comment.created).strftime("%d %B, %Y")}'
                     comment_data['content'] = f'{new_comment.content}'
@@ -244,6 +245,7 @@ def question_detail(request, slug):
                     # Respond to ajax
                     comment_data = {}
                     comment_data['full_name'] = f'{comment.student.user.get_full_name()}'
+                    comment_data['writer_image'] = f'{comment.student.picture.url}'
                     comment_data['slug'] = f'{comment.question.slug}'
                     comment_data['created_date'] = f'{(comment.created).strftime("%d %B, %Y")}'
                     comment_data['content'] = f'{comment.content}'

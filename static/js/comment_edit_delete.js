@@ -178,7 +178,7 @@ function CommentEditDropzone(response, question_id, comment_id)
                                 <div class="tt-item-header pt-noborder">
                                     <div class="tt-item-info info-top">
                                         <div class="tt-avatar-icon">
-                                            <i class="tt-icon"><svg><use xlink:href="#icon-ava-t"></use></svg></i>
+                                            <img src="${response.writer_image}" alt="" style="width: 40px; height: 40px; border-radius: 50%">
                                         </div>
                                         <div class="tt-avatar-title">
                                             <a href="#">${response.full_name}</a>
