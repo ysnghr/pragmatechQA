@@ -72,9 +72,10 @@
                 </svg>
               </button>
               <!-- /toggle -->
-              <form class="search-wrapper">
+              <form class="search-wrapper" method="POST" action="{% url 'advanced_search' %}">
+                {% csrf_token %}
                 <div class="search-form">
-                  <input type="text" class="tt-search__input" placeholder="Axtar" id="q" autocomplete="off" />
+                  <input type="text" class="tt-search__input" placeholder="Axtar" id="q" autocomplete="off" name='short'/>
                   <button class="tt-search__btn" type="submit">
                     <svg class="tt-icon">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 117 117" id="icon-search">
