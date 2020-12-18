@@ -383,6 +383,28 @@ class Comment(models.Model):
         return temp
 
 
+    def get_info(self):
+        comment_images = self.commentimage_set.all()
+
+        comment_image_info = []
+        comment_images_urls =[]
+
+        for eachImage in comment_images:
+            comment_image_info.append({
+                'name': os.path.basename(eachImage.image.name),
+                'size': eachImage.image.size,  
+                'type': 'image/jpeg',          
+            })
+            comment_images_urls.append(eachImage.image.url)
+
+        comment_data = {}
+        comment_data['content'] = self.content
+        comment_data['comment_image_info'] = comment_image_info
+        comment_data['comment_images_urls'] = comment_images_urls
+
+        return comment_data
+
+
 class CommentImage(models.Model):
     """Model definition for CommentImage."""
 

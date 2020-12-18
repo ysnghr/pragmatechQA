@@ -16,6 +16,7 @@ from django.utils.html import strip_tags
 from django.contrib import messages
 from django.db.models import Q
 import datetime
+from django.urls import reverse
 
 
 password_characters = string.ascii_letters + string.digits + string.punctuation
@@ -156,44 +157,50 @@ def question_detail(request, slug):
                             return JsonResponse({'max_files' : 2})                            
                     comment_data = {}
                     comment_data['full_name'] = f'{new_comment.student.user.get_full_name()}'
-                    comment_data['writer_image'] = f'{new_comment.student.picture.url}'
+                    comment_data['writer_image'] = new_comment.student.picture.url
+                    comment_data['writer_profile'] = reverse('user_activity', args=[request.user.id])
                     comment_data['slug'] = f'{new_comment.question.slug}'
                     comment_data['created_date'] = f'{(new_comment.created).strftime("%d %B, %Y")}'
                     comment_data['content'] = f'{new_comment.content}'
                     comment_data['question_id'] = int(f'{new_comment.question.id}')
                     comment_data['comment_id'] = int(f'{new_comment.id}')
-                    comment_data['owner'] = True if question.student.user == request.user else False
+                    comment_data['owner'] = True if question.student.user == request.user else False  # Check if question owner
+                    comment_data['comment_owner'] = True if new_comment.student.user == request.user else False # Check if comment owner
                     comment_data['images'] = [comment_image.image.url for comment_image in new_comment.commentimage_set.all()]
                     return JsonResponse(comment_data)
             
             elif(request.POST['post_type'] == 'question_vote'):
                 question = get_object_or_404(Question,id=request.POST.get("id"))
                 stud = Student.objects.get(user=request.user)
-                liked = question.action_set.filter(action_type=1).filter(student=stud).exists()
-                disliked = question.action_set.filter(action_type=0).filter(student=stud).exists()
-                if request.POST.get('type') == 'question':
-                    if request.POST.get('action_type')=='dislike':
-                        question.actions(0, stud, disliked, liked)
-                    else:
-                        question.actions(1, stud, liked, disliked)
-                return JsonResponse({'liked': str(liked), 'disliked': str(disliked)})
+                if(question.student != stud):                
+                    liked = question.action_set.filter(action_type=1).filter(student=stud).exists()
+                    disliked = question.action_set.filter(action_type=0).filter(student=stud).exists()
+                    if request.POST.get('type') == 'question':
+                        if request.POST.get('action_type')=='dislike':
+                            question.actions(0, stud, disliked, liked)
+                        else:
+                            question.actions(1, stud, liked, disliked)
+                    return JsonResponse({'liked': str(liked), 'disliked': str(disliked)})                
+                else:
+                    return JsonResponse({'error':'User can\'t give vote to its answer'})   
             
             elif(request.POST['post_type'] == 'comment_vote'):
                 question = get_object_or_404(Question,id =request.POST.get("id"))
                 student = Student.objects.get(user = request.user)
-                # Asagida hem comment_id, hem de question ile axtaririq cunki ola bilsin ki,
-                # comment basqa suala aid olsun.
                 comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question)
-                liked = comment.action_set.filter(action_type = 1).filter(student = student).exists()
-                disliked = comment.action_set.filter(action_type=0).filter(student = student).exists()
-                if request.POST.get('type') == 'comment':
-                    if request.POST.get('action_type')=='dislike':
-                        # 0 - downvote dislike
-                        comment.actions(0, student, disliked, liked)
-                    else:
-                        # 1 - upvote like
-                        comment.actions(1, student, liked, disliked)
-                return JsonResponse({'liked': str(liked), 'disliked': str(disliked)})
+                if(comment.student != student):   
+                    liked = comment.action_set.filter(action_type = 1).filter(student = student).exists()
+                    disliked = comment.action_set.filter(action_type=0).filter(student = student).exists()
+                    if request.POST.get('type') == 'comment':
+                        if request.POST.get('action_type')=='dislike':
+                            # 0 - downvote dislike
+                            comment.actions(0, student, disliked, liked)
+                        else:
+                            # 1 - upvote like
+                            comment.actions(1, student, liked, disliked)
+                    return JsonResponse({'liked': str(liked), 'disliked': str(disliked)})
+                else:
+                    return JsonResponse({'error':'User can\'t give vote to its comment'}) 
             
             elif(request.POST['post_type'] == 'comment_edit-read'):
                 question = get_object_or_404(Question,id = request.POST.get("question_id"))
@@ -245,13 +252,16 @@ def question_detail(request, slug):
                     # Respond to ajax
                     comment_data = {}
                     comment_data['full_name'] = f'{comment.student.user.get_full_name()}'
-                    comment_data['writer_image'] = f'{comment.student.picture.url}'
+                    comment_data['writer_image'] = comment.student.picture.url
+                    comment_data['writer_profile'] = reverse('user_activity', args=[request.user.id])
                     comment_data['slug'] = f'{comment.question.slug}'
                     comment_data['created_date'] = f'{(comment.created).strftime("%d %B, %Y")}'
                     comment_data['content'] = f'{comment.content}'
+                    comment_data['vote_result'] = comment.get_upvote() - comment.get_downvote()
                     comment_data['question_id'] = int(f'{comment.question.id}')
                     comment_data['comment_id'] = int(f'{comment.id}')
                     comment_data['owner'] = True if question.student.user == request.user else False
+                    comment_data['comment_owner'] = True if comment.student.user == request.user else False # Check if comment owner
                     comment_data['images'] = [comment_image.image.url for comment_image in comment.commentimage_set.all()]
                     return JsonResponse(comment_data)
                 else:
