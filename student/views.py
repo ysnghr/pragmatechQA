@@ -451,14 +451,14 @@ def login_view(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = User.objects.filter(username = username).first()
+            user = authenticate(username=username, password=password)
+            if user is None:
+                messages.error(request, "İstifadəçi adı və ya şifrə düzgün deyil!", extra_tags='danger')
+                return redirect('login')
             person = requests.post('http://157.230.220.111/api/person', data={"email": user.email}, auth=auth).json()
             if not person or ('Tələbə' in dict(person).get('roles') and dict(person).get('type')!=1):
                 messages.error(request, "Sizin emailiniz Pragmatech sistemindən silinmişdir! \
                     Əgər emailinizi dəyişmisinizsə zəhmət olmasa yeni email ilə yenidən qeydiyyatdan keçin", extra_tags='danger')
-                return redirect('login')
-            user = authenticate(username=username, password=password)
-            if user is None:
-                messages.error(request, "İstifadəçi adı və ya şifrə düzgün deyil!", extra_tags='danger')
                 return redirect('login')
             if not form.cleaned_data.get('remember_me'):
                 request.session.set_expiry(0)
@@ -518,7 +518,7 @@ def register(request):
             
             # Sending mail to user's email
             html_message = render_to_string('auth/verification.html', {'username': username, 'password': password})
-            mail.send_mail(subject = 'PragmatechQA Hesab Təsdiqlənməsi', message = strip_tags(html_message), from_email = 'Pragmatech <soltanov.tarlan04@gmail.com>', recipient_list=[person.get('email')], html_message=html_message)
+            mail.send_mail(subject = 'PragmatechCommunity Hesab Təsdiqlənməsi', message = strip_tags(html_message), from_email = 'Pragmatech <community@pragmatech.az>', recipient_list=[person.get('email')], html_message=html_message)
             messages.success(request, 'Profil yaradıldı və məlumatlar emailinizə göndərildi!')
             return redirect('login')
     return render(request, 'auth/register.html', context)
