@@ -363,7 +363,7 @@ class Comment(models.Model):
 
     def send_message(self, new_comment):
         html_message = render_to_string('notifications/notification.html', {'comment': new_comment})
-        mail.send_mail(subject = f'PragmatechCommunity Hesab Bildirişi-{new_comment.question.title}', message = strip_tags(html_message), from_email = 'Pragmatech <soltanov.tarlan04@gmail.com>', recipient_list=[new_comment.question.student.user.email], html_message=html_message)
+        mail.send_mail(subject = f'PragmatechCommunity Hesab Bildirişi-{new_comment.question.title}', message = strip_tags(html_message), from_email = 'Pragmatech <community@pragmatech.az>', recipient_list=[new_comment.question.student.user.email], html_message=html_message)
         return html_message
     
     def __str__(self):
