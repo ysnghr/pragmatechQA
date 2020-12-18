@@ -33,6 +33,7 @@ function CommentEdit(element)
                 $('[label="comment_edit_dropzone_wrapper"]').append('<div class="dropzone dz" id="commentEditDropzone"></div>')            
                 $('[label="post_comment"]').addClass('d-none')
                 $('[label="edit_comment"]').removeClass('d-none')   
+                $('#comment_edit_submit_btn').removeClass('disabled')
                 $('html,body').animate({scrollTop: $('[label="edit_comment"]').offset().top - 100},'slow');
                 CommentEditDropzone(response, question_id, comment_id)
             }
@@ -49,6 +50,7 @@ $('#comment_edit_cancel_btn').on('click', function(e){
     $('[label="post_comment"]').removeClass('d-none')   
     $('[label="edit_comment"]').addClass('d-none') 
 })//End of Event listener
+
 
 
 
@@ -178,10 +180,10 @@ function CommentEditDropzone(response, question_id, comment_id)
                                 <div class="tt-item-header pt-noborder">
                                     <div class="tt-item-info info-top">
                                         <div class="tt-avatar-icon">
-                                            <i class="tt-icon"><svg><use xlink:href="#icon-ava-t"></use></svg></i>
+                                            <img src="${response.writer_image}" alt="" style="width: 40px; height: 40px; border-radius: 50%">
                                         </div>
                                         <div class="tt-avatar-title">
-                                            <a href="#">${response.full_name}</a>
+                                            <a href="${response.writer_profile}">${response.full_name}</a>
                                         </div>
                                         <a href="#" class="tt-info-time">
                                             <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>${response.created_date} (Dəyişdirildi)
@@ -197,20 +199,7 @@ function CommentEditDropzone(response, question_id, comment_id)
                                 </div>
     
                                 <div class="tt-item-info info-bottom">
-                                <!-- Upvote(like) -->
-                                    <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions(${response.question_id},'${$('#request_user').val()}', 'comment', 'like', 'comment_vote', ${response.comment_id});">                               
-                                        <svg label='comment' class=" like_${response.comment_id}" style='fill:#666f74;' width="36" height="36" viewBox="0 0 36 36">
-                                            <path d="M2 26h32L18 10 2 26z"></path>
-                                        </svg>                               
-                                    </a>
-                                    <!-- Vote result: -->
-                                    <span label='comment' style="color: #666f74; font-size: 20px; padding: 2px 20px 0px 20px;" class="vote_result_${response.comment_id}"> 0 </span>
-                                    <!-- Downvote(dislike) -->
-                                    <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions(${response.question_id},'${$('#request_user').val()}', 'comment', 'dislike', 'comment_vote', ${response.comment_id});" >                             
-                                        <svg label='comment' class=" dislike_${response.comment_id}" style='fill:#666f74;' width="36" height="36" viewBox="0 0 36 36">
-                                            <path d="M2 10h32L18 26 2 10z"></path>
-                                        </svg>                                
-                                    </a>  
+                                ${IsCommentOwner(response.comment_owner)}
                                     <div class="col-separator"></div>
                                     <div class="tt-row-icon">
                                         <div class="tt-item">
@@ -262,6 +251,44 @@ function CommentEditDropzone(response, question_id, comment_id)
                     else
                     {
                         return ``
+                    }
+                }
+
+                function IsCommentOwner(argCommOwner)
+                {
+                    if(argCommOwner)
+                    {
+                        return ` <!-- Upvote(like) -->
+                        <a href="#" style="cursor: context-menu;" class="tt-icon-btn" onclick="event.preventDefault()">                               
+                            <svg label='comment' style="fill:#b5b9bb;" width="36" height="36" viewBox="0 0 36 36">
+                                <path d="M2 26h32L18 10 2 26z"></path>
+                            </svg>                               
+                        </a>
+                        <!-- Vote result: -->
+                        <span label='comment' style="color: #666f74; font-size: 20px; padding: 2px 20px 0px 20px;">  ${response.vote_result}  </span>
+                        <!-- Downvote(dislike) -->
+                        <a href="#" style="cursor: context-menu;" class="tt-icon-btn" onclick="event.preventDefault()">                             
+                            <svg label='comment' style="fill:#b5b9bb;" width="36" height="36" viewBox="0 0 36 36">
+                                <path d="M2 10h32L18 26 2 10z"></path>
+                            </svg>                                
+                        </a>  `
+                    }
+                    else
+                    {
+                        return `<!-- Upvote(like) -->
+                        <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions(${response.question_id},'${$('#request_user').val()}', 'comment', 'like', 'comment_vote', ${response.comment_id});">                               
+                            <svg label='comment' class=" like_${response.comment_id}" style='fill:#666f74;' width="36" height="36" viewBox="0 0 36 36">
+                                <path d="M2 26h32L18 10 2 26z"></path>
+                            </svg>                               
+                        </a>
+                        <!-- Vote result: -->
+                        <span label='comment' style="color: #666f74; font-size: 20px; padding: 2px 20px 0px 20px;" class="vote_result_${response.comment_id}"> ${response.vote_result} </span>
+                        <!-- Downvote(dislike) -->
+                        <a href="#" class="tt-icon-btn" onclick="event.preventDefault(); actions(${response.question_id},'${$('#request_user').val()}', 'comment', 'dislike', 'comment_vote', ${response.comment_id});" >                             
+                            <svg label='comment' class=" dislike_${response.comment_id}" style='fill:#666f74;' width="36" height="36" viewBox="0 0 36 36">
+                                <path d="M2 10h32L18 26 2 10z"></path>
+                            </svg>                                
+                        </a> `
                     }
                 }
     
