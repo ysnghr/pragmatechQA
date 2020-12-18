@@ -58,7 +58,7 @@
                             <div class="tt-avatar-title">
                                <a href="{% url 'user_activity' id=request.user.id %}">{{question.student.user.get_full_name}}</a>
                                <ul class="tt-list-badge">
-                                    {% for role in student.roles.all %}
+                                    {% for role in question.student.roles.all %}
                                         <li><a href="{% url 'student-about' %}"><span class="tt-color0{{ role.id }} tt-badge">{{ role }}</span></a></li>
                                     {% endfor %}
                                 </ul>
@@ -291,11 +291,18 @@
         </div>
     </div>
 </main>
->
 
 {% endblock content %}
 
 {% block script %}
+<!-- ======================================================================= -->
+<!-- ===========================  Comment Edit/Delete ====================== -->
+<!-- ======================================================================= -->
+
+
+<script src="{% static 'js/comment_edit_delete.js' %}"></script>
+
+
 <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
 <script src="{% static 'js/actions.js' %}"></script>
 <script src="{% static 'js/lightbox.js' %}"></script>
@@ -570,12 +577,7 @@ $('#question_delete_btn').on('click',function(e){
     
 </script>
 
-<!-- ======================================================================= -->
-<!-- ===========================  Comment Edit/Delete ====================== -->
-<!-- ======================================================================= -->
 
-
-<script src="{% static 'js/comment_edit_delete.js' %}"></script>
 
 
 

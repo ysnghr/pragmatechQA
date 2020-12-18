@@ -551,24 +551,31 @@ def search(request):
 
 @login_required
 def advanced_search(request):
+    context = {}
     if request.method == 'POST':
-        title = request.POST.get('title')
-        username = request.POST.get('username')
-        tags = [tag for tag in request.POST.get('tags').split(",")]
-        results = Question.objects.filter(  
-            	Q( title__contains = title ) |
-                Q( content__contains = title ) )
-        if request.POST.get('start'):
-            start = datetime.date(*list(map(int, request.POST.get('start').split("-"))))
-            if request.POST.get('end'):
-                end = datetime.date(*list(map(int, request.POST.get('end').split("-"))))
-                results = results.filter( created__range = (start, end) )
-            else:
-                results = results.filter( created__gte = start )
-        if username:
-            results = results.filter( student__user__username__contains = username )
-        if tags != ['']:
-            results = results.filter( tags__name__in = tags )
+        short = request.POST.get('short')
+        if short:
+            results = Question.objects.filter(  
+            	Q( title__contains = short ) |
+                Q( content__contains = short ) )
+        else:
+            title = request.POST.get('title')
+            username = request.POST.get('username')
+            tags = [tag for tag in request.POST.get('tags').split(",")]
+            results = Question.objects.filter(  
+                    Q( title__contains = title ) |
+                    Q( content__contains = title ) )
+            if request.POST.get('start'):
+                start = datetime.date(*list(map(int, request.POST.get('start').split("-"))))
+                if request.POST.get('end'):
+                    end = datetime.date(*list(map(int, request.POST.get('end').split("-"))))
+                    results = results.filter( created__range = (start, end) )
+                else:
+                    results = results.filter( created__gte = start )
+            if username:
+                results = results.filter( student__user__username__contains = username )
+            if tags != ['']:
+                results = results.filter( tags__name__in = tags )
         context={
             'questions': results,
             'NotResult': "Nəticə tapılmadı",
