@@ -4,7 +4,7 @@
             <li>
                 <a href="{% url 'single_topic' slug=question.slug %}">
                     <h6 class="tt-title">{{ question.title }}</h6>
-                    <div class="tt-description">{{ question.content|safe|truncatechars:50 }}</div>
+                    <div class="tt-description">{{ question.content|safe|truncatechars:15 }}</div>
                 </a>
             </li>
         {% endfor %}

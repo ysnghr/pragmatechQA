@@ -535,8 +535,8 @@ def search(request):
         q = request.GET.get('q')
         if q is not None:            
             results = Question.objects.filter(  
-            	Q( title__contains = q ) |
-                Q( content__contains = q ) ).all()[0:3]       
+            	Q( title__icontains = q ) |
+                Q( content__icontains = q ) ).all()[0:3]       
             return render(request, 'search/results.html', {'results': results})
 
 @login_required
@@ -546,15 +546,15 @@ def advanced_search(request):
         short = request.POST.get('short')
         if short:
             results = Question.objects.filter(  
-            	Q( title__contains = short ) |
-                Q( content__contains = short ) )
+            	Q( title__icontains = short ) |
+                Q( content__icontains = short ) )
         else:
             title = request.POST.get('title')
             username = request.POST.get('username')
             tags = [tag for tag in request.POST.get('tags').split(",")]
             results = Question.objects.filter(  
-                    Q( title__contains = title ) |
-                    Q( content__contains = title ) )
+                    Q( title__icontains = title ) |
+                    Q( content__icontains = title ) )
             if request.POST.get('start'):
                 start = datetime.date(*list(map(int, request.POST.get('start').split("-"))))
                 if request.POST.get('end'):
@@ -563,7 +563,7 @@ def advanced_search(request):
                 else:
                     results = results.filter( created__gte = start )
             if username:
-                results = results.filter( student__user__username__contains = username )
+                results = results.filter( student__user__username__icontains = username )
             if tags != ['']:
                 results = results.filter( tags__name__in = tags )
         context={
