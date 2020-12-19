@@ -30,15 +30,23 @@
                         PragmatechCommunity
                     </div>
                 </div>
-                <form class="form-default" style="overflow: hidden !important;" method="post" action="" enctype="multipart/form-data">
+                <form class="form-default text-center" style="overflow: hidden !important;" method="post" action="" enctype="multipart/form-data">
                     {% csrf_token %} 
                     
-                   {{form}}
-                        
-                     
-                    <div class="form-group">
-                        <button class="btn btn-secondary btn-block" type="submit">Əlavə et</button>
-                    </div>
+                    <input type="file" name="picture" id="imgInp" >
+                    
+                    {% if request.user.student.picture == "profile_images/default.jpg" %}
+                        <img id="blah" src="#" alt="your image" class="d-none" style="width: 100%; height: auto; padding: 5px;" />
+                        <div class="form-group">
+                            <button class="btn btn-secondary btn-block" type="submit">Əlavə et</button>
+                        </div>
+                    {% else %}
+                        <img id="blah" src="{{ request.user.student.picture.url }}" alt="your image" style="width: 100%; height: auto; padding: 5px;" />
+                        <div class="form-group">
+                            <button class="btn btn-secondary btn-block" type="submit">Əlavə et</button>
+                        </div>
+                        <a href="{% url 'student-home' %}" class="logo-color-text">Ana səhifə</a> 
+                    {% endif %}
                 </form>
             </div>
         </div>
@@ -46,3 +54,26 @@
 </main>
 
 {% endblock body %}
+
+
+{% block script %}
+<script>
+function readURL(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      
+      reader.onload = function(e) {
+        $('#blah').attr('src', e.target.result);
+        $('#blah').attr('class',"");
+      }
+      
+      reader.readAsDataURL(input.files[0]); // convert to base64 string
+    }
+  }
+  
+  $("#imgInp").change(function() {
+    readURL(this);
+  });
+</script>
+{% endblock script %}
+    
