@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from taggit.models import Tag
 from itertools import chain
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, logout, login
+from django.contrib.auth import authenticate, logout, login, update_session_auth_hash
 from student.decorators import *
 from django.core import mail
 from django.template.loader import render_to_string
@@ -17,6 +17,7 @@ from django.contrib import messages
 from django.db.models import Q
 import datetime
 from django.urls import reverse
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 password_characters = string.ascii_letters + string.digits + string.punctuation
@@ -590,3 +591,17 @@ def advanced_search(request):
 
 def error_404(request, exception):
     return render(request, 'error_pages/error404.html', context={})
+
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Hesab şifrəniz uğurla dəyişdirildi!')
+            return redirect('student-home')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'auth/change_password.html', {
+        'form': form
+    })

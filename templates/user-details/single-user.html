@@ -39,15 +39,15 @@
                         {% endfor %}
                     </ul>
                 </div>
-                <div class="tt-col-btn" id="js-settings-btn">
+                {% if student.user == request.user %}
+                <div class="tt-col-btn">
                     <div class="tt-list-btn">
-                        <a href="#" class="tt-btn-icon">
-                            <svg class="tt-icon">
-                              <use xlink:href="#icon-settings_fill"></use>
-                            </svg>
+                        <a href="{% url 'change_password' %}" type="button" class="btn btn-secondary btn-block">
+                            Şifrəni dəyiş
                         </a>
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
