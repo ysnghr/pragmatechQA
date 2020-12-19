@@ -1,5 +1,7 @@
 from django.urls import path
 from student import views
+from django.contrib.auth import views as auth_views
+from student.forms import EmailValidationOnForgotPassword
 
 
 urlpatterns = [
@@ -22,5 +24,9 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('register/', views.register, name='register'),
     path('search', views.search, name='search'),
-    path('search/advanced', views.advanced_search, name='advanced_search')
+    path('search/advanced', views.advanced_search, name='advanced_search'),
+    path('reset_password/', auth_views.PasswordResetView.as_view(template_name = "auth/reset_password.html", form_class=EmailValidationOnForgotPassword), name ='reset_password'),
+    path('reset_password_sent/', auth_views.PasswordResetDoneView.as_view(template_name = "auth/password_reset_sent.html"), name ='password_reset_done'),
+    path('reset/<uidb64>/<token>', auth_views.PasswordResetConfirmView.as_view(template_name = "auth/password_reset_form.html"), name ='password_reset_confirm'),
+    path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name = "auth/password_reset_done.html"), name ='password_reset_complete')
 ]

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 from django.contrib import messages
+from django.contrib.auth.forms import PasswordResetForm
 import requests
 import re
 
@@ -95,3 +96,12 @@ class StudentPictureForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = ['picture']
+
+
+class EmailValidationOnForgotPassword(PasswordResetForm):
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if not User.objects.filter(email__iexact=email, is_active=True).exists():
+            raise ValidationError("Bu email ilə qeydiyyatdan keçmiş istifadəçi yoxdur!")
+        return email
