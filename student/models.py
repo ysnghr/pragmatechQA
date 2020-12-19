@@ -362,8 +362,8 @@ class Comment(models.Model):
         return action_num
 
     def send_message(self, new_comment):
-        html_message = render_to_string('notifications/notification.html', {'eachComment': new_comment})
-        mail.send_mail(subject = 'PragmatechQA Hesab Bildirişi', message = strip_tags(html_message), from_email = 'Pragmatech <soltanov.tarlan04@gmail.com>', recipient_list=[new_comment.question.student.user.email], html_message=html_message)
+        html_message = render_to_string('notifications/notification.html', {'comment': new_comment})
+        mail.send_mail(subject = f'PragmatechCommunity Hesab Bildirişi-{new_comment.question.title}', message = strip_tags(html_message), from_email = 'Pragmatech <community@pragmatech.az>', recipient_list=[new_comment.question.student.user.email], html_message=html_message)
         return html_message
     
     def __str__(self):
@@ -381,6 +381,28 @@ class Comment(models.Model):
             })
 
         return temp
+
+
+    def get_info(self):
+        comment_images = self.commentimage_set.all()
+
+        comment_image_info = []
+        comment_images_urls =[]
+
+        for eachImage in comment_images:
+            comment_image_info.append({
+                'name': os.path.basename(eachImage.image.name),
+                'size': eachImage.image.size,  
+                'type': 'image/jpeg',          
+            })
+            comment_images_urls.append(eachImage.image.url)
+
+        comment_data = {}
+        comment_data['content'] = self.content
+        comment_data['comment_image_info'] = comment_image_info
+        comment_data['comment_images_urls'] = comment_images_urls
+
+        return comment_data
 
 
 class CommentImage(models.Model):
