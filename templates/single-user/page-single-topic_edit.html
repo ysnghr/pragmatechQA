@@ -116,7 +116,7 @@
 <!-- Load The Content -->
 <script>
     $('ck-editor__editable').empty();
-    html = String.raw`{{ question.content|safe|linebreaks }}`;
+    html = String.raw`{{ question.content|safe }}`;
     console.log(html)
     id_content.setData(html)
 </script>

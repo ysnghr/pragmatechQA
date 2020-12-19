@@ -143,29 +143,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
-
-CKEDITOR_CONFIGS = {
-    "default": {
-        "removePlugins": "stylesheetparser",
-        'allowedContent': True,
-        'extraPlugins': 'codesnippet',
-        'heigth' : 300,
-        'width' : '100%',
-        
-        'toolbar_Full': [
-        ['Format', 'Bold', 'Italic', '-' , 'Link', 'CodeSnippet'],
-        [ 'NumberedList', 'BulletedList', 'Indent', 'Outdent', '-'],
-        [ 'Undo', 'Redo' ],
-    ], 
-    'removeDialogTabs': ';'.join([
-            'link:upload', 
-        ]),
-    'filebrowserBrowseUrl': '',
-    }
-}
-
-
 CKEDITOR_UPLOAD_PATH = "uploads/"
 
 LOGIN_URL = 'login'
