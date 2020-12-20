@@ -2,5 +2,5 @@
 database = pragmatechqa
 host = localhost
 user = root
-password = root12345678
+password = root1234
 default-character-set = utf8
