@@ -162,7 +162,7 @@ class FAQ(models.Model):
 class Question(models.Model):
     """Model definition for Question."""
 
-    title = models.CharField(verbose_name="Başlıq", max_length=50) #Client Side REQUIRED + MAX_LENGTH = 50
+    title = models.CharField(verbose_name="Başlıq", max_length=75) #Client Side : REQUIRED, MAX_LENGTH = 75
     tags = TaggableManager() # Client Side REQUIRED + REGEX
     content = RichTextField(verbose_name="Məzmun") # Client Side REQUIRED
     student = models.ForeignKey(Student, on_delete=models.CASCADE, default = 1) # Bu Tes ucundur Productionda silinecek.

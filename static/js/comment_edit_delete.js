@@ -179,15 +179,12 @@ function CommentEditDropzone(response, question_id, comment_id)
                             <div class="tt-single-topic">
                                 <div class="tt-item-header pt-noborder">
                                     <div class="tt-item-info info-top">
-                                        <div class="tt-avatar-icon">
+                                        <a href="${response.writer_profile}" class="tt-avatar-icon" style="z-index: 15;">
                                             <img src="${response.writer_image}" alt="" style="width: 40px; height: 40px; border-radius: 50%">
-                                        </div>
+                                        </a>
                                         <div class="tt-avatar-title">
                                             <a href="${response.writer_profile}">${response.full_name}</a>
                                         </div>
-                                        <a href="#" class="tt-info-time">
-                                            <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>${response.created_date} (Dəyişdirildi)
-                                        </a>
                                     </div>
                                     ${IsOwner(response.owner)}
                                 </div>
@@ -214,8 +211,11 @@ function CommentEditDropzone(response, question_id, comment_id)
                                                 <i style="font-size: 22px; color: red; cursor: pointer;" class="fas fa-trash-alt"></i>
                                             </a>                           
                                         </div>                                                                                                               
-                                    </div>                         
+                                    </div>                                                             
                                 </div>
+                                <div class="tt-info-time mt-3 d-flex" style="justify-content: flex-end;">
+                                    <i class="tt-icon mr-3"><svg style="width: 16px; height: 16px;"><use xlink:href="#icon-time"></use></svg></i>${response.created_date}(Dəyişdirilib)
+                                </div> 
                             </div>`
                 tempCommentElement.empty()
                 tempCommentElement.append(html)
@@ -241,7 +241,7 @@ function CommentEditDropzone(response, question_id, comment_id)
                     if(argOwner)
                     {
                         return ` <div class="tt-item-info info-top">                                
-                                    <div class="tt-avatar-icon" style="padding-top: 60px;"> 
+                                    <div class="tt-avatar-icon" style="padding-top: 60px ; z-index: 5;"> 
                                         <a href="#" onclick="event.preventDefault(); check_answer(${response.question_id}, ${response.comment_id});">
                                             <i class="tt-icon"><svg   width="36" height="36" viewBox="0 0 36 36"><path class="select_answer" style='fill:#aeb3b4;' d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path></svg></i>
                                         </a> 
