@@ -19,9 +19,11 @@
 {% for question in questions %}
     <div class="tt-item">
         <div class="tt-col-avatar">
-            <div class="tt-col-avatar">
+            <a href="{% url 'user_activity' id=question.student.user.id %}">
+            <div class="tt-col-avatar">         
                 <img src="{{ question.student.picture.url }}" alt="" style="width: 40px; height: 40px; border-radius: 50%">
             </div>
+        </a>
         </div>
         <div class="tt-col-description">
             <h6 class="tt-title">
