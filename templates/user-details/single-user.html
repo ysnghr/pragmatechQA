@@ -3,58 +3,30 @@
 {% load static %} 
 
 {% load el_pagination_tags %}
-
-{% block style %}
-    <style>
-        .active{
-            border-color: transparent !important;
-            background-color: transparent !important;
-        }
-        .nav-link:hover{
-            border-color: transparent !important;
-            background-color: transparent !important;
-        }
-    </style>
-{% endblock style %}
     
 {% block content %}
 
 <main id="tt-pageContent" class="tt-offset-small">
     <div class="tt-wrapper-section">
         <div class="container">
-            <div class="tt-user-header">
-                <div class="tt-col-avatar">
+            <div class="tt-user-header d-block">
+                <div class="tt-col-avatar d-flex align-items-center" style="width: 100%;">
                     <div class="tt-icon">
                        <img class="tt-icon" src="{{ student.picture.url }}" style="width: 40px; height: 40px; border-radius: 50%" />
                     </div>
-                </div>
-                <div class="tt-col-title">
-                    <div class="tt-title">
-                        <a href="#">{{student.user.username}}</a>
-                    </div>
-                    <ul class="tt-list-badge">
-                        <li><a href="#"><span class="tt-color14 tt-badge">LVL : {{student.level}}</span></a></li>
-                        {% for role in student.roles.all %}
-                            <li><a href="#"><span class="tt-color0{{ role.id }} tt-badge">{{ role }}</span></a></li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% if student.user == request.user %}
-                    <div class="tt-col-btn">
-                        <div class="tt-list-btn">
-                            <a href="{% url 'change_password' %}" type="button" class="btn btn-secondary btn-block">
-                                Şifrəni dəyiş
-                            </a>
+                    <div class="tt-col-title">
+                        <div class="tt-title">
+                            <a href="#">{{student.user.username}}</a>
                         </div>
+                        
                     </div>
-                    <div class="tt-col-btn ml-3">
-                        <div class="tt-list-btn">
-                            <a href="{% url 'user_picture' %}" type="button" class="btn btn-secondary btn-block">
-                                Şəkli dəyiş
-                            </a>
-                        </div>
-                    </div>
-                {% endif %}
+                </div>
+                <ul class="tt-list-badge mt-3 ml-2" style="margin: -8px;">
+                    <li><a href="#"><span class="tt-color14 tt-badge">LVL : {{student.level}}</span></a></li>
+                    {% for role in student.roles.all %}
+                        <li><a href="#"><span class="tt-color0{{ role.id }} tt-badge">{{ role }}</span></a></li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>
@@ -71,7 +43,7 @@
                     <li class="nav-item">
                         <a class="nav-link {% if comments %}active{% endif %}" href="{% url 'user_comments' id=student.user.id %}"><span>Kommentlər</span></a>
                     </li>
-                    <li class="nav-item tt-hide-md">
+                    <li class="nav-item">
                         <a class="nav-link {% if tags %}active{% endif %}" href="{% url 'user_tags' id=student.user.id %}"><span>Taqlar</span></a>
                     </li>
                 </ul>

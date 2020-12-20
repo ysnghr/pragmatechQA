@@ -10,7 +10,7 @@
         <div class="tt-item">
             <div class="tt-item-header">
                 <ul class="tt-list-badge">
-                    <li><a href="{% url 'single_tag' slug=tag.slug %}"><span class="tt-color01 tt-badge">{{tag.name}}</span></a></li>
+                    <li><a href="{% url 'single_tag' slug=tag.slug %}"><span class="tt-color01 tt-badge logo-color">{{tag.name}}</span></a></li>
                 </ul>
                 <h6 class="tt-title"><a href="{% url 'single_tag' slug=tag.slug %}">Suallar - {% tag_count tag student.user.id %}</a></h6>
             </div>

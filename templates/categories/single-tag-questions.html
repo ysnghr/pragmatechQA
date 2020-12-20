@@ -5,8 +5,9 @@
 {% for question in questions %}
     <div class="tt-item">
         <div class="tt-col-avatar">
-            <a href="{% url 'user_activity' id=question.student.id %}">
-            <img class="tt-icon" src="{{ question.student.picture.url }}"  style="width: 40px; height: 40px; border-radius: 50%" />
+            <a href="{% url 'user_activity' id=question.student.user.id %}">
+                <img class="tt-icon" src="{{ question.student.picture.url }}"  style="width: 40px; height: 40px; border-radius: 50%" />
+            </a>
         </div>
         <div class="tt-col-description">
             <h6 class="tt-title">

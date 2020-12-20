@@ -15,18 +15,18 @@
             {% endif %} {% endcomment %}
             {% if activity.title %}
                 <h6 class="tt-title">
-                    <a href="#">
+                    <a href="{% url 'single_topic' slug=activity.slug %}">
                         {{ activity.title }}
                     </a>
                 </h6>
             {% else %}
                 <h6 class="tt-title">
-                    <a href="#">
+                    <a href="{% url 'single_topic' slug=activity.question.slug %}">
                         {{ activity.question.title }}
                     </a>
                 </h6>
                 <div class="tt-col-message">
-                    Komment : {{ activity.comment|truncatechars:40 }}
+                    Komment 
                 </div>
             {% endif %}
             <div class="row align-items-center no-gutters">

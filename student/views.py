@@ -18,6 +18,7 @@ from django.db.models import Q
 import datetime
 from django.urls import reverse
 from django.contrib.auth.forms import PasswordChangeForm
+from django.http import Http404
 
 
 password_characters = string.ascii_letters + string.digits + string.punctuation
@@ -57,6 +58,8 @@ def tag_info(request, slug):
     template = 'categories/single-tag.html' 
     page_template = 'categories/single-tag-questions.html'
     tag = Tag.objects.filter(slug = slug).first()
+    if not tag:
+        raise Http404("No MyModel matches the given query.")
     questions = Question.objects.filter(tags__in = [tag])
     context={
         "tag" : tag,
@@ -168,6 +171,7 @@ def question_detail(request, slug):
                     comment_data['owner'] = True if question.student.user == request.user else False  # Check if question owner
                     comment_data['comment_owner'] = True if new_comment.student.user == request.user else False # Check if comment owner
                     comment_data['images'] = [comment_image.image.url for comment_image in new_comment.commentimage_set.all()]
+                    student = get_object_or_404(Student, user = request.user)
                     return JsonResponse(comment_data)
             
             elif(request.POST['post_type'] == 'question_vote'):
@@ -183,6 +187,7 @@ def question_detail(request, slug):
                             question.actions(1, stud, liked, disliked)
                     return JsonResponse({'liked': str(liked), 'disliked': str(disliked)})                
                 else:
+                    student = get_object_or_404(Student, user = request.user)
                     return JsonResponse({'error':'User can\'t give vote to its answer'})   
             
             elif(request.POST['post_type'] == 'comment_vote'):
@@ -304,6 +309,7 @@ def question_detail(request, slug):
 def question_edit(request, slug):
     question = get_object_or_404(Question, slug=slug)
     form = QuestionForm()
+    student = get_object_or_404(Student, user = request.user)
     if request.method == "POST":
         form = QuestionForm(request.POST or None)
         if form.is_valid():
@@ -363,7 +369,7 @@ def question_edit(request, slug):
 @picture_required 
 def question_delete(request, slug):
     question = get_object_or_404(Question, slug=slug)
-    student = Student.objects.get(user = request.user) 
+    student = get_object_or_404(Student, user = request.user)
     if(question.student == student):
         question.delete()
     return redirect('/')

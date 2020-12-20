@@ -1,5 +1,27 @@
 {% extends 'static.html' %}
 {% load static %}
+
+{% block style %}
+<style>
+  @media (max-width: 1024px){
+  .profile {
+      display: block !important;
+  }
+  }
+</style>
+<style>
+        .active{
+            border-color: transparent !important;
+            background-color: transparent !important;
+        }
+        .nav-link:hover{
+            border-color: transparent !important;
+            background-color: transparent !important;
+        }
+    </style>
+{% endblock style %}
+  
+
 {% block body %}
     <!-- tt-mobile menu -->
     <nav class="panel-menu" id="mobile-menu">
@@ -105,17 +127,30 @@
             
               {% comment %} <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a> {% endcomment %}
               <div class="tt-user-info d-flex justify-content-center">
-                    <a href="{%url 'logout'%}" class="tt-btn-icon">
-                         <i class="fal fa-sign-out-alt" style="font-size: 25px; color: black;"></i>
-                    </a>
-                    <div class="tt-avatar-icon tt-size-md">
-                        <img src="{{ request.user.student.picture.url }}" alt="" style="width: 40px; height: 40px; border-radius: 50%">
-                    </div>
-
-                    <div style="margin-top: 5px;">
-                      <a href="{% url 'user_activity' id=request.user.id %}">
-                        {{request.user.username}}
-                      </a>
+                    <div class="tt-desktop-menu profile">
+                      <nav>
+                          <ul class="nav-items">
+                              <li>
+                                <a href="#">
+                                  <div class="row d-flex align-items-center">
+                                    <div class="col-4 d-flex align-items-center">
+                                      <img src="{{ request.user.student.picture.url }}" alt="" style="width: 40px; height: 40px; border-radius: 50%">
+                                    </div>
+                                    <div class="col-8">
+                                      <span>{{request.user.username}} <i class="fas fa-caret-down"></i></span>
+                                    </div>
+                                  </div>
+                                </a>
+                                <ul>
+                                  <li><a href="{% url 'user_activity' id=request.user.id %}">Profil</a></li>
+                                  <li><a href="{% url 'change_password' %}">Şifrəni dəyiş</a></li>
+                                  <li><a href="{% url 'user_picture' %}">Şəkli dəyiş</a></li>
+                                  <li><a href="{%url 'logout'%}">Çıxış et</a></li>
+                                </ul>
+                              </li>
+                              
+                          </ul>
+                      </nav>
                     </div>
                 </div>
     

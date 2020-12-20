@@ -50,7 +50,7 @@ class QuestionImageForm(forms.ModelForm):
         data = self.cleaned_data['image']
         MAX_IMAGE_SIZE = 2097152 # 2 MB
         if (data.size > MAX_IMAGE_SIZE):
-            raise ValidationError(f"Daxil etdiyiniz sekil: {data} hecmi coxdur. Max sekil hecmi: {MAX_IMAGE_SIZE}")
+            raise ValidationError(f"Daxil etdiyiniz şəkil: {data} həcmi çoxdur. Max şəkil həcmi: 2MB")
         else:
             return data
 
@@ -69,7 +69,7 @@ class CommentImageForm(forms.ModelForm):
         data = self.cleaned_data['image']
         MAX_IMAGE_SIZE = 2097152 # 2 MB
         if (data.size > MAX_IMAGE_SIZE):
-            raise ValidationError(f"Daxil etdiyiniz sekil: {data} hecmi coxdur. Max sekil hecmi: {MAX_IMAGE_SIZE}")
+            raise ValidationError(f"Daxil etdiyiniz şəkil: {data} həcmi çoxdur. Max şəkil həcmi: 2MB")
         else:
             return data
 
@@ -96,6 +96,16 @@ class StudentPictureForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = ['picture']
+    
+    def clean_picture(self):
+        data = self.cleaned_data['picture']
+        MAX_IMAGE_SIZE = 2097152 # 2 MB
+        if (data.size > MAX_IMAGE_SIZE):
+            raise ValidationError(f"Daxil etdiyiniz şəkil: {data} həcmi çoxdur. Max şəkil həcmi: 2MB")
+        else:
+            return data
+
+        return data
 
 
 class EmailValidationOnForgotPassword(PasswordResetForm):

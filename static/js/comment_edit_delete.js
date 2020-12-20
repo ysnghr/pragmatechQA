@@ -193,7 +193,7 @@ function CommentEditDropzone(response, question_id, comment_id)
                                 </div>
                                 <div class="tt-item-description">
                                     ${response.content}
-                                    <div style="display: flex; justify-content: space-around;">
+                                    <div class="comment-image-block" style="display: flex; justify-content: space-around;">
                                     ${GetImages(response.images)}
                                     </div>
                                 </div>
