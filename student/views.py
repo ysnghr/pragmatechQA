@@ -278,6 +278,8 @@ def question_detail(request, slug):
                 student = get_object_or_404(Student, user = request.user)
                 comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
                 comment.delete()
+                student.level -=3
+                student.save()
                 return JsonResponse({'status':'good'}, safe = False) 
 
             elif(request.POST['post_type'] == 'select_answer'):                
@@ -372,6 +374,8 @@ def question_delete(request, slug):
     student = get_object_or_404(Student, user = request.user)
     if(question.student == student):
         question.delete()
+        student.level -=3
+        student.save()
     return redirect('/')
     
 
