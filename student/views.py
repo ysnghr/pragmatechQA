@@ -389,7 +389,8 @@ def faq(request):
 def user_activity(request, id):
     template='user-details/user-activity.html' 
     page_template='user-details/user-activity-list.html'
-    temp_student = User.objects.get(id = id).student
+    user = get_object_or_404(User, id = id)
+    temp_student = get_object_or_404(Student, user = user)
     activity = sorted(chain(temp_student.question_set.all(), temp_student.comment_set.all()),key=lambda instance: instance.updated)
     context={
         'student' : temp_student,
@@ -405,7 +406,8 @@ def user_activity(request, id):
 def user_questions(request, id):
     template='user-details/user-questions.html'
     page_template='user-details/user-question-list.html'
-    temp_student = User.objects.get(id = id).student
+    user = get_object_or_404(User, id = id)
+    temp_student = get_object_or_404(Student, user = user)
     context={
         'student' : temp_student,
         'questions' : temp_student.question_set.all().order_by('-updated') if temp_student.question_set.all() else -1,
@@ -420,7 +422,8 @@ def user_questions(request, id):
 def user_comments(request, id):
     template = 'user-details/user-comments.html'
     page_template = 'user-details/user-comment-list.html'
-    temp_student = User.objects.get(id = id).student
+    user = get_object_or_404(User, id = id)
+    temp_student = get_object_or_404(Student, user = user)
     context={
         'student' : temp_student,
         'comments' : temp_student.comment_set.all().order_by('-updated') if temp_student.comment_set.all() else -1,
@@ -435,7 +438,8 @@ def user_comments(request, id):
 def user_tags(request, id):
     template = 'user-details/user-tags.html' 
     page_template = 'user-details/user-tag-list.html'
-    temp_student = User.objects.get(id = id).student
+    user = get_object_or_404(User, id = id)
+    temp_student = get_object_or_404(Student, user = user)
     my_tags = set()
     for question in temp_student.question_set.all():
         for tag in question.tags.all():
