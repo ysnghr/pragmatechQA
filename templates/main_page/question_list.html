@@ -3,16 +3,31 @@
 {% paginate questions %}
 
 
+{% block style %}
+
+
+<style>
+    #title_content{
+        width: 315px;
+        word-wrap: break-word;
+    }
+</style>
+
+{% endblock style %}
+
+
 {% for question in questions %}
     <div class="tt-item">
         <div class="tt-col-avatar">
-            <div class="tt-col-avatar">
+            <a href="{% url 'user_activity' id=question.student.user.id %}">
+            <div class="tt-col-avatar">         
                 <img src="{{ question.student.picture.url }}" alt="" style="width: 40px; height: 40px; border-radius: 50%">
             </div>
+        </a>
         </div>
         <div class="tt-col-description">
             <h6 class="tt-title">
-                <a href="{% url 'single_topic' slug=question.slug %}">
+                <a id="title_content" href="{% url 'single_topic' slug=question.slug %}">
                     {{ question.title }}
                 </a>
             </h6>

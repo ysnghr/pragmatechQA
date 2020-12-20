@@ -226,10 +226,10 @@
             }
             else
             {   
-                if(title.trim().length > 50)
+                if(title.trim().length > 75)
                 {
                     titleErrorDiv.removeClass('d-none')
-                    titleErrorDiv.find('span[label="error_content"]').text('Başlığın uzunluğu maximum 50 xarakterdən ibarət ola bilər.')
+                    titleErrorDiv.find('span[label="error_content"]').text('Başlığın uzunluğu maximum 75 xarakterdən ibarət ola bilər.')
                     $('html,body').animate({scrollTop: titleErrorDiv.offset().top - 100},'slow');
                     return false;
 
