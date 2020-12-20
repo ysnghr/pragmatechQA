@@ -6,7 +6,7 @@
     <img src="https://pragmatech.az/static/assets/images/logo/logo.png" alt="Logo" width= "50%">
   </a>
 
-  <h3 align="center">Pragmatech Q&A Project</h3>
+  <h3 align="center">Pragmatech Community Project</h3>
 
 </p>
 
