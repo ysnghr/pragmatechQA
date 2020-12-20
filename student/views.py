@@ -19,6 +19,16 @@ import datetime
 from django.urls import reverse
 from django.contrib.auth.forms import PasswordChangeForm
 from django.http import Http404
+import sys
+import locale
+import datetime
+
+# Date - i bizim dilde cixartmaq ucun
+if sys.platform == 'win32':
+    print("Windows")
+    locale.setlocale(locale.LC_ALL, 'az_AZ')
+else:
+    locale.setlocale(locale.LC_ALL, 'az_AZ.ISO8859-9E')
 
 
 password_characters = string.ascii_letters + string.digits + string.punctuation
@@ -164,7 +174,7 @@ def question_detail(request, slug):
                     comment_data['writer_image'] = new_comment.student.picture.url
                     comment_data['writer_profile'] = reverse('user_activity', args=[request.user.id])
                     comment_data['slug'] = f'{new_comment.question.slug}'
-                    comment_data['created_date'] = f'{(new_comment.created).strftime("%d %B, %Y")}'
+                    comment_data['created_date'] = f'{(new_comment.created).strftime("%d %b, %Y")}'
                     comment_data['content'] = f'{new_comment.content}'
                     comment_data['question_id'] = int(f'{new_comment.question.id}')
                     comment_data['comment_id'] = int(f'{new_comment.id}')
@@ -261,7 +271,7 @@ def question_detail(request, slug):
                     comment_data['writer_image'] = comment.student.picture.url
                     comment_data['writer_profile'] = reverse('user_activity', args=[request.user.id])
                     comment_data['slug'] = f'{comment.question.slug}'
-                    comment_data['created_date'] = f'{(comment.created).strftime("%d %B, %Y")}'
+                    comment_data['created_date'] = f'{(comment.created).strftime("%d %b, %Y")}'
                     comment_data['content'] = f'{comment.content}'
                     comment_data['vote_result'] = comment.get_upvote() - comment.get_downvote()
                     comment_data['question_id'] = int(f'{comment.question.id}')

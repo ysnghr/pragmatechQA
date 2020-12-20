@@ -72,11 +72,9 @@
                         <div class="tt-item-info info-top" style="word-wrap: break-word !important;">
                             <input id="request_user" type="hidden" value="{{request.user}" >
                             <input label='label_question_id' type="hidden" value="{{question.id}}">
-                            <div class="tt-avatar-icon">
-                                <a href="{% url 'user_activity' id=question.student.user.id %}">
+                            <a href="{% url 'user_activity' id=question.student.user.id %}" class="tt-avatar-icon">
                                 <img src="{{ question.student.picture.url }}" alt="" style="width: 40px; height: 40px; border-radius: 50%">
                             </a>
-                            </div>
                             <div class="tt-avatar-title">
                                <a href="{% url 'user_activity' id=question.student.user.id %}">{{question.student.user.get_full_name}}</a>
                                <ul class="tt-list-badge">
@@ -177,9 +175,9 @@
                     <div class="tt-single-topic">
                         <div class="tt-item-header pt-noborder">
                             <div class="tt-item-info info-top">
-                                <div class="tt-avatar-icon">
+                                <a href="{% url 'user_activity' eachComment.student.user.id %}" class="tt-avatar-icon" style="z-index: 15;">
                                     <img src="{{ eachComment.student.picture.url }}" alt="" style="width: 40px; height: 40px; border-radius: 50%">
-                                </div>
+                                </a>
                                 <div class="tt-avatar-title">
                                     <a href="{% url 'user_activity' eachComment.student.user.id %}">{{eachComment.student.user.get_full_name}}</a>
                                 </div>
@@ -187,7 +185,7 @@
 
                             {% if question.student.user == request.user %}
                                 <div class="tt-item-info info-top">                                
-                                    <div class="tt-avatar-icon" style="padding-top: 120px;"> 
+                                    <div class="tt-avatar-icon" style="padding-top: 120px; z-index: 10;"> 
                                         <a href="#" onclick="event.preventDefault(); check_answer({{question.id}}, {{eachComment.id}});">
                                             <i class="tt-icon"><svg   width="36" height="36" viewBox="0 0 36 36"><path class="select_answer" {% if question|comment_answer_check:eachComment %} style='fill:#48A868;' {% else %} style='fill:#aeb3b4;' {% endif %}  d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path></svg></i>
                                         </a> 
@@ -260,7 +258,7 @@
                         </div>
                         
                         <div class="tt-info-time mt-3 d-flex" style="justify-content: flex-end;">
-                            <i class="tt-icon mr-3"><svg style="width: 16px; height: 16px;"><use xlink:href="#icon-time"></use></svg></i>{{question.created|date:"d M,y" }} {% if question.created != question.updated %} (Dəyişdirilib){% endif %}
+                            <i class="tt-icon mr-3"><svg style="width: 16px; height: 16px;"><use xlink:href="#icon-time"></use></svg></i>{{eachComment.created|date:"d M,y" }} {% if eachComment.created != eachComment.updated %} (Dəyişdirilib){% endif %}
                         </div>  
                     </div>
                 </div>
@@ -443,7 +441,7 @@
                             <div class="tt-item-header pt-noborder">
                                 <div class="tt-item-info info-top">
                                     <div class="tt-avatar-icon">
-                                        <a href="${response.writer_profile}">
+                                        <a href="${response.writer_profile} style="z-index: 15;">
                                             <img src="${response.writer_image}" alt="" style="width: 40px; height: 40px; border-radius: 50%">
                                         </a>
                                     </div>
@@ -479,7 +477,7 @@
                                 </div>                          
                             </div>
                             <div class="tt-info-time mt-3 d-flex" style="justify-content: flex-end;">
-                                <i class="tt-icon mr-3"><svg style="width: 16px; height: 16px;"><use xlink:href="#icon-time"></use></svg></i>${response.created_date}{% if question.created != question.updated %} (Dəyişdirilib){% endif %}
+                                <i class="tt-icon mr-3"><svg style="width: 16px; height: 16px;"><use xlink:href="#icon-time"></use></svg></i>${response.created_date}
                             </div>  
                         </div>
                     </div>`
@@ -507,7 +505,7 @@
                 if(argOwner)
                 {
                     return ` <div class="tt-item-info info-top">                                
-                                <div class="tt-avatar-icon" style="padding-top: 60px;"> 
+                                <div class="tt-avatar-icon" style="padding-top: 60px; z-index: 10y;"> 
                                     <a href="#" onclick="event.preventDefault(); check_answer(${response.question_id}, ${response.comment_id});">
                                         <i class="tt-icon"><svg   width="36" height="36" viewBox="0 0 36 36"><path class="select_answer" style='fill:#aeb3b4;' d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path></svg></i>
                                     </a> 
