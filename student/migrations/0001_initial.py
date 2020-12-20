@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
             name='Question',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=50, verbose_name='Başlıq')),
+                ('title', models.CharField(max_length=75, verbose_name='Başlıq')),
                 ('content', ckeditor.fields.RichTextField(verbose_name='Məzmun')),
                 ('view', models.IntegerField(default=0, verbose_name='Baxış sayı')),
                 ('created', models.DateTimeField(auto_now_add=True)),
