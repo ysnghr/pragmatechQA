@@ -72,17 +72,9 @@
                         <div class="tt-item-info info-top" style="word-wrap: break-word !important;">
                             <input id="request_user" type="hidden" value="{{request.user}" >
                             <input label='label_question_id' type="hidden" value="{{question.id}}">
-<<<<<<< HEAD
                             <a href="{% url 'user_activity' id=question.student.user.id %}" class="tt-avatar-icon">
                                 <img src="{{ question.student.picture.url }}" alt="" style="width: 40px; height: 40px; border-radius: 50%">
                             </a>
-=======
-                            <div class="tt-avatar-icon">
-                                <a href="{% url 'user_activity' id=question.student.user.id %}">
-                                <img src="{{ question.student.picture.url }}" alt="" style="width: 40px; height: 40px; border-radius: 50%">
-                            </a>
-                            </div>
->>>>>>> d075b66a9036fc2812ed29b10219302e885dbeaa
                             <div class="tt-avatar-title">
                                <a href="{% url 'user_activity' id=question.student.user.id %}">{{question.student.user.get_full_name}}</a>
                                <ul class="tt-list-badge">
