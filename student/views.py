@@ -25,7 +25,6 @@ import datetime
 
 # Date - i bizim dilde cixartmaq ucun
 if sys.platform == 'win32':
-    print("Windows")
     locale.setlocale(locale.LC_ALL, 'az_AZ')
 else:
     locale.setlocale(locale.LC_ALL, 'az_AZ.ISO8859-9E')
@@ -139,6 +138,8 @@ def question_detail(request, slug):
     comments = question.comment_set.all()
     if request.method=="POST":
         if request.is_ajax():
+            print("Burdaayam 1")
+            print(request.POST)
             if(request.POST['post_type'] == 'comment_create'):
                 question = get_object_or_404(Question, id = int(request.POST['question_id']))
                 student = get_object_or_404(Student, user = request.user)
@@ -219,34 +220,16 @@ def question_detail(request, slug):
                     return JsonResponse({'error':'User can\'t give vote to its comment'}) 
             
             elif(request.POST['post_type'] == 'comment_edit-read'):
-                user_roles = [eachRole.id for eachRole in request.user.student.roles.all()]
-                # For editor roles:
-                if (1 in user_roles or 2 in user_roles or 4 in user_roles):
-                    question = get_object_or_404(Question, slug=slug)
-                    comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question)
-                # For students:
-                else:    
-                    question = get_object_or_404(Question,id = request.POST.get("question_id"))
-                    student = get_object_or_404(Student, user = request.user)
-                    comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
+                question = get_object_or_404(Question,id = request.POST.get("question_id"))
+                student = get_object_or_404(Student, user = request.user)
+                comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
                 return JsonResponse(comment.get_info(), safe = False)
 
-            elif(request.POST['post_type'] == 'comment_edit-update'):
-                user_roles = [eachRole.id for eachRole in request.user.student.roles.all()]
-                # For editor roles:
-                if (1 in user_roles or 2 in user_roles or 4 in user_roles):
-                    question = get_object_or_404(Question, slug=slug)
-                    comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question)
-                    student = get_object_or_404(Student, user = request.user)
-                    isEditor = True
-                # For students:
-                else:    
-                    question = get_object_or_404(Question,id = request.POST.get("question_id"))
-                    student = get_object_or_404(Student, user = request.user)
-                    comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
-                    isEditor = False
-               
-                
+            elif(request.POST['post_type'] == 'comment_edit-update'):   
+                question = get_object_or_404(Question,id = request.POST.get("question_id"))
+                student = get_object_or_404(Student, user = request.user)
+                comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
+                                               
                 current_images_url = request.POST['server_images'].split(',')
 
                 comment_data = request.POST.copy()
@@ -272,7 +255,7 @@ def question_detail(request, slug):
                         pass
                     else:
                         MAX_FILES = 2 # The number of max files (Client-Side 2)
-                        if (len(request.FILES) <= MAX_FILES ): 
+                        if (len(request.FILES) + len(current_images_url)  <= MAX_FILES ): 
                             for imageKey, imageValue in request.FILES.items():
                                 commentData = {'comment' : comment}
                                 imageData = {'image' : imageValue}
@@ -297,19 +280,25 @@ def question_detail(request, slug):
                     comment_data['comment_id'] = int(f'{comment.id}')
                     comment_data['owner'] = True if question.student.user == request.user else False
                     comment_data['comment_owner'] = True if comment.student.user == request.user else False # Check if comment owner
-                    comment_data['editor'] = isEditor #Check is editor or not
                     comment_data['images'] = [comment_image.image.url for comment_image in comment.commentimage_set.all()]
                     return JsonResponse(comment_data)
                 else:
                     return JsonResponse(commentForm.errors.as_json(), safe = False) 
 
             elif(request.POST['post_type'] == 'comment_delete'):
-                question = get_object_or_404(Question,id = request.POST.get("question_id"))
-                student = get_object_or_404(Student, user = request.user)
-                comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
+                user_roles = [eachRole.id for eachRole in request.user.student.roles.all()]
+                # For editor roles:
+                if (1 in user_roles or 4 in user_roles):
+                    question = get_object_or_404(Question, slug=slug)
+                    comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question)
+                # For students:
+                else:    
+                    question = get_object_or_404(Question,id = request.POST.get("question_id"))
+                    student = get_object_or_404(Student, user = request.user)
+                    comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)                    
                 comment.delete()
-                student.level -=3
-                student.save()
+                comment.student.level -=3
+                comment.student.save()
                 return JsonResponse({'status':'good'}, safe = False) 
 
             elif(request.POST['post_type'] == 'select_answer'):                
@@ -342,7 +331,7 @@ def question_detail(request, slug):
 def question_edit(request, slug):
     user_roles = [eachRole.id for eachRole in request.user.student.roles.all()]
     # For editor roles:
-    if (1 in user_roles or 2 in user_roles or 4 in user_roles):
+    if (1 in user_roles or 4 in user_roles):
         question = get_object_or_404(Question, slug=slug)
     # For students:
     else:    
@@ -374,7 +363,7 @@ def question_edit(request, slug):
                 pass
             else:
                 MAX_FILES = 2 # The number of max files (Client-Side 2)
-                if (len(request.FILES) <= MAX_FILES ): 
+                if (len(request.FILES) + len(current_images_url) <= MAX_FILES ): 
                     for imageKey, imageValue in request.FILES.items():
                         questionData = {'question' : question}
                         imageData = {'image' : imageValue}
@@ -402,12 +391,18 @@ def question_edit(request, slug):
 @login_required
 @picture_required 
 def question_delete(request, slug):
-    question = get_object_or_404(Question, slug=slug)
-    student = get_object_or_404(Student, user = request.user)
-    if(question.student == student):
-        question.delete()
-        student.level -=3
-        student.save()
+    user_roles = [eachRole.id for eachRole in request.user.student.roles.all()]
+    # For editor roles:
+    if (1 in user_roles or 4 in user_roles):
+        question = get_object_or_404(Question, slug=slug)
+    # For students:
+    else:    
+        student = get_object_or_404(Student, user = request.user)
+        question = get_object_or_404(Question, slug=slug, student = student)
+
+    question.delete()
+    question.student.level -=3
+    question.student.save()
     return redirect('/')
     
 

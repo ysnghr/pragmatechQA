@@ -148,11 +148,17 @@
                                         <i style="font-size: 22px; color: red; cursor: pointer;" class="fas fa-trash-alt"></i>
                                     </a>
                                 </div>
-                            {% elif 1 in user_roles or 2 in user_roles or 4 in user_roles %} 
+                            {% elif 1 in user_roles or 4 in user_roles %} 
                                 <div class="tt-item">
                                     <!-- Edit -->
                                     <a  href="{% url 'single_topic_edit' slug=question.slug %}" class="tt-icon-btn tt-position-bottom">
                                         <i style="font-size: 22px; color: #666f74; cursor: pointer;" class="tt-icon fas fa-edit"></i>                                                              
+                                    </a>
+                                </div>
+                                <div class="tt-item">
+                                    <!-- Delete -->
+                                    <a id="question_delete_btn" href="#" class="tt-icon-btn tt-position-bottom">
+                                        <i style="font-size: 22px; color: red; cursor: pointer;" class="fas fa-trash-alt"></i>
                                     </a>
                                 </div>
                             {% endif %}
@@ -260,14 +266,13 @@
                                             <i style="font-size: 22px; color: red; cursor: pointer;" class="fas fa-trash-alt"></i>
                                         </a>                           
                                     </div>   
-                                {% elif 1 in user_roles or 2 in user_roles or 4 in user_roles %} 
-                                   <!-- Edit for Editor roles  -->
+                                {% elif 1 in user_roles or 4 in user_roles %} 
                                     <div class="tt-item">
-                                        <!-- Edit -->
-                                        <a onclick="event.preventDefault(); CommentEdit(this)" label="comment_edit_btn" href="#" class="tt-icon-btn tt-position-bottom">
-                                            <i style="font-size: 22px; color: #666f74; cursor: pointer;" class="tt-icon fas fa-edit"></i>                                                              
-                                        </a>                                        
-                                    </div>      
+                                        <!-- Delete -->
+                                        <a onclick="event.preventDefault(); CommentDelete(this)" label="comment_delete_btn" href="#" class="tt-icon-btn tt-position-bottom">
+                                            <i style="font-size: 22px; color: red; cursor: pointer;" class="fas fa-trash-alt"></i>
+                                        </a>                           
+                                    </div>     
                                 {% endif %}                  
                             </div>
                         </div>
