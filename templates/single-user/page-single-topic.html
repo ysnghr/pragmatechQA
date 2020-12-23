@@ -111,8 +111,7 @@
                             {% endfor %}                            
                         </div>
                     </div>
-                    <div class="tt-item-info info-bottom">
-                        
+                    <div class="tt-item-info info-bottom">                        
                         <!-- If question belongs to user ignore like button -->
                         {% if question.student.user == request.user %}
                             <a style="cursor: context-menu;" href="#" class="tt-icon-btn" onclick="event.preventDefault()">
@@ -135,6 +134,7 @@
                         {% endif %}
                         <div class="col-separator"></div>
                         <div class="tt-row-icon">
+
                             {% if question.student.user == request.user %}
                                 <div class="tt-item">
                                     <!-- Edit -->
@@ -147,7 +147,14 @@
                                     <a id="question_delete_btn" href="#" class="tt-icon-btn tt-position-bottom">
                                         <i style="font-size: 22px; color: red; cursor: pointer;" class="fas fa-trash-alt"></i>
                                     </a>
-                                </div>                            
+                                </div>
+                            {% elif 1 in user_roles or 2 in user_roles or 4 in user_roles %} 
+                                <div class="tt-item">
+                                    <!-- Edit -->
+                                    <a  href="{% url 'single_topic_edit' slug=question.slug %}" class="tt-icon-btn tt-position-bottom">
+                                        <i style="font-size: 22px; color: #666f74; cursor: pointer;" class="tt-icon fas fa-edit"></i>                                                              
+                                    </a>
+                                </div>
                             {% endif %}
                             <div class="tt-item">
                                 <div class="tt-icon-btn tt-position-bottom">
@@ -252,7 +259,15 @@
                                         <a onclick="event.preventDefault(); CommentDelete(this)" label="comment_delete_btn" href="#" class="tt-icon-btn tt-position-bottom">
                                             <i style="font-size: 22px; color: red; cursor: pointer;" class="fas fa-trash-alt"></i>
                                         </a>                           
-                                    </div>                            
+                                    </div>   
+                                {% elif 1 in user_roles or 2 in user_roles or 4 in user_roles %} 
+                                   <!-- Edit for Editor roles  -->
+                                    <div class="tt-item">
+                                        <!-- Edit -->
+                                        <a onclick="event.preventDefault(); CommentEdit(this)" label="comment_edit_btn" href="#" class="tt-icon-btn tt-position-bottom">
+                                            <i style="font-size: 22px; color: #666f74; cursor: pointer;" class="tt-icon fas fa-edit"></i>                                                              
+                                        </a>                                        
+                                    </div>      
                                 {% endif %}                  
                             </div>
                         </div>
@@ -505,7 +520,7 @@
                 if(argOwner)
                 {
                     return ` <div class="tt-item-info info-top">                                
-                                <div class="tt-avatar-icon" style="padding-top: 60px; z-index: 10y;"> 
+                                <div class="tt-avatar-icon" style="padding-top: 60px; z-index: 10;"> 
                                     <a href="#" onclick="event.preventDefault(); check_answer(${response.question_id}, ${response.comment_id});">
                                         <i class="tt-icon"><svg   width="36" height="36" viewBox="0 0 36 36"><path class="select_answer" style='fill:#aeb3b4;' d="M6 14l8 8L30 6v8L14 30l-8-8v-8z"></path></svg></i>
                                     </a> 

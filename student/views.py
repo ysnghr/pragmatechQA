@@ -219,21 +219,40 @@ def question_detail(request, slug):
                     return JsonResponse({'error':'User can\'t give vote to its comment'}) 
             
             elif(request.POST['post_type'] == 'comment_edit-read'):
-                question = get_object_or_404(Question,id = request.POST.get("question_id"))
-                student = get_object_or_404(Student, user = request.user)
-                comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
+                user_roles = [eachRole.id for eachRole in request.user.student.roles.all()]
+                # For editor roles:
+                if (1 in user_roles or 2 in user_roles or 4 in user_roles):
+                    question = get_object_or_404(Question, slug=slug)
+                    comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question)
+                # For students:
+                else:    
+                    question = get_object_or_404(Question,id = request.POST.get("question_id"))
+                    student = get_object_or_404(Student, user = request.user)
+                    comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
                 return JsonResponse(comment.get_info(), safe = False)
 
             elif(request.POST['post_type'] == 'comment_edit-update'):
-                question = get_object_or_404(Question,id = request.POST.get("question_id"))
-                student = get_object_or_404(Student, user = request.user)
-                comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
+                user_roles = [eachRole.id for eachRole in request.user.student.roles.all()]
+                # For editor roles:
+                if (1 in user_roles or 2 in user_roles or 4 in user_roles):
+                    question = get_object_or_404(Question, slug=slug)
+                    comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question)
+                    student = get_object_or_404(Student, user = request.user)
+                    isEditor = True
+                # For students:
+                else:    
+                    question = get_object_or_404(Question,id = request.POST.get("question_id"))
+                    student = get_object_or_404(Student, user = request.user)
+                    comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
+                    isEditor = False
+               
                 
                 current_images_url = request.POST['server_images'].split(',')
 
                 comment_data = request.POST.copy()
                 comment_data['question'] = question
-                comment_data['student'] = student
+                
+                comment_data['student'] = student 
                 del comment_data['post_type']
                 del comment_data['question_id']
                 del comment_data['server_images']
@@ -269,7 +288,7 @@ def question_detail(request, slug):
                     comment_data = {}
                     comment_data['full_name'] = f'{comment.student.user.get_full_name()}'
                     comment_data['writer_image'] = comment.student.picture.url
-                    comment_data['writer_profile'] = reverse('user_activity', args=[request.user.id])
+                    comment_data['writer_profile'] = reverse('user_activity', args=[comment.student.user.id])
                     comment_data['slug'] = f'{comment.question.slug}'
                     comment_data['created_date'] = f'{(comment.created).strftime("%d %b, %Y")}'
                     comment_data['content'] = f'{comment.content}'
@@ -278,6 +297,7 @@ def question_detail(request, slug):
                     comment_data['comment_id'] = int(f'{comment.id}')
                     comment_data['owner'] = True if question.student.user == request.user else False
                     comment_data['comment_owner'] = True if comment.student.user == request.user else False # Check if comment owner
+                    comment_data['editor'] = isEditor #Check is editor or not
                     comment_data['images'] = [comment_image.image.url for comment_image in comment.commentimage_set.all()]
                     return JsonResponse(comment_data)
                 else:
@@ -311,6 +331,7 @@ def question_detail(request, slug):
         question.save()
     context={
         'comments' : question.filter_comments(),
+        'user_roles' : [eachRole.id for eachRole in request.user.student.roles.all()],
         'question': question,
         'student': Student.objects.get(user = request.user),
     }
@@ -319,24 +340,27 @@ def question_detail(request, slug):
 @login_required
 @picture_required
 def question_edit(request, slug):
-    question = get_object_or_404(Question, slug=slug)
+    user_roles = [eachRole.id for eachRole in request.user.student.roles.all()]
+    # For editor roles:
+    if (1 in user_roles or 2 in user_roles or 4 in user_roles):
+        question = get_object_or_404(Question, slug=slug)
+    # For students:
+    else:    
+        student = get_object_or_404(Student, user = request.user)
+        question = get_object_or_404(Question, slug=slug, student = student)
+
     form = QuestionForm()
-    student = get_object_or_404(Student, user = request.user)
     if request.method == "POST":
         form = QuestionForm(request.POST or None)
-        if form.is_valid():
-            student = Student.objects.get(user = request.user) 
-            if(question.student == student ):                
-                question.title = form.cleaned_data['title']
-                question.content = form.cleaned_data['content'] 
-                question.slug = question.get_unique_slug()
-                question.updated = datetime.datetime.now()       
-                question.tags.clear()
-                for eachTag in form.cleaned_data['tags']:
-                    question.tags.add(eachTag)           
-                question.save()                
-            else:
-                return JsonResponse({'error':'Question owner is not valid'}, safe = False)
+        if form.is_valid():             
+            question.title = form.cleaned_data['title']
+            question.content = form.cleaned_data['content'] 
+            question.slug = question.get_unique_slug()
+            question.updated = datetime.datetime.now()       
+            question.tags.clear()
+            for eachTag in form.cleaned_data['tags']:
+                question.tags.add(eachTag)           
+            question.save()                            
 
             # Check for server images deleted or not
             previos_images_url = question.get_previous_images()
@@ -365,8 +389,6 @@ def question_edit(request, slug):
             return JsonResponse({'slug': question.slug }, safe = False)
         else:
             return JsonResponse(form.errors.as_json(), safe = False)
-
-
     
     context={
         'form':form,

@@ -199,18 +199,7 @@ function CommentEditDropzone(response, question_id, comment_id)
                                 ${IsCommentOwner(response.comment_owner)}
                                     <div class="col-separator"></div>
                                     <div class="tt-row-icon">
-                                        <div class="tt-item">
-                                            <!-- Edit -->
-                                            <a label="comment_edit_btn" onclick="event.preventDefault(); CommentEdit(this)" href="#" class="tt-icon-btn tt-position-bottom">
-                                                <i style="font-size: 22px; color: #666f74; cursor: pointer;" class="tt-icon fas fa-edit"></i>                                                              
-                                            </a>                                                                                
-                                        </div>   
-                                        <div class="tt-item">
-                                            <!-- Delete -->
-                                            <a label="comment_delete_btn" onclick="event.preventDefault(); CommentDelete(this)" href="#" class="tt-icon-btn tt-position-bottom">
-                                                <i style="font-size: 22px; color: red; cursor: pointer;" class="fas fa-trash-alt"></i>
-                                            </a>                           
-                                        </div>                                                                                                               
+                                        ${IsEditor(response.editor)}                                                                                                            
                                     </div>                                                             
                                 </div>
                                 <div class="tt-info-time mt-3 d-flex" style="justify-content: flex-end;">
@@ -305,6 +294,36 @@ function CommentEditDropzone(response, question_id, comment_id)
                     }
                     return temp_html;
     
+                }
+
+                function IsEditor(editor)
+                {
+                    temp_html = '';
+                    if (editor)
+                    {
+                        return `<div class="tt-item">
+                                    <!-- Edit -->
+                                    <a label="comment_edit_btn" onclick="event.preventDefault(); CommentEdit(this)" href="#" class="tt-icon-btn tt-position-bottom">
+                                        <i style="font-size: 22px; color: #666f74; cursor: pointer;" class="tt-icon fas fa-edit"></i>                                                              
+                                    </a>                                                                                
+                                </div>  `        
+                    }
+                    else
+                    {
+                        return `<div class="tt-item">
+                                    <!-- Edit -->
+                                    <a label="comment_edit_btn" onclick="event.preventDefault(); CommentEdit(this)" href="#" class="tt-icon-btn tt-position-bottom">
+                                        <i style="font-size: 22px; color: #666f74; cursor: pointer;" class="tt-icon fas fa-edit"></i>                                                              
+                                    </a>                                                                                
+                                </div>   
+                                <div class="tt-item">
+                                    <!-- Delete -->
+                                    <a label="comment_delete_btn" onclick="event.preventDefault(); CommentDelete(this)" href="#" class="tt-icon-btn tt-position-bottom">
+                                        <i style="font-size: 22px; color: red; cursor: pointer;" class="fas fa-trash-alt"></i>
+                                    </a>                           
+                                </div>  `
+                    }
+
                 }
             }        
         },
