@@ -56,7 +56,6 @@ $('#comment_edit_cancel_btn').on('click', function(e){
 
 function CommentEditDropzone(response, question_id, comment_id)
 {
-
     Dropzone.autoDiscover = false;
     var isEnter = true;
     var commentEditDropzone = new Dropzone("#commentEditDropzone", {
@@ -80,7 +79,7 @@ function CommentEditDropzone(response, question_id, comment_id)
         dictMaxFilesExceeded: 'Maximum 2 şəkil yükləyə bilərsiniz',
         dictResponseError: "Server responded with {{statusCode}} code.",
         init: function() {
-            dzClosure = this; // Makes sure that 'this' is understood inside the functions below.
+            dzClosureSecond = this; // Makes sure that 'this' is understood inside the functions below.
     
             for (let i = 0; i < response.comment_image_info.length; i++) 
             {  
@@ -93,14 +92,14 @@ function CommentEditDropzone(response, question_id, comment_id)
              // for Dropzone to process the queue (instead of default form behavior):
             $('#comment_edit_submit_btn').on("click", function(e) {
                 
-                if (CheckCommentContent() & CheckImageLength())
+                if (CheckCommentContent() && CheckImageLength())
                 {
-                    if (dzClosure.getQueuedFiles().length > 0) 
+                    if (dzClosureSecond.getQueuedFiles().length > 0) 
                     {
                         isEnter = true;                                
                         e.preventDefault();
                         e.stopPropagation();  
-                        dzClosure.processQueue(); 
+                        dzClosureSecond.processQueue(); 
                         $('#comment_edit_submit_btn').addClass('disabled')
                         return false
                     } 
@@ -109,8 +108,8 @@ function CommentEditDropzone(response, question_id, comment_id)
                         isEnter = true;                      
                         e.preventDefault();
                         var blob = new Blob(); //Back check is blob or not
-                        blob.upload = { 'chunked': dzClosure.defaultOptions.chunking };
-                        dzClosure.uploadFile(blob);
+                        blob.upload = { 'chunked': dzClosureSecond.defaultOptions.chunking };
+                        dzClosureSecond.uploadFile(blob);
                         $('#comment_edit_submit_btn').addClass('disabled')
                     }    
                 }
@@ -123,8 +122,9 @@ function CommentEditDropzone(response, question_id, comment_id)
             });
 
             //send all the form data along with the files:
-            this.on("sendingmultiple", function(data, xhr, formData) 
+            dzClosureSecond.on("sendingmultiple", function(data, xhr, formData) 
             {
+                console.log("Meeeene basdi")
                 formData.append("question_id", question_id);
                 formData.append("comment_id", comment_id);
                 formData.append("post_type", "comment_edit-update");
@@ -140,6 +140,7 @@ function CommentEditDropzone(response, question_id, comment_id)
                 {
                     contentErrorDiv.removeClass('d-none')
                     contentErrorDiv.find('span[label="error_content"]').text('Mövzu doldurulmalıdır.')
+                    //$('html,body').animate({scrollTop: imageErrorDiv.offset().top - 100},'slow');
                     return false;
                 }
                 else
@@ -151,7 +152,7 @@ function CommentEditDropzone(response, question_id, comment_id)
 
             function CheckImageLength()
             {
-                image_counter = response.comment_images_urls.length + dzClosure.getQueuedFiles().length;
+                image_counter = response.comment_images_urls.length + dzClosureSecond.getQueuedFiles().length;
                 imageErrorDiv = $("div[label='comment_content_edit_error']")
                 if(image_counter > 2) //Empty
                 {
@@ -210,7 +211,7 @@ function CommentEditDropzone(response, question_id, comment_id)
                                             <a label="comment_delete_btn" onclick="event.preventDefault(); CommentDelete(this)" href="#" class="tt-icon-btn tt-position-bottom">
                                                 <i style="font-size: 22px; color: red; cursor: pointer;" class="fas fa-trash-alt"></i>
                                             </a>                           
-                                        </div>                                                                                                               
+                                        </div>                                                                                                          
                                     </div>                                                             
                                 </div>
                                 <div class="tt-info-time mt-3 d-flex" style="justify-content: flex-end;">
@@ -306,6 +307,7 @@ function CommentEditDropzone(response, question_id, comment_id)
                     return temp_html;
     
                 }
+
             }        
         },
     

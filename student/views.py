@@ -25,7 +25,6 @@ import datetime
 
 # Date - i bizim dilde cixartmaq ucun
 if sys.platform == 'win32':
-    print("Windows")
     locale.setlocale(locale.LC_ALL, 'az_AZ')
 else:
     locale.setlocale(locale.LC_ALL, 'az_AZ.ISO8859-9E')
@@ -139,6 +138,8 @@ def question_detail(request, slug):
     comments = question.comment_set.all()
     if request.method=="POST":
         if request.is_ajax():
+            print("Burdaayam 1")
+            print(request.POST)
             if(request.POST['post_type'] == 'comment_create'):
                 question = get_object_or_404(Question, id = int(request.POST['question_id']))
                 student = get_object_or_404(Student, user = request.user)
@@ -224,16 +225,17 @@ def question_detail(request, slug):
                 comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
                 return JsonResponse(comment.get_info(), safe = False)
 
-            elif(request.POST['post_type'] == 'comment_edit-update'):
+            elif(request.POST['post_type'] == 'comment_edit-update'):   
                 question = get_object_or_404(Question,id = request.POST.get("question_id"))
                 student = get_object_or_404(Student, user = request.user)
                 comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
-                
+                                               
                 current_images_url = request.POST['server_images'].split(',')
 
                 comment_data = request.POST.copy()
                 comment_data['question'] = question
-                comment_data['student'] = student
+                
+                comment_data['student'] = student 
                 del comment_data['post_type']
                 del comment_data['question_id']
                 del comment_data['server_images']
@@ -253,7 +255,7 @@ def question_detail(request, slug):
                         pass
                     else:
                         MAX_FILES = 2 # The number of max files (Client-Side 2)
-                        if (len(request.FILES) <= MAX_FILES ): 
+                        if (len(request.FILES) + len(current_images_url)  <= MAX_FILES ): 
                             for imageKey, imageValue in request.FILES.items():
                                 commentData = {'comment' : comment}
                                 imageData = {'image' : imageValue}
@@ -269,7 +271,7 @@ def question_detail(request, slug):
                     comment_data = {}
                     comment_data['full_name'] = f'{comment.student.user.get_full_name()}'
                     comment_data['writer_image'] = comment.student.picture.url
-                    comment_data['writer_profile'] = reverse('user_activity', args=[request.user.id])
+                    comment_data['writer_profile'] = reverse('user_activity', args=[comment.student.user.id])
                     comment_data['slug'] = f'{comment.question.slug}'
                     comment_data['created_date'] = f'{(comment.created).strftime("%d %b, %Y")}'
                     comment_data['content'] = f'{comment.content}'
@@ -284,12 +286,19 @@ def question_detail(request, slug):
                     return JsonResponse(commentForm.errors.as_json(), safe = False) 
 
             elif(request.POST['post_type'] == 'comment_delete'):
-                question = get_object_or_404(Question,id = request.POST.get("question_id"))
-                student = get_object_or_404(Student, user = request.user)
-                comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)
+                user_roles = [eachRole.id for eachRole in request.user.student.roles.all()]
+                # For editor roles:
+                if (1 in user_roles or 4 in user_roles):
+                    question = get_object_or_404(Question, slug=slug)
+                    comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question)
+                # For students:
+                else:    
+                    question = get_object_or_404(Question,id = request.POST.get("question_id"))
+                    student = get_object_or_404(Student, user = request.user)
+                    comment = get_object_or_404(Comment, id = request.POST.get("comment_id"), question = question, student = student)                    
                 comment.delete()
-                student.level -=3
-                student.save()
+                comment.student.level -=3
+                comment.student.save()
                 return JsonResponse({'status':'good'}, safe = False) 
 
             elif(request.POST['post_type'] == 'select_answer'):                
@@ -311,6 +320,7 @@ def question_detail(request, slug):
         question.save()
     context={
         'comments' : question.filter_comments(),
+        'user_roles' : [eachRole.id for eachRole in request.user.student.roles.all()],
         'question': question,
         'student': Student.objects.get(user = request.user),
     }
@@ -319,24 +329,27 @@ def question_detail(request, slug):
 @login_required
 @picture_required
 def question_edit(request, slug):
-    question = get_object_or_404(Question, slug=slug)
+    user_roles = [eachRole.id for eachRole in request.user.student.roles.all()]
+    # For editor roles:
+    if (1 in user_roles or 4 in user_roles):
+        question = get_object_or_404(Question, slug=slug)
+    # For students:
+    else:    
+        student = get_object_or_404(Student, user = request.user)
+        question = get_object_or_404(Question, slug=slug, student = student)
+
     form = QuestionForm()
-    student = get_object_or_404(Student, user = request.user)
     if request.method == "POST":
         form = QuestionForm(request.POST or None)
-        if form.is_valid():
-            student = Student.objects.get(user = request.user) 
-            if(question.student == student ):                
-                question.title = form.cleaned_data['title']
-                question.content = form.cleaned_data['content'] 
-                question.slug = question.get_unique_slug()
-                question.updated = datetime.datetime.now()       
-                question.tags.clear()
-                for eachTag in form.cleaned_data['tags']:
-                    question.tags.add(eachTag)           
-                question.save()                
-            else:
-                return JsonResponse({'error':'Question owner is not valid'}, safe = False)
+        if form.is_valid():             
+            question.title = form.cleaned_data['title']
+            question.content = form.cleaned_data['content'] 
+            question.slug = question.get_unique_slug()
+            question.updated = datetime.datetime.now()       
+            question.tags.clear()
+            for eachTag in form.cleaned_data['tags']:
+                question.tags.add(eachTag)           
+            question.save()                            
 
             # Check for server images deleted or not
             previos_images_url = question.get_previous_images()
@@ -350,7 +363,7 @@ def question_edit(request, slug):
                 pass
             else:
                 MAX_FILES = 2 # The number of max files (Client-Side 2)
-                if (len(request.FILES) <= MAX_FILES ): 
+                if (len(request.FILES) + len(current_images_url) <= MAX_FILES ): 
                     for imageKey, imageValue in request.FILES.items():
                         questionData = {'question' : question}
                         imageData = {'image' : imageValue}
@@ -365,8 +378,6 @@ def question_edit(request, slug):
             return JsonResponse({'slug': question.slug }, safe = False)
         else:
             return JsonResponse(form.errors.as_json(), safe = False)
-
-
     
     context={
         'form':form,
@@ -380,12 +391,18 @@ def question_edit(request, slug):
 @login_required
 @picture_required 
 def question_delete(request, slug):
-    question = get_object_or_404(Question, slug=slug)
-    student = get_object_or_404(Student, user = request.user)
-    if(question.student == student):
-        question.delete()
-        student.level -=3
-        student.save()
+    user_roles = [eachRole.id for eachRole in request.user.student.roles.all()]
+    # For editor roles:
+    if (1 in user_roles or 4 in user_roles):
+        question = get_object_or_404(Question, slug=slug)
+    # For students:
+    else:    
+        student = get_object_or_404(Student, user = request.user)
+        question = get_object_or_404(Question, slug=slug, student = student)
+
+    question.delete()
+    question.student.level -=3
+    question.student.save()
     return redirect('/')
     
 
